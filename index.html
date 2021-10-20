@@ -91,21 +91,23 @@ function format_card(data) {
 	const colors = data.colors.sort((l, r) => {
 		return "WUBRG".indexOf(l) - "WUBRG".indexOf(r)
 	}).join('');
-	const bg_colors = data.type_line.includes("Artifact") ? "Artifact" : data.type_line.includes("Vehicule") ? "Vehicule" : colors.length === 0 ? "Colorless" : colors.length > 2 ? "Gold" : colors; 
-	const boxes_colors = colors.length > 1 ? "Gold" : bg_colors;
+	// TODO: Correctly handle dual mana cost (bi-colored border)
+	const dual_colors = data.type_line.includes("Artifact") ? "Artifact" : data.type_line.includes("Vehicule") ? "Vehicule" : colors.length === 0 ? "Colorless" : colors.length > 2 ? "Gold" : colors;
+	// TODO: Correctly handle dual mana cost (bi-colored border) 
+	const boxes_colors = colors.length > 1 ? "Gold" : dual_colors;
 	
 	const legendary_crown_el = document.querySelector(".legendary-crown");
 	if(is_legendary) {
-		legendary_crown_el.style.backgroundImage = `url("img/legendary_crowns/${bg_colors}.png")`;
+		legendary_crown_el.style.backgroundImage = `url("img/legendary_crowns/${dual_colors}.png")`;
 		legendary_crown_el.style.visibility = "visible";
-		document.querySelector(".inner-frame").classList.add("legendary");
+		document.querySelector(".mtg-card").classList.add("legendary");
 	} else {
 		legendary_crown_el.style.visibility = "hidden";
-		document.querySelector(".inner-frame").classList.remove("legendary");
+		document.querySelector(".mtg-card").classList.remove("legendary");
 	}
 
-	document.querySelector(".inner-background").style.backgroundImage = `url("img/bg/${colors}.png")`;
-	document.querySelector(".inner-frame").style.backgroundImage = `url("img/borders/${colors}.png")`;
+	document.querySelector(".inner-background").style.backgroundImage = `url("img/bg/${boxes_colors}.png")`;
+	document.querySelector(".inner-frame").style.backgroundImage = `url("img/borders/${dual_colors}.png")`;
 	document.querySelector(".top-line").style.backgroundImage = `url("img/boxes/${boxes_colors}.png")`;
 	document.querySelector(".mid-line").style.backgroundImage = `url("img/boxes/${boxes_colors}.png")`;
 }
@@ -218,6 +220,12 @@ function load_card(event) {
 	background-repeat: no-repeat;
 }
 
+.legendary .inner-background {
+	background-position: 0 -1.1mm;
+	margin-top: 1.1mm;
+	padding-top: 0;
+}
+
 .inner-frame {
 	margin: auto;
 	width: calc(58mm * 0.974820);
@@ -229,9 +237,8 @@ function load_card(event) {
 	padding-top: 0.508mm;
 }
 
-.inner-frame.legendary {
+.legendary .inner-frame {
 	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
-	margin-top: 1mm;
 }
 
 .legendary-crown {
@@ -274,7 +281,7 @@ function load_card(event) {
 	height: 39mm;
 	margin: auto;
 	margin-top: 0.51mm;
-	margin-bottom: 0.8mm;
+	margin-bottom: 0.55mm;
 	background-color: yellow;
 	background-size: 100%;
 	//border: 0.2mm solid black;
