@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/mana.css" type="text/css" />
+<script>
+const keywords = {"Flash": "You may cast this spell any time you could cast an instant."}
+		
+function check_overflow(el)
+{
+   var curOverflow = el.style.overflow;
+
+   if ( !curOverflow || curOverflow === "visible" )
+      el.style.overflow = "hidden";
+
+   var isOverflowing = el.clientWidth < el.scrollWidth 
+      || el.clientHeight < el.scrollHeight;
+
+   el.style.overflow = curOverflow;
+
+   return isOverflowing;
+}
+
+function format_card(data) {
+	document.querySelector(".name").textContent = data.name;
+	document.querySelector(".illustration").style.backgroundImage = `url("${data.image_uris.art_crop}")`;
+	document.querySelector(".type-line").textContent = data.type_line;
+
+	function format_oracle(data) {
+		const lines = data.oracle_text.split('\n');
+		const flavor = data.flavor_text;
+		let r = [];
+		
+		for(let l of lines) {
+			let el = document.createElement("div");
+			el.classList.add("oracle-inner");
+			el.textContent = l; // TODO: Actually Format
+			if(l in keywords) {
+				let reminder_el = document.createElement("span");
+				reminder_el.classList.add("oracle-reminder");
+				reminder_el.textContent = ` (${keywords[l]})`;
+				el.appendChild(reminder_el);
+			}
+			r.push(el);
+		}
+		
+		if(flavor) {
+			let el = document.createElement("div");
+			el.classList.add("oracle-flavor");
+			el.textContent = flavor;
+			r.push(el);
+		}
+		
+		return r;
+	}
+
+	function format_mana_cost(data) {
+		const regex = /{([^}]+)}/g;
+		const matches = data.mana_cost.matchAll(regex);
+		const r = [];
+		for(let m of matches) {
+			let el = document.createElement("i");
+			el.className = "ms ms-cost ms-shadow";
+			el.classList.add(`ms-${m[1].toLowerCase()}`);
+			r.push(el);
+		}
+		return r;
+	}
+
+	let mana_cost_el = document.querySelector(".mana-cost");
+	mana_cost_el.innerHTML = "";
+	for(let el of format_mana_cost(data))
+		mana_cost_el.appendChild(el);
+
+	let oracle_el = document.querySelector(".oracle");
+	oracle_el.innerHTML = "";
+	for(let el of format_oracle(data))
+		oracle_el.appendChild(el);
+	
+	let curr_font_size = 8;
+	while(check_overflow(oracle_el)) {
+		curr_font_size *= 0.9;
+		oracle_el.style.fontSize = curr_font_size + "pt";
+	}
+		
+	document.querySelector(".collector-number").textContent = `${data.collector_number}/???`;
+	document.querySelector(".artist-name").textContent = `${data.artist}`;
+
+	const is_legendary = data.type_line.startsWith("Legendary");
+
+	const colors = data.colors.sort((l, r) => {
+		return "WUBRG".indexOf(l) - "WUBRG".indexOf(r)
+	}).join('');
+	const bg_colors = data.type_line.includes("Artifact") ? "Artifact" : data.type_line.includes("Vehicule") ? "Vehicule" : colors.length === 0 ? "Colorless" : colors.length > 2 ? "Gold" : colors; 
+	const boxes_colors = colors.length > 1 ? "Gold" : bg_colors;
+	
+	const legendary_crown_el = document.querySelector(".legendary-crown");
+	if(is_legendary) {
+		legendary_crown_el.style.backgroundImage = `url("img/legendary_crowns/${bg_colors}.png")`;
+		legendary_crown_el.style.visibility = "visible";
+		document.querySelector(".inner-frame").classList.add("legendary");
+	} else {
+		legendary_crown_el.style.visibility = "hidden";
+		document.querySelector(".inner-frame").classList.remove("legendary");
+	}
+
+	document.querySelector(".inner-background").style.backgroundImage = `url("img/bg/${colors}.png")`;
+	document.querySelector(".inner-frame").style.backgroundImage = `url("img/borders/${colors}.png")`;
+	document.querySelector(".top-line").style.backgroundImage = `url("img/boxes/${boxes_colors}.png")`;
+	document.querySelector(".mid-line").style.backgroundImage = `url("img/boxes/${boxes_colors}.png")`;
+}
+
+function load_card(event) {
+	const name = event.target ? event.target.elements[0].value : event;
+	fetch(`https://api.scryfall.com/cards/named?fuzzy=${name}`).then(response => response.json()).then(data => {
+		if(data.status && data.status != 200) {
+			console.log(data);
+			alert("Not found.\nDetails: " + data.details);
+		} else {
+			format_card(data);
+		}
+	});
+	return false;
+}
+</script>
+	</head>
+	<body>
+		<div>
+			<form onsubmit="return load_card(event)" method="post">
+				<input type="text" placeholder="Card Name..." />
+				<button type="submit">Load</button>
+			<form>
+		</div>
+		<div class="mtg-card">
+			<div class="inner-background">
+				<div class="inner-frame">
+					<div class="legendary-crown"></div>
+					<div class="top-line">
+						<span class="name">Card Name</span>
+						<div class="mana-cost">
+							<i class="ms ms-2 ms-cost ms-shadow"></i> 
+							<i class="ms ms-g ms-cost ms-shadow"></i> 
+						</div>
+					</div>
+					<div class="illustration"></div>
+					<div class="mid-line">
+						<span class="type-line">Supertype — Subtype(s)</span>
+						<span class="set-icon"></span>
+					</div>
+					<div class="oracle">
+						<div class="oracle-inner">
+							Flash
+							<span class="oracle-reminder">
+								(You may cast this spell any time you could cast an instant.)
+						</div>
+						<div class="oracle-inner">
+							Each creature you control that's a Wolf or a Werewolf gets +1/+1 and has trample.
+						</div>
+						<div class="oracle-flavor">
+							The renewed howling of werewolves announced the end of the Cursemute—and the beginning of Avacyn's madness.
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="footer-left">
+					<div class="collector-number">24/352</div>
+					<div>
+						<span class="artist-icon">a </span><span class="artist-name"></span>
+					</div>
+				</div>
+				<div class="copyright">
+					<div></div>
+					<div>Custom Proxy</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			load_card("Old Stickfingers");
+		</script>
+	</body>
+</html>
+
+<style>
+@font-face {
+	font-family: "Mana";
+	src: url("fonts/mana.woff2") format("woff2"),
+	   url("fonts/mana.woff") format("woff");
+}
+
+@font-face {
+	font-family: "Relay Medium";
+	src: url("fonts/relay-medium.ttf") format("truetype");
+}
+
+.mtg-card {
+	position: relative;
+	width: 63.5mm;
+	height: 88.9mm;
+	border-radius: 3mm;
+	padding: 2.25mm;
+	background-color: black;
+
+	font-family: Beleren;
+	font-size: 3mm;
+	box-sizing: border-box;
+}
+
+.inner-background {
+	width: 58mm;
+	height: 78mm;
+	margin: auto;
+	border-radius: 0.75mm 0.75mm 4mm 4mm;
+	overflow-y: visible;
+	background-image: url("img/bg/G.png");
+	background-size: 100%;
+	padding-top: 1.1mm;
+	background-repeat: no-repeat;
+}
+
+.inner-frame {
+	margin: auto;
+	width: calc(58mm * 0.974820);
+	height: 78mm;
+	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black) drop-shadow(0.1mm -0.2mm 0.1mm #FFFFFFA0);
+	background-image: url("img/borders/G.png");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	padding-top: 0.508mm;
+}
+
+.inner-frame.legendary {
+	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
+	margin-top: 1mm;
+}
+
+.legendary-crown {
+	position: absolute;
+	left: -2mm;
+	top: -7.5px;
+	width: 60.2mm;
+	height: 100%;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	z-index: -1;
+}
+
+.top-line,
+.mid-line {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 5.1mm;
+	//border-radius: 1.1mm / 50%;
+	margin: 0 0.5mm;
+	padding: 0 1mm 0 1.5mm;
+	//outline: 1px dashed red;
+	background-image: url("img/boxes/G.png");
+	background-size: 100%;
+}
+
+.name {
+	font-size: 9.454pt;
+}
+
+.mana-cost {
+	font-size: 6.5pt;
+	display: flex;
+	gap: 0.3mm;
+}
+
+.illustration {
+	width: 53.5mm;
+	height: 39mm;
+	margin: auto;
+	margin-top: 0.51mm;
+	margin-bottom: 0.8mm;
+	background-color: yellow;
+	background-size: 100%;
+	//border: 0.2mm solid black;
+}
+
+.mid-line {
+	background-position: 0 bottom;
+}
+
+.type-line {
+	font-size: 8pt;
+}
+
+.oracle {
+	display: flex;
+	align-items: strech;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.8mm;
+
+	width: 53mm;
+	height: 25mm;
+	//background-color: white;
+	margin: auto;
+	margin-top: 0.8mm;
+	//box-shadow: inset -0.3mm 0.3mm 0.3mm #00000080;
+	//outline: 1px dashed red;
+	
+	font-family: MPlantin;
+	font-size: 8pt;
+}
+
+.oracle-inner,
+.oracle-flavor,
+.oracle-reminder {
+	margin: 0 0.44mm;
+}
+
+.oracle-flavor,
+.oracle-reminder {
+	font-family: MPlantin-Italic;
+}
+
+.footer {
+	width: 55mm;
+	margin: auto;
+	margin-top: 0;
+	
+	display: flex;
+	justify-content: space-between;
+	color: white;
+	font-size: 1.5mm;
+}
+
+.collector-number {
+	font-family: Relay Medium;
+	letter-spacing: 0.2mm;
+}
+
+.copyright {
+	font-family: MPlantin;
+}
+
+.copyright div {
+}
+
+.artist-icon {
+	font-family: NDPMTG;
+}
+
+.artist-name {
+	font-family: Beleren Small Caps;
+}
+</style>
