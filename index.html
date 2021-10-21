@@ -4,7 +4,10 @@
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="css/mana.css" type="text/css" />
 <script>
-const keywords = {"Flash": "You may cast this spell any time you could cast an instant."}
+const keywords = {"Flash": "You may cast this spell any time you could cast an instant."};
+
+const mana_regex = /{([^}]+)}/g;
+	
 		
 function check_overflow(el)
 {
@@ -21,6 +24,13 @@ function check_overflow(el)
    return isOverflowing;
 }
 
+function gen_mana_symbol(str, classes = []) {
+	let el = document.createElement("i");
+	el.className = "ms ms-cost " + classes.join(" ");
+	el.classList.add(`ms-${str.toLowerCase()}`);
+	return el;
+}
+
 function format_card(data) {
 	document.querySelector(".name").textContent = data.name;
 	document.querySelector(".illustration").style.backgroundImage = `url("${data.image_uris.art_crop}")`;
@@ -34,7 +44,11 @@ function format_card(data) {
 		for(let l of lines) {
 			let el = document.createElement("div");
 			el.classList.add("oracle-inner");
-			el.textContent = l; // TODO: Actually Format
+			// Mana Symbols
+			l = l.replace(mana_regex, (match, group)  => gen_mana_symbol(group).outerHTML);
+			// Included reminder text
+			l = l.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
+			el.innerHTML = l; // TODO: Actually Format
 			if(l in keywords) {
 				let reminder_el = document.createElement("span");
 				reminder_el.classList.add("oracle-reminder");
@@ -55,14 +69,10 @@ function format_card(data) {
 	}
 
 	function format_mana_cost(data) {
-		const regex = /{([^}]+)}/g;
-		const matches = data.mana_cost.matchAll(regex);
+		const matches = data.mana_cost.matchAll(mana_regex);
 		const r = [];
 		for(let m of matches) {
-			let el = document.createElement("i");
-			el.className = "ms ms-cost ms-shadow";
-			el.classList.add(`ms-${m[1].toLowerCase()}`);
-			r.push(el);
+			r.push(gen_mana_symbol(m[1], ["ms-shadow"]));
 		}
 		return r;
 	}
@@ -77,8 +87,9 @@ function format_card(data) {
 	for(let el of format_oracle(data))
 		oracle_el.appendChild(el);
 	
+	// Make sure oracle text fits in its box
 	let curr_font_size = 8;
-	while(check_overflow(oracle_el)) {
+	while(check_overflow(oracle_el) && curr_font_size > 3) {
 		curr_font_size *= 0.9;
 		oracle_el.style.fontSize = curr_font_size + "pt";
 	}
@@ -312,6 +323,11 @@ function load_card(event) {
 	
 	font-family: MPlantin;
 	font-size: 8pt;
+}
+
+.oracle .ms {
+	font-size: 0.7em;
+	margin: 0 0.07em;
 }
 
 .oracle-inner,
