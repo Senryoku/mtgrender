@@ -4,8 +4,10 @@
 			<div class="inner-frame">
 				<div class="legendary-crown" v-show="is_legendary"></div>
 				<div class="top-line">
-					<span class="name">{{ card.name }}</span>
-					<div class="mana-cost">
+					<span class="name" @dblclick="edit_property('name')">{{
+						card.name
+					}}</span>
+					<div class="mana-cost" @dblclick="edit_property('mana_cost')">
 						<img
 							v-for="(uri, idx) in mana_cost"
 							class="ms ms-shadow"
@@ -16,7 +18,9 @@
 				</div>
 				<div class="illustration"></div>
 				<div class="mid-line">
-					<span class="type-line">{{ card.type_line }}</span>
+					<span class="type-line" @dblclick="edit_property('type_line')">{{
+						card.type_line
+					}}</span>
 					<span class="set-icon"></span>
 				</div>
 				<div class="oracle" ref="oracle_el">
@@ -25,22 +29,37 @@
 						v-for="(line, idx) in oracle_lines"
 						:key="idx"
 						v-html="line"
+						@dblclick="edit_property('oracle_text')"
 					></div>
-					<div class="oracle-flavor" v-if="card.flavor_text">
+					<div
+						class="oracle-flavor"
+						v-if="card.flavor_text"
+						@dblclick="edit_property('flavor_text')"
+					>
 						{{ card.flavor_text }}
 					</div>
 				</div>
 			</div>
 			<div class="pt-box" v-show="card.power || card.toughness">
-				{{ card.power }}/{{ card.toughness }}
+				<span @dblclick="edit_property('power')">{{ card.power }}</span
+				>/<span @dblclick="edit_property('toughness')"
+					>{{ card.toughness }}
+				</span>
 			</div>
 		</div>
 		<div class="footer">
 			<div class="footer-left">
-				<div class="collector-number">{{ card.collector_number }}/???</div>
+				<div
+					class="collector-number"
+					@dblclick="edit_property('collector_number')"
+				>
+					{{ card.collector_number }}/???
+				</div>
 				<div>
 					<span class="artist-icon">a </span
-					><span class="artist-name">{{ card.artist }}</span>
+					><span class="artist-name" @dblclick="edit_property('artist')">{{
+						card.artist
+					}}</span>
 				</div>
 			</div>
 			<div class="copyright">
@@ -83,7 +102,9 @@ export default {
 	},
 	data() {
 		const oracle_el = ref(null);
-		return { oracle_el };
+		return {
+			oracle_el,
+		};
 	},
 	methods: {
 		gen_mana_symbol(str, classes = []) {
@@ -109,10 +130,21 @@ export default {
 			);
 			return str;
 		},
+		edit_property(prop) {
+			// TODO
+			this.card[prop] = prompt(`Edit Card property '${prop}'`, this.card[prop]);
+		},
 	},
 	computed: {
 		is_legendary() {
 			return this.card?.type_line?.startsWith("Legendary") ? true : false;
+		},
+		is_vehicle() {
+			if (!this.card?.type_line) return false;
+			return (
+				this.card.type_line.includes("Vehicle") ||
+				this.card.type_line.includes("véhicule")
+			);
 		},
 		mana_cost() {
 			if (!this.card?.mana_cost) return [];
@@ -125,29 +157,45 @@ export default {
 			return this.card.oracle_text.split("\n").map(this.parse_oracle);
 		},
 		colors() {
-			if (!this.card?.colors) return "B";
-			const colors = this.card.colors
+			if (
+				this.card?.colors === undefined &&
+				this.card?.color_identity === undefined &&
+				this.card?.mana_cost === undefined
+			)
+				return "Colorless";
+			const colors = this.card?.colors
+				? this.card?.colors
+				: this.card?.color_identity
+				? this.card?.color_identity
+				: [...this.card.mana_cost].filter((c) => "WUBRG".includes(c));
+			const sorted_colors = colors
 				.sort((l: string, r: string) => {
 					return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
 				})
 				.join("");
 			// TODO: Correctly handle dual mana cost (bi-colored border)
-			return this.card.type_line.includes("Artifact")
+			return this.card.type_line.includes("Artifact") ||
+				this.card.type_line.includes("Artefact")
 				? "Artifact"
-				: this.card.type_line.includes("Vehicule")
-				? "Vehicule"
-				: colors.length === 0
-				? "Colorless"
-				: colors.length > 2
+				: sorted_colors.length === 0
+				? "Colourless"
+				: sorted_colors.length > 2
 				? "Gold"
-				: colors;
+				: sorted_colors;
 		},
 		boxes_colors() {
-			return this.colors.length > 1 ? "Gold" : this.colors;
+			return this.colors === "Vehicle"
+				? "Artifact"
+				: this.colors.length > 1 && this.colors.length < 5
+				? "Gold"
+				: this.colors;
 		},
 		background() {
 			return `url(${
-				new URL(`../assets/img/bg/${this.colors}.png`, import.meta.url).href
+				new URL(
+					`../assets/img/bg/${this.is_vehicle ? "Vehicle" : this.colors}.png`,
+					import.meta.url
+				).href
 			})`;
 		},
 		frame() {
@@ -172,10 +220,15 @@ export default {
 		pt_box() {
 			return `url(${
 				new URL(
-					`../assets/img/pt_boxes/${this.boxes_colors}.png`,
+					`../assets/img/pt_boxes/${
+						this.is_vehicle ? "Vehicle" : this.boxes_colors
+					}.png`,
 					import.meta.url
 				).href
 			})`;
+		},
+		pt_box_color() {
+			return this.is_vehicle ? "white" : "black";
 		},
 		illustration() {
 			return `url(${this.card?.image_uris?.art_crop})`;
@@ -210,7 +263,7 @@ export default {
 
 @font-face {
 	font-family: "MPlantin";
-	src: url("../assets/fonts/mplantin.ttf") format("truetype");
+	src: url("../assets/fonts/mplantin.woff") format("woff");
 }
 
 @font-face {
@@ -359,8 +412,8 @@ export default {
 
 .pt-box {
 	position: absolute;
-	right: 3mm;
-	bottom: 5.5mm;
+	right: 2.2mm;
+	bottom: 5.2mm;
 	width: 11.58mm;
 	height: 6.176mm;
 	background-image: v-bind(pt_box);
@@ -371,6 +424,7 @@ export default {
 	/*align-items: center;*/
 	line-height: 5.5mm;
 	font-size: 9.6pt;
+	color: v-bind(pt_box_color);
 }
 
 .footer {
@@ -391,9 +445,6 @@ export default {
 
 .copyright {
 	font-family: MPlantin;
-}
-
-.copyright div {
 }
 
 .artist-icon {
