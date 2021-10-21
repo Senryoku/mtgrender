@@ -8,6 +8,7 @@
 		for(let symbol of mana_symbols_list)
 			mana_symbols[symbol.symbol] = symbol; 
 		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js" integrity="sha512-01CJ9/g7e8cUmY0DFTMcUw/ikS799FHiOA0eyHsUWfOetgbx/t6oV4otQ5zXKQyIrQGTHSmRVPIgrgLcZi/WMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const keywords = {"Flash": "You may cast this spell any time you could cast an instant."};
 
@@ -143,6 +144,20 @@ function load_card(event) {
 	});
 	return false;
 }
+
+function render() {
+	console.log("Render");
+	const card_el = document.querySelector(".mtg-card");
+	domtoimage.toPng(document.querySelector(".mtg-card"), {width: 5.0 * card_el.clientWidth, height: 5.0 * card_el.clientHeight, style: {"transform-origin": "top left", transform: "scale(5.0)"}})
+		.then(function (dataUrl) {
+			var img = new Image();
+			img.src = dataUrl;
+			document.body.appendChild(img);
+		})
+		.catch(function (error) {
+			console.error('oops, something went wrong!', error);
+    });
+}
 </script>
 	</head>
 	<body>
@@ -150,8 +165,10 @@ function load_card(event) {
 			<form onsubmit="return load_card(event)" method="post">
 				<input type="text" placeholder="Card Name..." />
 				<button type="submit">Load</button>
-			<form>
+			</form>
+			<button onclick="render()">Render to PNG</button>
 		</div>
+		
 		<div class="mtg-card">
 			<div class="inner-background">
 				<div class="inner-frame">
