@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<script>
+		const mana_symbols = {};
+		const mana_symbols_list = [{"object":"card_symbol","symbol":"{T}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/T.svg","loose_variant":null,"english":"tap this permanent","transposable":false,"represents_mana":false,"appears_in_mana_costs":false,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":["ocT","oT"]},{"object":"card_symbol","symbol":"{Q}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/Q.svg","loose_variant":null,"english":"untap this permanent","transposable":false,"represents_mana":false,"appears_in_mana_costs":false,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{E}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/E.svg","loose_variant":null,"english":"an energy counter","transposable":false,"represents_mana":false,"appears_in_mana_costs":false,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{PW}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/PW.svg","loose_variant":null,"english":"planeswalker","transposable":false,"represents_mana":false,"appears_in_mana_costs":false,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{CHAOS}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/CHAOS.svg","loose_variant":null,"english":"chaos","transposable":false,"represents_mana":false,"appears_in_mana_costs":false,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{A}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/A.svg","loose_variant":null,"english":"an acorn counter","transposable":false,"represents_mana":false,"appears_in_mana_costs":false,"cmc":0.0,"funny":true,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{X}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/X.svg","loose_variant":"X","english":"X generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":["oX","ooX"]},{"object":"card_symbol","symbol":"{Y}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/Y.svg","loose_variant":"Y","english":"Y generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":0.0,"funny":true,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{Z}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/Z.svg","loose_variant":"Z","english":"Z generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":0.0,"funny":true,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{0}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/0.svg","loose_variant":"0","english":"zero mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":0.0,"funny":false,"colors":[],"gatherer_alternates":["o0"]},{"object":"card_symbol","symbol":"{½}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/HALF.svg","loose_variant":"½","english":"one-half generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":0.5,"funny":true,"colors":[],"gatherer_alternates":["o½"]},{"object":"card_symbol","symbol":"{1}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/1.svg","loose_variant":"1","english":"one generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":[],"gatherer_alternates":["o1"]},{"object":"card_symbol","symbol":"{2}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/2.svg","loose_variant":"2","english":"two generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":2.0,"funny":false,"colors":[],"gatherer_alternates":["o2"]},{"object":"card_symbol","symbol":"{3}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/3.svg","loose_variant":"3","english":"three generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":3.0,"funny":false,"colors":[],"gatherer_alternates":["o3"]},{"object":"card_symbol","symbol":"{4}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/4.svg","loose_variant":"4","english":"four generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":4.0,"funny":false,"colors":[],"gatherer_alternates":["o4"]},{"object":"card_symbol","symbol":"{5}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/5.svg","loose_variant":"5","english":"five generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":5.0,"funny":false,"colors":[],"gatherer_alternates":["o5"]},{"object":"card_symbol","symbol":"{6}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/6.svg","loose_variant":"6","english":"six generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":6.0,"funny":false,"colors":[],"gatherer_alternates":["o6"]},{"object":"card_symbol","symbol":"{7}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/7.svg","loose_variant":"7","english":"seven generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":7.0,"funny":false,"colors":[],"gatherer_alternates":["o7"]},{"object":"card_symbol","symbol":"{8}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/8.svg","loose_variant":"8","english":"eight generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":8.0,"funny":false,"colors":[],"gatherer_alternates":["o8"]},{"object":"card_symbol","symbol":"{9}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/9.svg","loose_variant":"9","english":"nine generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":9.0,"funny":false,"colors":[],"gatherer_alternates":["o9"]},{"object":"card_symbol","symbol":"{10}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/10.svg","loose_variant":"10","english":"ten generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":10.0,"funny":false,"colors":[],"gatherer_alternates":["o10"]},{"object":"card_symbol","symbol":"{11}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/11.svg","loose_variant":"11","english":"eleven generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":11.0,"funny":false,"colors":[],"gatherer_alternates":["o11"]},{"object":"card_symbol","symbol":"{12}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/12.svg","loose_variant":"12","english":"twelve generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":12.0,"funny":false,"colors":[],"gatherer_alternates":["o12"]},{"object":"card_symbol","symbol":"{13}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/13.svg","loose_variant":"13","english":"thirteen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":13.0,"funny":false,"colors":[],"gatherer_alternates":["o13"]},{"object":"card_symbol","symbol":"{14}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/14.svg","loose_variant":"14","english":"fourteen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":14.0,"funny":false,"colors":[],"gatherer_alternates":["o14"]},{"object":"card_symbol","symbol":"{15}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/15.svg","loose_variant":"15","english":"fifteen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":15.0,"funny":false,"colors":[],"gatherer_alternates":["o15"]},{"object":"card_symbol","symbol":"{16}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/16.svg","loose_variant":"16","english":"sixteen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":16.0,"funny":false,"colors":[],"gatherer_alternates":["o16"]},{"object":"card_symbol","symbol":"{17}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/17.svg","loose_variant":"17","english":"seventeen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":17.0,"funny":false,"colors":[],"gatherer_alternates":["o17"]},{"object":"card_symbol","symbol":"{18}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/18.svg","loose_variant":"18","english":"eighteen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":18.0,"funny":false,"colors":[],"gatherer_alternates":["o18"]},{"object":"card_symbol","symbol":"{19}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/19.svg","loose_variant":"19","english":"nineteen generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":19.0,"funny":false,"colors":[],"gatherer_alternates":["o19"]},{"object":"card_symbol","symbol":"{20}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/20.svg","loose_variant":"20","english":"twenty generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":20.0,"funny":false,"colors":[],"gatherer_alternates":["o20"]},{"object":"card_symbol","symbol":"{100}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/100.svg","loose_variant":"100","english":"one hundred generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":100.0,"funny":true,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{1000000}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/1000000.svg","loose_variant":"1000000","english":"one million generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1000000.0,"funny":true,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{∞}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/INFINITY.svg","loose_variant":"∞","english":"infinite generic mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":null,"funny":true,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{W/U}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/WU.svg","loose_variant":null,"english":"one white or blue mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["W","U"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{W/B}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/WB.svg","loose_variant":null,"english":"one white or black mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["W","B"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{B/R}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/BR.svg","loose_variant":null,"english":"one black or red mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["B","R"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{B/G}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/BG.svg","loose_variant":null,"english":"one black or green mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["B","G"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{U/B}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/UB.svg","loose_variant":null,"english":"one blue or black mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["U","B"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{U/R}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/UR.svg","loose_variant":null,"english":"one blue or red mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["U","R"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{R/G}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/RG.svg","loose_variant":null,"english":"one red or green mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["R","G"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{R/W}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/RW.svg","loose_variant":null,"english":"one red or white mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["W","R"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{G/W}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/GW.svg","loose_variant":null,"english":"one green or white mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["W","G"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{G/U}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/GU.svg","loose_variant":null,"english":"one green or blue mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["U","G"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{2/W}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/2W.svg","loose_variant":null,"english":"two generic mana or one white mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":2.0,"funny":false,"colors":["W"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{2/U}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/2U.svg","loose_variant":null,"english":"two generic mana or one blue mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":2.0,"funny":false,"colors":["U"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{2/B}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/2B.svg","loose_variant":null,"english":"two generic mana or one black mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":2.0,"funny":false,"colors":["B"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{2/R}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/2R.svg","loose_variant":null,"english":"two generic mana or one red mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":2.0,"funny":false,"colors":["R"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{2/G}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/2G.svg","loose_variant":null,"english":"two generic mana or one green mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":2.0,"funny":false,"colors":["G"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{P}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/P.svg","loose_variant":null,"english":"one colored mana or two life","transposable":false,"represents_mana":true,"appears_in_mana_costs":false,"cmc":1.0,"funny":false,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{W/P}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/WP.svg","loose_variant":null,"english":"one white mana or two life","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["W"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{U/P}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/UP.svg","loose_variant":null,"english":"one blue mana or two life","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["U"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{B/P}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/BP.svg","loose_variant":null,"english":"one black mana or two life","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["B"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{R/P}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/RP.svg","loose_variant":null,"english":"one red mana or two life","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["R"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{G/P}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/GP.svg","loose_variant":null,"english":"one green mana or two life","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["G"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{HW}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/HW.svg","loose_variant":null,"english":"one-half white mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":true,"cmc":0.5,"funny":true,"colors":["W"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{HR}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/HR.svg","loose_variant":null,"english":"one-half red mana","transposable":true,"represents_mana":true,"appears_in_mana_costs":false,"cmc":0.5,"funny":true,"colors":["R"],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{W}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/W.svg","loose_variant":"W","english":"one white mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["W"],"gatherer_alternates":["oW","ooW"]},{"object":"card_symbol","symbol":"{U}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/U.svg","loose_variant":"U","english":"one blue mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["U"],"gatherer_alternates":["oU","ooU"]},{"object":"card_symbol","symbol":"{B}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/B.svg","loose_variant":"B","english":"one black mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["B"],"gatherer_alternates":["oB","ooB"]},{"object":"card_symbol","symbol":"{R}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/R.svg","loose_variant":"R","english":"one red mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["R"],"gatherer_alternates":["oR","ooR"]},{"object":"card_symbol","symbol":"{G}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/G.svg","loose_variant":"G","english":"one green mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":["G"],"gatherer_alternates":["oG","ooG"]},{"object":"card_symbol","symbol":"{C}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/C.svg","loose_variant":"C","english":"one colorless mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":[],"gatherer_alternates":null},{"object":"card_symbol","symbol":"{S}","svg_uri":"https://c2.scryfall.com/file/scryfall-symbols/card-symbols/S.svg","loose_variant":"S","english":"one snow mana","transposable":false,"represents_mana":true,"appears_in_mana_costs":true,"cmc":1.0,"funny":false,"colors":[],"gatherer_alternates":null}];
+		for(let symbol of mana_symbols_list)
+			mana_symbols[symbol.symbol] = symbol; 
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js" integrity="sha512-01CJ9/g7e8cUmY0DFTMcUw/ikS799FHiOA0eyHsUWfOetgbx/t6oV4otQ5zXKQyIrQGTHSmRVPIgrgLcZi/WMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const keywords = {"Flash": "You may cast this spell any time you could cast an instant."};
+
+const mana_regex = /{([^}]+)}/g;
+
+function check_overflow(el)
+{
+   var curOverflow = el.style.overflow;
+
+   if ( !curOverflow || curOverflow === "visible" )
+      el.style.overflow = "hidden";
+
+   var isOverflowing = el.clientWidth < el.scrollWidth 
+      || el.clientHeight < el.scrollHeight;
+
+   el.style.overflow = curOverflow;
+
+   return isOverflowing;
+}
+
+function gen_mana_symbol(str, classes = []) {
+	if("{"+str+"}" in  mana_symbols) {
+		let el = new Image();
+		el.src = mana_symbols["{"+str+"}"].svg_uri;
+		el.className = "ms";
+		return el;
+	}
+	
+}
+
+function format_card(data) {
+	document.querySelector(".name").textContent = data.name;
+	document.querySelector(".illustration").style.backgroundImage = `url("${data.image_uris.art_crop}")`;
+	document.querySelector(".type-line").textContent = data.type_line;
+
+	function format_oracle(data) {
+		const lines = data.oracle_text.split('\n');
+		const flavor = data.flavor_text;
+		let r = [];
+		
+		for(let l of lines) {
+			let el = document.createElement("div");
+			el.classList.add("oracle-inner");
+			// Mana Symbols
+			l = l.replace(mana_regex, (match, group)  => gen_mana_symbol(group).outerHTML);
+			// Included reminder text
+			l = l.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
+			el.innerHTML = l; // TODO: Actually Format
+			if(l in keywords) {
+				let reminder_el = document.createElement("span");
+				reminder_el.classList.add("oracle-reminder");
+				reminder_el.textContent = ` (${keywords[l]})`;
+				el.appendChild(reminder_el);
+			}
+			r.push(el);
+		}
+		
+		if(flavor) {
+			// TODO: Add separator
+			let el = document.createElement("div");
+			el.classList.add("oracle-flavor");
+			el.textContent = flavor;
+			r.push(el);
+		}
+		
+		return r;
+	}
+
+	function format_mana_cost(data) {
+		const matches = data.mana_cost.matchAll(mana_regex);
+		const r = [];
+		for(let m of matches) {
+			r.push(gen_mana_symbol(m[1], ["ms-shadow"]));
+		}
+		return r;
+	}
+
+	let mana_cost_el = document.querySelector(".mana-cost");
+	mana_cost_el.innerHTML = "";
+	for(let el of format_mana_cost(data))
+		mana_cost_el.appendChild(el);
+
+	let oracle_el = document.querySelector(".oracle");
+	oracle_el.innerHTML = "";
+	for(let el of format_oracle(data))
+		oracle_el.appendChild(el);
+	
+	// Make sure oracle text fits in its box
+	let curr_font_size = 8;
+	while(check_overflow(oracle_el) && curr_font_size > 3) {
+		curr_font_size *= 0.9;
+		oracle_el.style.fontSize = curr_font_size + "pt";
+	}
+		
+	document.querySelector(".collector-number").textContent = `${data.collector_number}/???`;
+	document.querySelector(".artist-name").textContent = `${data.artist}`;
+
+	const is_legendary = data.type_line.startsWith("Legendary");
+
+	const colors = data.colors.sort((l, r) => {
+		return "WUBRG".indexOf(l) - "WUBRG".indexOf(r)
+	}).join('');
+	// TODO: Correctly handle dual mana cost (bi-colored border)
+	const dual_colors = data.type_line.includes("Artifact") ? "Artifact" : data.type_line.includes("Vehicule") ? "Vehicule" : colors.length === 0 ? "Colorless" : colors.length > 2 ? "Gold" : colors;
+	// TODO: Correctly handle dual mana cost (bi-colored border) 
+	const boxes_colors = colors.length > 1 ? "Gold" : dual_colors;
+	
+	const legendary_crown_el = document.querySelector(".legendary-crown");
+	if(is_legendary) {
+		legendary_crown_el.style.backgroundImage = `url("img/legendary_crowns/${dual_colors}.png")`;
+		legendary_crown_el.style.visibility = "visible";
+		document.querySelector(".mtg-card").classList.add("legendary");
+	} else {
+		legendary_crown_el.style.visibility = "hidden";
+		document.querySelector(".mtg-card").classList.remove("legendary");
+	}
+
+	document.querySelector(".inner-background").style.backgroundImage = `url("img/bg/${boxes_colors}.png")`;
+	document.querySelector(".inner-frame").style.backgroundImage = `url("img/borders/${dual_colors}.png")`;
+	document.querySelector(".top-line").style.backgroundImage = `url("img/boxes/${boxes_colors}.png")`;
+	document.querySelector(".mid-line").style.backgroundImage = `url("img/boxes/${boxes_colors}.png")`;
+}
+
+function load_card(event) {
+	const name = event.target ? event.target.elements[0].value : event;
+	fetch(`https://api.scryfall.com/cards/named?fuzzy=${name}`).then(response => response.json()).then(data => {
+		if(data.status && data.status != 200) {
+			console.log(data);
+			alert("Not found.\nDetails: " + data.details);
+		} else {
+			format_card(data);
+		}
+	});
+	return false;
+}
+
+function render() {
+	console.log("Render");
+	const card_el = document.querySelector(".mtg-card");
+	domtoimage.toPng(document.querySelector(".mtg-card"), {width: 5.0 * card_el.clientWidth, height: 5.0 * card_el.clientHeight, style: {"transform-origin": "top left", transform: "scale(5.0)"}})
+		.then(function (dataUrl) {
+			var img = new Image();
+			img.src = dataUrl;
+			document.body.appendChild(img);
+		})
+		.catch(function (error) {
+			console.error('oops, something went wrong!', error);
+    });
+}
+</script>
+	</head>
+	<body>
+		<div>
+			<form onsubmit="return load_card(event)" method="post">
+				<input type="text" placeholder="Card Name..." />
+				<button type="submit">Load</button>
+			</form>
+			<button onclick="render()">Render to PNG</button>
+		</div>
+		
+		<div class="mtg-card">
+			<div class="inner-background">
+				<div class="inner-frame">
+					<div class="legendary-crown"></div>
+					<div class="top-line">
+						<span class="name">Card Name</span>
+						<div class="mana-cost">
+						</div>
+					</div>
+					<div class="illustration"></div>
+					<div class="mid-line">
+						<span class="type-line">Supertype — Subtype(s)</span>
+						<span class="set-icon"></span>
+					</div>
+					<div class="oracle">
+						<div class="oracle-inner">
+							Flash
+							<span class="oracle-reminder">
+								(You may cast this spell any time you could cast an instant.)
+						</div>
+						<div class="oracle-inner">
+							Each creature you control that's a Wolf or a Werewolf gets +1/+1 and has trample.
+						</div>
+						<div class="oracle-flavor">
+							The renewed howling of werewolves announced the end of the Cursemute—and the beginning of Avacyn's madness.
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="footer-left">
+					<div class="collector-number">24/352</div>
+					<div>
+						<span class="artist-icon">a </span><span class="artist-name"></span>
+					</div>
+				</div>
+				<div class="copyright">
+					<div></div>
+					<div>Custom Proxy</div>
+				</div>
+			</div>
+		</div>
+		<script type="module">
+			load_card("Old Stickfingers");
+		</script>
+	</body>
+</html>
+
+<style>
+@font-face {
+	font-family: "Relay Medium";
+	src: url("fonts/relay-medium.ttf") format("truetype");
+}
+
+.mtg-card {
+	position: relative;
+	width: 63.5mm;
+	height: 88.9mm;
+	border-radius: 3mm;
+	padding: 2.25mm;
+	background-color: black;
+
+	font-family: Beleren;
+	font-size: 3mm;
+	box-sizing: border-box;
+}
+
+.inner-background {
+	width: 58mm;
+	height: 78mm;
+	margin: auto;
+	border-radius: 0.75mm 0.75mm 4mm 4mm;
+	overflow-y: visible;
+	background-image: url("img/bg/G.png");
+	background-size: 100%;
+	padding-top: 1.1mm;
+	background-repeat: no-repeat;
+}
+
+.legendary .inner-background {
+	background-position: 0 -1.1mm;
+	margin-top: 1.1mm;
+	padding-top: 0;
+}
+
+.inner-frame {
+	margin: auto;
+	width: calc(58mm * 0.974820);
+	height: 78mm;
+	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black) drop-shadow(0.1mm -0.2mm 0.1mm #FFFFFFA0);
+	background-image: url("img/borders/G.png");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	padding-top: 0.508mm;
+}
+
+.legendary .inner-frame {
+	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
+}
+
+.legendary-crown {
+	position: absolute;
+	left: -2mm;
+	top: -7.5px;
+	width: 60.2mm;
+	height: 100%;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	z-index: -1;
+}
+
+.top-line,
+.mid-line {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 5.1mm;
+	//border-radius: 1.1mm / 50%;
+	margin: 0 0.5mm;
+	padding: 0 1mm 0 1.5mm;
+	//outline: 1px dashed red;
+	background-image: url("img/boxes/G.png");
+	background-size: 100%;
+}
+
+.name {
+	font-size: 9.454pt;
+}
+
+.mana-cost {
+	font-size: 6.5pt;
+	display: flex;
+	gap: 0.3mm;
+}
+
+.mana-cost .ms {
+	width: 1.35em;
+	border-radius: 50%;
+	box-shadow: -0.2mm 0.2mm 0 rgba(0,0,0,0.85);
+}
+
+.illustration {
+	width: 53.5mm;
+	height: 39mm;
+	margin: auto;
+	margin-top: 0.51mm;
+	margin-bottom: 0.55mm;
+	background-color: yellow;
+	background-size: 100%;
+	//border: 0.2mm solid black;
+}
+
+.mid-line {
+	background-position: 0 bottom;
+}
+
+.type-line {
+	font-size: 8pt;
+}
+
+.oracle {
+	display: flex;
+	align-items: strech;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.8mm;
+
+	width: 53mm;
+	height: 25mm;
+	//background-color: white;
+	margin: auto;
+	margin-top: 0.8mm;
+	//box-shadow: inset -0.3mm 0.3mm 0.3mm #00000080;
+	//outline: 1px dashed red;
+	
+	font-family: MPlantin;
+	font-size: 8pt;
+}
+
+.oracle .ms {
+	width: 0.8em;
+	margin: 0 0.07em;
+}
+
+.oracle-inner,
+.oracle-flavor,
+.oracle-reminder {
+	margin: 0 0.44mm;
+}
+
+.oracle-flavor,
+.oracle-reminder {
+	font-family: MPlantin-Italic;
+}
+
+.footer {
+	width: 55mm;
+	margin: auto;
+	margin-top: 0;
+	
+	display: flex;
+	justify-content: space-between;
+	color: white;
+	font-size: 1.5mm;
+}
+
+.collector-number {
+	font-family: Relay Medium;
+	letter-spacing: 0.2mm;
+}
+
+.copyright {
+	font-family: MPlantin;
+}
+
+.copyright div {
+}
+
+.artist-icon {
+	font-family: NDPMTG;
+}
+
+.artist-name {
+	font-family: Beleren Small Caps;
+}
+</style>
