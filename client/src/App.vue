@@ -182,7 +182,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.load_card("Displacer Beast");
+		this.load_card("Elspeth Conquers Death");
 	},
 	methods: {
 		async autocomplete_card_name(event) {
