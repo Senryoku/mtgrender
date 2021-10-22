@@ -8,23 +8,107 @@
 				<input type="text" placeholder="Card Name..." />
 				<button type="submit">Load</button>
 			</form>
-			<button @click="render" :disabled="rendering">Render to PNG</button>
-			<button @click="upscale" :disabled="upscaling">
-				Upscale Illustration
-			</button>
 		</div>
 		<div class="content">
-			<MTGCard :card="card" />
-			<div>
-				Raw JSON View<br />
-				<textarea
-					:value="JSON.stringify(card, null, 2)"
-					@change="update_card"
-					ref="jsonView"
-					rows="20"
-					cols="80"
-				></textarea>
+			<div class="card-display">
+				<MTGCard :card="card" />
 			</div>
+			<div>
+				<div class="tabs">
+					<div
+						v-for="(tabName, idx) in ['Card Info', 'Render', 'Raw JSON']"
+						:key="idx"
+						@click="currentTab = idx"
+						class="tab"
+						:class="{ 'selected-tab': currentTab === idx }"
+					>
+						{{ tabName }}
+					</div>
+				</div>
+				<div v-show="currentTab === 0" class="inner-tab card-info">
+					<div>
+						<label for="card-name">Name</label>
+						<input id="card-name" v-model="card.name" type="text" />
+					</div>
+					<div>
+						<label for="card-mana-cost">Mana Cost</label>
+						<input id="card-mana-cost" v-model="card.mana_cost" type="text" />
+					</div>
+					<div>
+						<label for="card-type-line">Type Line</label>
+						<input id="card-type-line" v-model="card.type_line" type="text" />
+					</div>
+					<div>
+						<label for="card-oracle">Oracle</label><br />
+						<textarea
+							id="card-oracle"
+							v-model="card.oracle_text"
+							cols="40"
+							rows="6"
+						/>
+					</div>
+					<div>
+						<label for="card-power">P / T</label>
+						<input
+							id="card-power"
+							class="small-input"
+							v-model="card.power"
+							type="text"
+						/>
+						/
+						<input
+							id="card-toughness"
+							class="small-input"
+							v-model="card.toughness"
+							type="text"
+						/>
+					</div>
+					<div v-if="card.image_uris">
+						<label for="card-illustration">Illustration</label>
+						<input
+							id="card-illustration"
+							v-model="card.image_uris.art_crop"
+							type="text"
+						/>
+					</div>
+					<div>
+						<label for="card-artist">Artist</label>
+						<input id="card-artist" v-model="card.artist" type="text" />
+					</div>
+					<div>
+						<label for="card-number">Number</label>
+						<input
+							id="card-number"
+							v-model="card.collector_number"
+							type="text"
+						/>
+					</div>
+				</div>
+				<div v-show="currentTab === 1" class="inner-tab">
+					<button @click="upscale" :disabled="upscaling">
+						Upscale Illustration
+					</button>
+					<div>
+						<label for="render-margin">Margin (mm)</label>
+						<input
+							id="render-margin"
+							type="number"
+							v-model="renderOptions.margin"
+						/>
+					</div>
+					<button @click="render" :disabled="rendering">Render to PNG</button>
+				</div>
+				<div v-show="currentTab === 2" class="inner-tab">
+					<textarea
+						:value="JSON.stringify(card, null, 2)"
+						@change="update_card"
+						ref="jsonView"
+						rows="20"
+						cols="80"
+					></textarea>
+				</div>
+			</div>
+			<CardStore :currentCard="card" @load="load" />
 		</div>
 	</div>
 </template>
@@ -34,18 +118,25 @@ import { ref } from "vue";
 import domtoimage from "dom-to-image";
 
 import MTGCard from "./components/MTGCard.vue";
+import CardStore from "./components/CardStore.vue";
 
 export default {
 	name: "App",
 	components: {
 		MTGCard,
+		CardStore,
 	},
 	data() {
 		const jsonView = ref(null);
 		return {
 			card: {},
+			display_scale: 2.0,
+			renderOptions: {
+				margin: 3,
+			},
 			rendering: false,
 			upscaling: false,
+			currentTab: 0,
 			jsonView,
 			base_card: {
 				name: "Card Name",
@@ -62,10 +153,12 @@ export default {
 		};
 	},
 	mounted() {
-		//this.load_card("Old Stickfingers");
 		this.load_card("Displacer Beast");
 	},
 	methods: {
+		load(card) {
+			this.card = card;
+		},
 		load_card(event) {
 			const name = event.target ? event.target.elements[0].value : event;
 			fetch(`https://api.scryfall.com/cards/named?fuzzy=${name}`)
@@ -152,16 +245,24 @@ export default {
 				});
 		},
 		render() {
+			// https://github.com/tsayen/dom-to-image/issues/394
 			this.rendering = true;
 			const card_el = document.querySelector(".mtg-card");
-			const scale = 3288 / card_el.clientWidth;
+			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
+			const scale = 3288 / card_el.clientWidth / this.display_scale;
 			domtoimage
-				.toPng(document.querySelector(".mtg-card"), {
-					width: scale * card_el.clientWidth,
-					height: scale * card_el.clientHeight,
+				.toPng(document.querySelector(".card-display"), {
+					width:
+						(2 * margin_px) / this.display_scale +
+						this.display_scale * scale * card_el.clientWidth,
+					height:
+						(2 * margin_px) / this.display_scale +
+						this.display_scale * scale * card_el.clientHeight,
 					style: {
 						"transform-origin": "top left",
 						transform: `scale(${scale})`,
+						"background-color": "black",
+						padding: `${this.renderOptions.margin}mm`,
 					},
 				})
 				.then((dataUrl) => {
@@ -203,5 +304,50 @@ export default {
 	display: flex;
 	gap: 1em;
 	margin: 1em;
+}
+
+.card-display {
+	width: calc(2 * 63mm);
+}
+
+.card-display .mtg-card {
+	transform: scale(v-bind(display_scale));
+	transform-origin: left top;
+}
+
+.tabs {
+	display: flex;
+	gap: 1em;
+}
+
+.tab {
+	background-color: #00000040;
+	color: #000000a0;
+	border-radius: 0.5em 0.5em 0 0;
+	padding: 0.2em 0.2em 0 0.2em;
+	cursor: pointer;
+}
+
+.selected-tab {
+	background-color: #00000020;
+	color: #000000;
+}
+
+.inner-tab {
+	background-color: #00000020;
+	padding: 0.5em;
+}
+
+.card-info label {
+	display: inline-block;
+	width: 5em;
+}
+
+.card-info input[type="text"] {
+	width: 19em;
+}
+
+.card-info input.small-input {
+	width: 3em;
 }
 </style>

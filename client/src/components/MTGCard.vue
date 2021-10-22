@@ -162,7 +162,7 @@ export default {
 				this.card?.color_identity === undefined &&
 				this.card?.mana_cost === undefined
 			)
-				return "Colorless";
+				return "Colourless";
 			const colors = this.card?.colors
 				? this.card?.colors
 				: this.card?.color_identity
@@ -193,7 +193,9 @@ export default {
 		background() {
 			return `url(${
 				new URL(
-					`../assets/img/bg/${this.is_vehicle ? "Vehicle" : this.colors}.png`,
+					`../assets/img/bg/${
+						this.is_vehicle ? "Vehicle" : this.boxes_colors
+					}.png`,
 					import.meta.url
 				).href
 			})`;
@@ -445,6 +447,10 @@ export default {
 
 .copyright {
 	font-family: MPlantin;
+}
+
+.copyright div {
+	min-height: 2mm;
 }
 
 .artist-icon {
