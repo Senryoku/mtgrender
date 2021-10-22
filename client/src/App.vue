@@ -5,13 +5,33 @@
 				New Card
 			</button>
 			<form @submit.prevent="load_card">
-				<input type="text" placeholder="Card Name..." />
+				<input
+					type="text"
+					placeholder="Card Name..."
+					v-model="searchCardName"
+					@input="autocomplete_card_name"
+				/>
+				<div class="card-name-autocomplete" v-if="autocompleteStatus">
+					<div v-if="autocompleteStatus === 'updating'">Searching...</div>
+					<div v-if="autocompleteStatus === 'error'">An error occured.</div>
+					<div v-if="Array.isArray(autocompleteStatus)">
+						<ul>
+							<li
+								v-for="r in autocompleteStatus"
+								:key="r"
+								@click="select_card(r)"
+							>
+								{{ r }}
+							</li>
+						</ul>
+					</div>
+				</div>
 				<button type="submit">Load</button>
 			</form>
 		</div>
 		<div class="content">
 			<div class="card-display">
-				<MTGCard :card="card" />
+				<MTGCard :card="card" :scale="display_scale" />
 			</div>
 			<div>
 				<div class="tabs">
@@ -110,6 +130,7 @@
 						ref="jsonView"
 						rows="20"
 						cols="80"
+						spellcheck="false"
 					></textarea>
 				</div>
 			</div>
@@ -137,6 +158,8 @@ export default {
 		return {
 			card: {},
 			display_scale: 2.0,
+			searchCardName: "",
+			autocompleteStatus: null,
 			renderOptions: {
 				margin: 3,
 			},
@@ -162,6 +185,27 @@ export default {
 		this.load_card("Displacer Beast");
 	},
 	methods: {
+		async autocomplete_card_name(event) {
+			this.autocompleteStatus = "updating";
+			const response = await fetch(
+				`https://api.scryfall.com/cards/autocomplete?q=${event.target.value}`
+			);
+			if (response.status !== 200) {
+				this.autocompleteStatus = "error";
+			} else {
+				const data = await response.json();
+				if (data.total_values > 0) this.autocompleteStatus = data.data;
+				else this.autocompleteStatus = null;
+			}
+		},
+		close_autocomplete() {
+			this.autocompleteStatus = null;
+		},
+		select_card(cardName) {
+			this.searchCardName = cardName;
+			this.load_card(this.searchCardName);
+			this.close_autocomplete();
+		},
 		load(card) {
 			this.card = card;
 		},
@@ -215,6 +259,17 @@ export default {
 							}
 						} else {
 							alert(`Expected json file, got '${file.type}'.`);
+						}
+					} else if (event.dataTransfer.items[i].kind === "string") {
+						// Is it an URL?
+						// try { let url = new URL(event.dataTransfer.items[i]); } catch (_) { return false; }
+						console.log(event.dataTransfer.items[i]);
+						if (event.dataTransfer.items[i].type.includes("url")) {
+							let url = event.dataTransfer.getData(
+								event.dataTransfer.items[i].type
+							);
+							//if(url.endsWith(".png") || url.endsWith(".jpg"))
+							this.card.image_uris.art_crop = url;
 						}
 					}
 				}
@@ -311,10 +366,47 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+	font-family: "Inconsolata";
+	src: url("./assets/fonts/Ligconsolata-Regular.ttf") format("truetype");
+}
+
+input {
+	border-radius: 0.3em;
+	margin: 0.1em;
+}
+
+textarea {
+	font-family: Inconsolata;
+}
+
 .menu {
 	display: flex;
 	gap: 1em;
 	margin: 0.5em;
+	position: relative;
+}
+
+.card-name-autocomplete {
+	position: absolute;
+	top: 100%;
+	z-index: 1;
+	background-color: white;
+}
+
+.card-name-autocomplete ul {
+	list-style: none;
+	margin: 0.2em;
+	padding: 0;
+}
+
+.card-name-autocomplete li {
+	padding: 0.2em;
+	cursor: pointer;
+}
+
+.card-name-autocomplete li:hover {
+	background-color: lightblue;
 }
 
 .content {
@@ -334,15 +426,16 @@ export default {
 
 .tabs {
 	display: flex;
-	gap: 1em;
+	gap: 0.4em;
 }
 
 .tab {
 	background-color: #00000040;
 	color: #000000a0;
 	border-radius: 0.5em 0.5em 0 0;
-	padding: 0.2em 0.2em 0 0.2em;
+	padding: 0.1em 0.4em 0 0.4em;
 	cursor: pointer;
+	font-weight: 900;
 }
 
 .selected-tab {
@@ -353,6 +446,7 @@ export default {
 .inner-tab {
 	background-color: #00000020;
 	padding: 0.5em;
+	border-radius: 0 0 0.5em 0.5em;
 }
 
 .card-info label {

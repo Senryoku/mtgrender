@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<button @click="save">Save</button>
+		{{ used_local_storage }}KB used
 		<ol class="card-list">
 			<li
 				v-for="(card, idx) in cards"
@@ -16,6 +17,22 @@
 </template>
 
 <script>
+// Returns used storage space in KB
+function used_local_storage() {
+	let _lsTotal = 0,
+		_xLen,
+		_x;
+	for (_x in localStorage) {
+		if (!localStorage.hasOwnProperty(_x)) {
+			continue;
+		}
+		_xLen = (localStorage[_x].length + _x.length) * 2;
+		_lsTotal += _xLen;
+		//console.log(_x.substr(0, 50) + " = " + (_xLen / 1024).toFixed(2) + " KB");
+	}
+	return (_lsTotal / 1024).toFixed(2);
+}
+
 export default {
 	props: {
 		currentCard: Object,
@@ -56,6 +73,11 @@ export default {
 				e.preventDefault(); // Prevent the Save dialog to open
 				this.store();
 			}
+		},
+	},
+	computed: {
+		used_local_storage() {
+			return used_local_storage();
 		},
 	},
 };

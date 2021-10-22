@@ -16,7 +16,14 @@
 						/>
 					</div>
 				</div>
-				<div class="illustration"></div>
+				<div
+					class="illustration"
+					@wheel.prevent="scale_illustration"
+					@mousedown.prevent="start_drag_illustration"
+					@mouseup.prevent="end_drag_illustration"
+					@mousemove="drag_illustration"
+					@mouseleave="cancel_drag_illustration"
+				></div>
 				<div class="mid-line">
 					<span class="type-line" @dblclick="edit_property('type_line')">{{
 						card.type_line
@@ -113,11 +120,13 @@ export default {
 	name: "MTGCard",
 	props: {
 		card: Object,
+		scale: Number,
 	},
 	data() {
 		const oracle_el = ref(null);
 		return {
 			oracle_el,
+			dragging_illustration: null,
 		};
 	},
 	methods: {
@@ -149,8 +158,45 @@ export default {
 			const r = prompt(`Edit Card property '${prop}'`, this.card[prop]);
 			if (r) this.card[prop] = r;
 		},
+		scale_illustration(event) {
+			if (!this.card.illustration_scale) this.card.illustration_scale = 1;
+			this.card.illustration_scale += event.deltaY > 0 ? -0.1 : 0.1;
+			this.card.illustration_scale = Math.min(
+				Math.max(1, this.card.illustration_scale),
+				50
+			);
+		},
+		start_drag_illustration(event) {
+			if (!this.card.illustration_position)
+				this.card.illustration_position = { x: 0, y: 0 };
+			this.dragging_illustration = {
+				x: this.card.illustration_position.x,
+				y: this.card.illustration_position.y,
+			};
+		},
+		cancel_drag_illustration(event) {
+			if (this.dragging_illustration) {
+				this.card.illustration_position = this.dragging_illustration;
+				this.end_drag_illustration();
+			}
+		},
+		end_drag_illustration(event) {
+			this.dragging_illustration = null;
+		},
+		drag_illustration(event) {
+			if (this.dragging_illustration) {
+				const illu_scale = this.card.illustration_scale ?? 1;
+				this.card.illustration_position.x +=
+					(this.mmperpixel * event.movementX) / this.scale;
+				this.card.illustration_position.y +=
+					(this.mmperpixel * event.movementY) / this.scale;
+			}
+		},
 	},
 	computed: {
+		mmperpixel() {
+			return 63.5 / this.$el.clientWidth;
+		},
 		is_legendary() {
 			return this.card?.type_line?.startsWith("Legendary") ? true : false;
 		},
@@ -249,6 +295,18 @@ export default {
 		},
 		illustration() {
 			return `url(${this.card?.image_uris?.art_crop})`;
+		},
+		illustration_scale() {
+			return this.card?.illustration_scale ?? 1;
+		},
+		illustration_position() {
+			// FIXME: The use of pixels here is convenient to map it with mouse movement, but is probably a bad idea.
+			return this.card?.illustration_position
+				? {
+						x: this.card?.illustration_position.x + "mm",
+						y: this.card?.illustration_position.y + "mm",
+				  }
+				: { x: 0, y: 0 };
 		},
 	},
 	watch: {
@@ -388,7 +446,10 @@ export default {
 	margin-bottom: 0.55mm;
 	background-image: v-bind(illustration);
 	background-color: yellow;
-	background-size: 100%;
+	background-size: calc(v-bind(illustration_scale) * 100%);
+	background-position: v-bind(illustration_position.x)
+		v-bind(illustration_position.y);
+	background-repeat: no-repeat;
 }
 
 .mid-line {
