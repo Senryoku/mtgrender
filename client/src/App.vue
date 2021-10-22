@@ -76,6 +76,10 @@
 						<input id="card-artist" v-model="card.artist" type="text" />
 					</div>
 					<div>
+						<label for="card-set">Set</label>
+						<input id="card-set" v-model="card.set" type="text" />
+					</div>
+					<div>
 						<label for="card-number">Number</label>
 						<input
 							id="card-number"
@@ -85,6 +89,7 @@
 					</div>
 				</div>
 				<div v-show="currentTab === 1" class="inner-tab">
+					{{ illustration_dimensions[0] }}x{{ illustration_dimensions[1] }}
 					<button @click="upscale" :disabled="upscaling">
 						Upscale Illustration
 					</button>
@@ -116,6 +121,7 @@
 <script lang="ts">
 import { ref } from "vue";
 import domtoimage from "dom-to-image";
+import "keyrune";
 
 import MTGCard from "./components/MTGCard.vue";
 import CardStore from "./components/CardStore.vue";
@@ -231,7 +237,7 @@ export default {
 			formdata.append("image", this.card.image_uris.art_crop);
 			await fetch("https://api.deepai.org/api/waifu2x", {
 				method: "POST",
-				headers: { "api-key": "quickstart-QUdJIGlzIGNvbWluZy4uLi4K" },
+				headers: { "api-key": "84b79bce-e6c3-4153-bd0d-83e1edb2aa1c" },
 				body: formdata,
 			})
 				.then((response) => response.json())
@@ -245,37 +251,40 @@ export default {
 				});
 		},
 		render() {
-			// https://github.com/tsayen/dom-to-image/issues/394
 			this.rendering = true;
 			const card_el = document.querySelector(".mtg-card");
 			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
 			const scale = 3288 / card_el.clientWidth / this.display_scale;
-			domtoimage
-				.toPng(document.querySelector(".card-display"), {
-					width:
-						(2 * margin_px) / this.display_scale +
-						this.display_scale * scale * card_el.clientWidth,
-					height:
-						(2 * margin_px) / this.display_scale +
-						this.display_scale * scale * card_el.clientHeight,
-					style: {
-						"transform-origin": "top left",
-						transform: `scale(${scale})`,
-						"background-color": "black",
-						padding: `${this.renderOptions.margin}mm`,
-					},
-				})
-				.then((dataUrl) => {
-					const link = document.createElement("a");
-					link.download = `${this.card.name}.png`;
-					link.href = dataUrl;
-					link.click();
-					this.rendering = false;
-				})
-				.catch((error) => {
-					console.error("oops, something went wrong!", error);
-					this.rendering = false;
-				});
+			// FIXME: Call toPng twice to workaround image not loading on the first call
+			// See https://github.com/tsayen/dom-to-image/issues/394
+			domtoimage.toPng(document.querySelector(".card-display")).then(() => {
+				domtoimage
+					.toPng(document.querySelector(".card-display"), {
+						width:
+							(2 * margin_px) / this.display_scale +
+							this.display_scale * scale * card_el.clientWidth,
+						height:
+							(2 * margin_px) / this.display_scale +
+							this.display_scale * scale * card_el.clientHeight,
+						style: {
+							"transform-origin": "top left",
+							transform: `scale(${scale})`,
+							"background-color": "black",
+							padding: `${this.renderOptions.margin}mm`,
+						},
+					})
+					.then((dataUrl) => {
+						const link = document.createElement("a");
+						link.download = `${this.card.name}.png`;
+						link.href = dataUrl;
+						link.click();
+						this.rendering = false;
+					})
+					.catch((error) => {
+						console.error("oops, something went wrong!", error);
+						this.rendering = false;
+					});
+			});
 		},
 		update_card(event) {
 			try {
@@ -283,6 +292,14 @@ export default {
 			} catch (err) {
 				console.error(err);
 			}
+		},
+	},
+	computed: {
+		illustration_dimensions() {
+			if (!this.card?.image_uris?.art_crop) return [0, 0];
+			const img = new Image();
+			img.src = this.card.image_uris.art_crop;
+			return [img.width, img.height];
 		},
 	},
 	watch: {
@@ -340,7 +357,7 @@ export default {
 
 .card-info label {
 	display: inline-block;
-	width: 5em;
+	width: 6em;
 }
 
 .card-info input[type="text"] {

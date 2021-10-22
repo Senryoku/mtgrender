@@ -21,7 +21,12 @@
 					<span class="type-line" @dblclick="edit_property('type_line')">{{
 						card.type_line
 					}}</span>
-					<span class="set-icon"></span>
+					<span class="set-icon"
+						><i
+							class="ss ss-grad"
+							:class="`ss-${card.set} ss-${card.rarity}`"
+						></i
+					></span>
 				</div>
 				<div class="oracle" ref="oracle_el">
 					<div
@@ -36,6 +41,7 @@
 						v-if="card.flavor_text"
 						@dblclick="edit_property('flavor_text')"
 					>
+						<hr />
 						{{ card.flavor_text }}
 					</div>
 				</div>
@@ -53,11 +59,18 @@
 					class="collector-number"
 					@dblclick="edit_property('collector_number')"
 				>
-					{{ card.collector_number }}/???
+					{{ card.collector_number }}
 				</div>
 				<div>
-					<span class="artist-icon">a </span
-					><span class="artist-name" @dblclick="edit_property('artist')">{{
+					<span v-if="card.set" class="set"
+						>{{ card.set.toUpperCase() }}&nbsp;</span
+					>
+					<span v-if="card.set && card.lang" class="set">•&nbsp;</span>
+					<span v-if="card.lang" class="language"
+						>{{ card.lang.toUpperCase() }}&nbsp;</span
+					>
+					<span class="artist-icon">a </span>
+					<span class="artist-name" @dblclick="edit_property('artist')">{{
 						card.artist
 					}}</span>
 				</div>
@@ -72,6 +85,7 @@
 
 <script lang="ts">
 import { ref, nextTick } from "vue";
+import MTGSets from "../assets/data/sets.json";
 
 const keywords = {
 	Flash: "You may cast this spell any time you could cast an instant.",
@@ -132,7 +146,8 @@ export default {
 		},
 		edit_property(prop) {
 			// TODO
-			this.card[prop] = prompt(`Edit Card property '${prop}'`, this.card[prop]);
+			const r = prompt(`Edit Card property '${prop}'`, this.card[prop]);
+			if (r) this.card[prop] = r;
 		},
 	},
 	computed: {
@@ -269,6 +284,11 @@ export default {
 }
 
 @font-face {
+	font-family: "MPlantin-Italic";
+	src: url("../assets/fonts/MPlantin-Italic.ttf") format("truetype");
+}
+
+@font-face {
 	font-family: "Relay Medium";
 	src: url("../assets/fonts/relay-medium.ttf") format("truetype");
 }
@@ -379,6 +399,15 @@ export default {
 	font-size: 8pt;
 }
 
+.set-icon {
+	font-size: 4.5mm;
+}
+
+.set-icon i {
+	margin-top: -1mm;
+	margin-right: 0.6mm;
+}
+
 .oracle {
 	display: flex;
 	align-items: stretch;
@@ -395,7 +424,7 @@ export default {
 	font-size: 8pt;
 }
 
-.oracle ::v-deep .ms {
+.oracle:deep(.ms) {
 	width: 0.8em;
 	margin: 0 0.07em;
 	vertical-align: middle;
@@ -407,9 +436,24 @@ export default {
 	margin: 0 0.44mm;
 }
 
+.oracle-flavor hr {
+	border: 0;
+	height: 0.25mm;
+	background-image: linear-gradient(
+		to right,
+		rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0.2) 20%,
+		rgba(0, 0, 0, 0.2) 80%,
+		rgba(0, 0, 0, 0)
+	);
+	margin-top: 0.2mm;
+	margin-bottom: 0.8mm;
+}
+
 .oracle-flavor,
-::v-deep .oracle-reminder {
+:deep(.oracle-reminder) {
 	font-family: MPlantin-Italic;
+	font-style: italic;
 }
 
 .pt-box {
@@ -451,6 +495,12 @@ export default {
 
 .copyright div {
 	min-height: 2mm;
+}
+
+.set,
+.language {
+	font-family: Relay Medium;
+	letter-spacing: 0.15mm;
 }
 
 .artist-icon {

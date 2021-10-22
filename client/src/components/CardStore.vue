@@ -24,6 +24,12 @@ export default {
 		const cards = JSON.parse(localStorage.getItem("cards") ?? "[]");
 		return { cards: cards };
 	},
+	mounted() {
+		document.addEventListener("keydown", this.keydown);
+	},
+	unmounted() {
+		document.removeEventListener("keydown", this.keydown);
+	},
 	methods: {
 		save() {
 			const idx = this.cards.findIndex((c) => c.name === this.currentCard.name);
@@ -43,6 +49,13 @@ export default {
 		},
 		store() {
 			localStorage.setItem("cards", JSON.stringify(this.cards));
+			// TODO: Notify user
+		},
+		keydown(e) {
+			if (e.ctrlKey && e.key === "s") {
+				e.preventDefault(); // Prevent the Save dialog to open
+				this.store();
+			}
 		},
 	},
 };
