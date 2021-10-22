@@ -54,7 +54,9 @@
 								v-for="(step, idx) in saga_steps"
 								:key="idx"
 							>
-								<img :src="step.step" class="saga-step-number" />
+								<div class="saga-step-number">
+									<img v-for="step in step.steps" :key="step" :src="step" />
+								</div>
 								<div v-html="step.html"></div>
 							</div>
 						</div>
@@ -130,11 +132,11 @@ import mana_symbols_list from "../assets/data/symbology.json";
 for (let symbol of mana_symbols_list) mana_symbols[symbol.symbol] = symbol;
 
 function check_overflow(el) {
-	var curOverflow = el.style.overflow;
+	const curOverflow = el.style.overflow;
 
 	if (!curOverflow || curOverflow === "visible") el.style.overflow = "hidden";
 
-	var isOverflowing =
+	const isOverflowing =
 		el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
 
 	el.style.overflow = curOverflow;
@@ -261,8 +263,13 @@ export default {
 				.map((str) => {
 					const m = str.match(/(.+) — (.+)/);
 					return {
-						step: new URL(`../assets/img/saga/${m[1]}.png`, import.meta.url)
-							.href,
+						steps: m[1]
+							.split(",")
+							.map(
+								(s) =>
+									new URL(`../assets/img/saga/${s.trim()}.png`, import.meta.url)
+										.href
+							),
 						html: m[2],
 					};
 				});
@@ -619,24 +626,34 @@ export default {
 .saga-steps {
 	display: flex;
 	align-items: stretch;
-	justify-content: center;
+	justify-content: stretch;
 	flex-direction: column;
 	gap: 0.8mm;
 	padding-left: 2.5mm;
+	height: 47.5mm;
 }
 
 .saga-step {
 	position: relative;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
 	box-shadow: 0 -0.35mm 0.5mm #00000020;
 	padding: 1mm;
+	flex-grow: 1;
 }
 
 .saga-step-number {
 	position: absolute;
 	width: 5mm;
-	top: calc(50% - 2.5mm);
+	top: 50%;
+	transform: translateY(-50%);
 	left: -5mm;
 	z-index: 4;
+}
+
+.saga-step-number img {
+	width: 5mm;
 }
 
 .oracle:deep(.ms),
