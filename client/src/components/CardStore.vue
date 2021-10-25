@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<button @click="save">Save</button>
+		<button @click="render_all">Render All</button>
 		{{ used_local_storage }}KB used
 		<ol class="card-list">
 			<li
@@ -61,8 +62,12 @@ export default {
 			this.$emit("load", JSON.parse(JSON.stringify(card)));
 		},
 		remove(idx) {
-			if (confirm(`Are you sure you want to delete '${this.cards[idx].name}'?`))
+			if (
+				confirm(`Are you sure you want to delete '${this.cards[idx].name}'?`)
+			) {
 				this.cards.splice(idx, 1);
+				this.store();
+			}
 		},
 		store() {
 			localStorage.setItem("cards", JSON.stringify(this.cards));
@@ -73,6 +78,9 @@ export default {
 				e.preventDefault(); // Prevent the Save dialog to open
 				this.store();
 			}
+		},
+		render_all() {
+			this.$emit("renderAll", this.cards);
 		},
 	},
 	computed: {

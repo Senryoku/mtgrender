@@ -25,9 +25,13 @@
 					@mouseleave="cancel_drag_illustration"
 				></div>
 				<div class="mid-line">
-					<span class="type-line" @dblclick="edit_property('type_line')">{{
-						card.type_line
-					}}</span>
+					<div
+						class="type-line"
+						@dblclick="edit_property('type_line')"
+						ref="type_line_el"
+					>
+						{{ card.type_line }}
+					</div>
 					<span class="set-icon">
 						<i
 							v-if="card.set"
@@ -138,7 +142,6 @@ function check_overflow(el) {
 
 	const isOverflowing =
 		el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
-
 	el.style.overflow = curOverflow;
 
 	return isOverflowing;
@@ -152,8 +155,10 @@ export default {
 	},
 	data() {
 		const oracle_el = ref(null);
+		const type_line_el = ref(null);
 		return {
 			oracle_el,
+			type_line_el,
 			dragging_illustration: null,
 		};
 	},
@@ -383,7 +388,6 @@ export default {
 			return this.card?.illustration_scale ?? 1;
 		},
 		illustration_position() {
-			// FIXME: The use of pixels here is convenient to map it with mouse movement, but is probably a bad idea.
 			return this.card?.illustration_position
 				? {
 						x: this.card?.illustration_position.x + "mm",
@@ -398,9 +402,22 @@ export default {
 			// Make sure oracle text fits in its box
 			nextTick(() => {
 				let curr_font_size = 8;
+				this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
 				while (check_overflow(this.$refs.oracle_el) && curr_font_size > 3) {
 					curr_font_size *= 0.9;
 					this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
+				}
+			});
+		},
+		"card.type_line": function (newVal, oldVal) {
+			if (!this.$refs.type_line_el) return;
+			// Make sure type fits in its box
+			nextTick(() => {
+				let curr_font_size = 8;
+				this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
+				while (check_overflow(this.$refs.type_line_el) && curr_font_size > 3) {
+					curr_font_size *= 0.9;
+					this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
 				}
 			});
 		},
@@ -576,6 +593,8 @@ export default {
 
 .type-line {
 	font-size: 8pt;
+	height: 5mm;
+	line-height: 5mm;
 }
 
 .set-icon {

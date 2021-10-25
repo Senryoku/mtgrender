@@ -134,7 +134,7 @@
 					></textarea>
 				</div>
 			</div>
-			<CardStore :currentCard="card" @load="load" />
+			<CardStore :currentCard="card" @load="load" @renderAll="render_all" />
 		</div>
 	</div>
 </template>
@@ -142,10 +142,22 @@
 <script lang="ts">
 import { ref } from "vue";
 import domtoimage from "dom-to-image";
+import Upscaler from "upscaler";
+import { downloadZip } from "client-zip";
 import "keyrune";
 
 import MTGCard from "./components/MTGCard.vue";
 import CardStore from "./components/CardStore.vue";
+
+const upscaler = new Upscaler({});
+
+function download(filename, data) {
+	const link = document.createElement("a");
+	link.download = filename;
+	link.href = data;
+	link.click();
+	link.remove();
+}
 
 export default {
 	name: "App",
@@ -288,16 +300,15 @@ export default {
 		},
 		async upscale() {
 			this.upscaling = true;
-			const formdata = new FormData();
-			formdata.append("image", this.card.image_uris.art_crop);
-			await fetch("https://api.deepai.org/api/waifu2x", {
-				method: "POST",
-				headers: { "api-key": "84b79bce-e6c3-4153-bd0d-83e1edb2aa1c" },
-				body: formdata,
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					this.card.image_uris.art_crop = data.output_url;
+			const img = new Image();
+			img.src = this.card.image_uris.art_crop;
+			upscaler
+				.upscale(img, {
+					output: "tensor",
+				})
+				.then((img) => {
+					console.log(img);
+					//this.card.image_uris.art_crop = img.src;
 					this.upscaling = false;
 				})
 				.catch((error) => {
@@ -305,41 +316,58 @@ export default {
 					this.upscaling = false;
 				});
 		},
-		render() {
-			this.rendering = true;
+		render_current(options) {
 			const card_el = document.querySelector(".mtg-card");
 			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
 			const scale = 3288 / card_el.clientWidth / this.display_scale;
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
-			domtoimage.toPng(document.querySelector(".card-display")).then(() => {
-				domtoimage
-					.toPng(document.querySelector(".card-display"), {
-						width:
-							(2 * margin_px) / this.display_scale +
-							this.display_scale * scale * card_el.clientWidth,
-						height:
-							(2 * margin_px) / this.display_scale +
-							this.display_scale * scale * card_el.clientHeight,
-						style: {
-							"transform-origin": "top left",
-							transform: `scale(${scale})`,
-							"background-color": "black",
-							padding: `${this.renderOptions.margin}mm`,
-						},
-					})
+			const func = options.toBlob ? domtoimage.toBlob : domtoimage.toPng;
+			return func(document.querySelector(".card-display")).then(() => {
+				return func(document.querySelector(".card-display"), {
+					width:
+						(2 * margin_px) / this.display_scale +
+						this.display_scale * scale * card_el.clientWidth,
+					height:
+						(2 * margin_px) / this.display_scale +
+						this.display_scale * scale * card_el.clientHeight,
+					style: {
+						"transform-origin": "top left",
+						transform: `scale(${scale})`,
+						"background-color": "black",
+						padding: `${this.renderOptions.margin}mm`,
+					},
+				})
 					.then((dataUrl) => {
-						const link = document.createElement("a");
-						link.download = `${this.card.name}.png`;
-						link.href = dataUrl;
-						link.click();
-						this.rendering = false;
+						return dataUrl;
 					})
 					.catch((error) => {
 						console.error("oops, something went wrong!", error);
 						this.rendering = false;
 					});
 			});
+		},
+		async render() {
+			this.rendering = true;
+			const dataUrl = await this.render_current();
+			download(`${this.card.name}.png`, dataUrl);
+			this.rendering = false;
+		},
+		async render_all(cards) {
+			this.rendering = true;
+			const renders = [];
+			for (let c of cards) {
+				this.card = c;
+				renders.push({
+					name: this.card.name + ".png",
+					lastModified: new Date(),
+					input: await this.render_current({ toBlob: true }),
+				});
+			}
+			// FIXME: See https://touffy.me/client-zip/demo/worker to handle larger archives
+			const blob = await downloadZip(renders).blob();
+			download("MTGRenders.zip", URL.createObjectURL(blob));
+			this.rendering = false;
 		},
 		update_card(event) {
 			try {
