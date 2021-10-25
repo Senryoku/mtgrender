@@ -124,6 +124,7 @@
 								v-model="card.illustration_scale"
 								type="number"
 							/>
+							<a @click="card.illustration_scale = 1.0">↺</a>
 						</div>
 						<div v-if="card.illustration_position">
 							<label for="card-illustration-position">Position</label>
@@ -137,6 +138,7 @@
 								v-model="card.illustration_position.y"
 								type="number"
 							/>
+							<a @click="card.illustration_position = { x: 0, y: 0 }">↺</a>
 						</div>
 					</div>
 					<div
@@ -160,6 +162,14 @@
 							v-model="card.collector_number"
 							type="text"
 						/>
+					</div>
+					<div
+						@mouseenter="outline_element($event, 'copyright')"
+						@focus.capture="outline_element($event, 'copyright')"
+					>
+						<label for="copyright">Copyright</label>
+						<input id="copyright" v-model="card.copyright" type="text" />
+						<a @click="card.copyright = undefined">↺</a>
 					</div>
 				</div>
 				<div v-show="currentTab === 1" class="inner-tab">
@@ -485,6 +495,15 @@ export default {
 @font-face {
 	font-family: "Inconsolata";
 	src: url("./assets/fonts/Ligconsolata-Regular.ttf") format("truetype");
+}
+
+a,
+button {
+	cursor: pointer;
+}
+
+a:hover {
+	color: #666;
 }
 
 input,

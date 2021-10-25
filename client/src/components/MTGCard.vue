@@ -134,7 +134,7 @@
 			</div>
 			<div class="copyright">
 				<div>&nbsp;</div>
-				<div>Custom Proxy</div>
+				<div>{{ copyright }}</div>
 			</div>
 		</div>
 	</div>
@@ -295,6 +295,12 @@ export default {
 						html: m[2],
 					};
 				});
+		},
+		copyright() {
+			return (
+				this.card?.copyright ??
+				`™ & © ${new Date().getFullYear()} Wizards of the Coast`
+			);
 		},
 		colors() {
 			if (
@@ -749,12 +755,12 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	color: white;
+	font-family: Relay Medium;
 	font-size: 1.5mm;
 	font-size: 4.5pt;
 }
 
 .collector-number {
-	font-family: Relay Medium;
 	letter-spacing: 0.2mm;
 }
 
@@ -768,7 +774,6 @@ export default {
 
 .set,
 .language {
-	font-family: Relay Medium;
 	letter-spacing: 0.15mm;
 }
 
