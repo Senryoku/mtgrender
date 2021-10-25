@@ -78,6 +78,13 @@ export default {
 				this.store();
 			}
 		},
+		load_default() {
+			if (this.cards.length > 0) {
+				this.$emit("load", JSON.parse(JSON.stringify(this.cards[0])));
+				return true;
+			}
+			return false;
+		},
 		render_all() {
 			this.$emit("renderAll", this.cards);
 		},

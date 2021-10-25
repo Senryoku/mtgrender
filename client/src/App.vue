@@ -1,43 +1,53 @@
 <template>
 	<div @drop="dropHandler" @dragover="dragOverHandler">
-		<div class="menu">
-			<button @click="card = JSON.parse(JSON.stringify(base_card))">
-				New Card
-			</button>
-			<button @click="save">Save</button>
-			<form @submit.prevent="load_card">
-				<input
-					type="text"
-					placeholder="Card Name..."
-					v-model="searchCardName"
-					@input="autocomplete_card_name"
-				/>
-				<div class="card-name-autocomplete" v-if="autocompleteStatus">
-					<div v-if="autocompleteStatus === 'updating'">Searching...</div>
-					<div v-if="autocompleteStatus === 'error'">An error occured.</div>
-					<div v-if="Array.isArray(autocompleteStatus)">
-						<ul>
-							<li
-								v-for="r in autocompleteStatus"
-								:key="r"
-								@click="select_card(r)"
-							>
-								{{ r }}
-							</li>
-						</ul>
+		<div class="header">
+			<h1>MTGRender</h1>
+			<div class="menu">
+				<button @click="card = Object.assign({}, baseCard)">New Card</button>
+				<button @click="save">Save</button>
+				<form @submit.prevent="loadCard">
+					<input
+						type="text"
+						placeholder="Card Name..."
+						v-model="searchCardName"
+						@input="autocompleteCardName"
+					/>
+					<div class="card-name-autocomplete" v-if="autocompleteStatus">
+						<div v-if="autocompleteStatus === 'updating'">Searching...</div>
+						<div v-if="autocompleteStatus === 'error'">An error occured.</div>
+						<div v-if="Array.isArray(autocompleteStatus)">
+							<ul>
+								<li
+									v-for="r in autocompleteStatus"
+									:key="r"
+									@click="selectCard(r)"
+								>
+									{{ r }}
+								</li>
+							</ul>
+						</div>
 					</div>
-				</div>
-				<button type="submit">Load from Scryfall</button>
-			</form>
+					<button type="submit">Load from Scryfall</button>
+				</form>
+			</div>
 		</div>
 		<div class="content">
 			<div class="card-display">
-				<MTGCard :card="card" :scale="display_scale" />
+				<MTGCard
+					:card="finalCard"
+					:scale="displayScale"
+					@edit="(k, v) => (card[k] = v)"
+				/>
 			</div>
-			<div>
+			<div style="flex-grow: 1">
 				<div class="tabs">
 					<div
-						v-for="(tabName, idx) in ['Card Info', 'Render', 'Raw JSON']"
+						v-for="(tabName, idx) in [
+							'Card Info',
+							'Render',
+							'Raw JSON',
+							'Global Settings',
+						]"
 						:key="idx"
 						@click="currentTab = idx"
 						class="tab"
@@ -48,29 +58,33 @@
 				</div>
 				<div v-show="currentTab === 0" class="inner-tab card-info">
 					<div
-						@mouseenter="outline_element($event, 'name')"
-						@focus.capture="outline_element($event, 'name')"
+						@mouseenter="outlineElement($event, 'name')"
+						@focus.capture="outlineElement($event, 'name')"
 					>
 						<label for="card-name">Name</label>
 						<input id="card-name" v-model="card.name" type="text" />
 					</div>
 					<div
-						@mouseenter="outline_element($event, 'mana-cost')"
-						@focus.capture="outline_element($event, 'mana-cost')"
+						@mouseenter="outlineElement($event, 'mana-cost')"
+						@focus.capture="outlineElement($event, 'mana-cost')"
 					>
 						<label for="card-mana-cost">Mana Cost</label>
 						<input id="card-mana-cost" v-model="card.mana_cost" type="text" />
 					</div>
 					<div
-						@mouseenter="outline_element($event, 'type-line')"
-						@focus.capture="outline_element($event, 'type-line')"
+						@mouseenter="outlineElement($event, 'type-line')"
+						@focus.capture="outlineElement($event, 'type-line')"
 					>
 						<label for="card-type-line">Type Line</label>
 						<input id="card-type-line" v-model="card.type_line" type="text" />
 					</div>
+					<div>
+						<label for="card-set">Set</label>
+						<input id="card-set" v-model="card.set" type="text" />
+					</div>
 					<div
-						@mouseenter="outline_element($event, 'oracle')"
-						@focus.capture="outline_element($event, 'oracle')"
+						@mouseenter="outlineElement($event, 'oracle')"
+						@focus.capture="outlineElement($event, 'oracle')"
 					>
 						<label for="card-oracle">Oracle</label><br />
 						<textarea
@@ -81,8 +95,8 @@
 						/>
 					</div>
 					<div
-						@mouseenter="outline_element($event, 'pt-box')"
-						@focus.capture="outline_element($event, 'pt-box')"
+						@mouseenter="outlineElement($event, 'pt-box')"
+						@focus.capture="outlineElement($event, 'pt-box')"
 					>
 						<label for="card-power">P / T</label>
 						<input
@@ -98,11 +112,12 @@
 							v-model="card.toughness"
 							type="text"
 						/>
+						<a @click="card.power = card.toughness = undefined">↺</a>
 					</div>
 					<div
 						class="subsection"
-						@mouseenter="outline_element($event, 'illustration')"
-						@focus.capture="outline_element($event, 'illustration')"
+						@mouseenter="outlineElement($event, 'illustration')"
+						@focus.capture="outlineElement($event, 'illustration')"
 					>
 						<h3>Illustration</h3>
 						<div v-if="card.image_uris">
@@ -141,39 +156,38 @@
 							<a @click="card.illustration_position = { x: 0, y: 0 }">↺</a>
 						</div>
 					</div>
-					<div
-						@mouseenter="outline_element($event, 'artist-name')"
-						@focus.capture="outline_element($event, 'artist-name')"
-					>
-						<label for="card-artist">Artist</label>
-						<input id="card-artist" v-model="card.artist" type="text" />
-					</div>
-					<div>
-						<label for="card-set">Set</label>
-						<input id="card-set" v-model="card.set" type="text" />
-					</div>
-					<div
-						@mouseenter="outline_element($event, 'collector-number')"
-						@focus.capture="outline_element($event, 'collector-number')"
-					>
-						<label for="card-number">Number</label>
-						<input
-							id="card-number"
-							v-model="card.collector_number"
-							type="text"
-						/>
-					</div>
-					<div
-						@mouseenter="outline_element($event, 'copyright')"
-						@focus.capture="outline_element($event, 'copyright')"
-					>
-						<label for="copyright">Copyright</label>
-						<input id="copyright" v-model="card.copyright" type="text" />
-						<a @click="card.copyright = undefined">↺</a>
+					<div class="subsection">
+						<h3>Footer</h3>
+						<div
+							@mouseenter="outlineElement($event, 'artist-name')"
+							@focus.capture="outlineElement($event, 'artist-name')"
+						>
+							<label for="card-artist">Artist</label>
+							<input id="card-artist" v-model="card.artist" type="text" />
+						</div>
+						<div
+							@mouseenter="outlineElement($event, 'collector-number')"
+							@focus.capture="outlineElement($event, 'collector-number')"
+						>
+							<label for="card-number">Number</label>
+							<input
+								id="card-number"
+								v-model="card.collector_number"
+								type="text"
+							/>
+						</div>
+						<div
+							@mouseenter="outlineElement($event, 'copyright')"
+							@focus.capture="outlineElement($event, 'copyright')"
+						>
+							<label for="copyright">Copyright</label>
+							<input id="copyright" v-model="card.copyright" type="text" />
+							<a @click="card.copyright = undefined">↺</a>
+						</div>
 					</div>
 				</div>
 				<div v-show="currentTab === 1" class="inner-tab">
-					{{ illustration_dimensions[0] }}x{{ illustration_dimensions[1] }}
+					{{ illustrationDimensions[0] }}x{{ illustrationDimensions[1] }}
 					<button @click="upscale" :disabled="upscaling">
 						Upscale Illustration
 					</button>
@@ -190,18 +204,42 @@
 				<div v-show="currentTab === 2" class="inner-tab">
 					<textarea
 						:value="JSON.stringify(card, null, 2)"
-						@change="update_card"
+						@change="updateCard"
 						ref="jsonView"
 						rows="20"
 						cols="80"
 						spellcheck="false"
 					></textarea>
 				</div>
+				<div v-show="currentTab === 3" class="inner-tab">
+					<div>
+						<label>Default Card Properties:</label><br />
+						<textarea
+							:value="JSON.stringify(defaultCardProperties, null, 2)"
+							@change="updateDefaultCardProperties"
+							ref="defaultCardPropertiesJsonView"
+							rows="20"
+							cols="80"
+							spellcheck="false"
+						></textarea>
+					</div>
+					<div>
+						<label>Override Card Properties:</label><br />
+						<textarea
+							:value="JSON.stringify(overrideCardProperties, null, 2)"
+							@change="updateOverrideCardProperties"
+							ref="overrideCardPropertiesJsonView"
+							rows="20"
+							cols="80"
+							spellcheck="false"
+						></textarea>
+					</div>
+				</div>
 			</div>
 			<CardStore
 				:currentCard="card"
 				@load="load"
-				@renderAll="render_all"
+				@renderAll="renderAll"
 				ref="store"
 			/>
 		</div>
@@ -237,9 +275,17 @@ export default {
 	data() {
 		const jsonView = ref(null);
 		const store = ref(null);
+		const defaultCardProperties = JSON.parse(
+			localStorage.getItem("defaultCardProperties") ?? "{}"
+		);
+		const overrideCardProperties = JSON.parse(
+			localStorage.getItem("overrideCardProperties") ?? "{}"
+		);
 		return {
 			card: {},
-			display_scale: 2.0,
+			defaultCardProperties,
+			overrideCardProperties,
+			displayScale: 2.0,
 			searchCardName: "",
 			autocompleteStatus: null,
 			renderOptions: {
@@ -250,7 +296,7 @@ export default {
 			currentTab: 0,
 			jsonView,
 			store,
-			base_card: {
+			baseCard: {
 				name: "Card Name",
 				mana_cost: "{1}{R}{G}{B}",
 				type_line: "Supertype — Subtype(s)",
@@ -265,13 +311,14 @@ export default {
 		};
 	},
 	mounted() {
-		this.load_card("Elspeth Conquers Death");
+		if (!this.$refs.store.load_default())
+			this.loadCard("Elspeth Conquers Death");
 	},
 	methods: {
 		save() {
 			this.$refs.store.save();
 		},
-		async autocomplete_card_name(event) {
+		async autocompleteCardName(event) {
 			this.autocompleteStatus = "updating";
 			const response = await fetch(
 				`https://api.scryfall.com/cards/autocomplete?q=${event.target.value}`
@@ -284,18 +331,18 @@ export default {
 				else this.autocompleteStatus = null;
 			}
 		},
-		close_autocomplete() {
+		closeAutocomplete() {
 			this.autocompleteStatus = null;
 		},
-		select_card(cardName) {
+		selectCard(cardName) {
 			this.searchCardName = cardName;
-			this.load_card(this.searchCardName);
-			this.close_autocomplete();
+			this.loadCard(this.searchCardName);
+			this.closeAutocomplete();
 		},
 		load(card) {
 			this.card = card;
 		},
-		load_card(event) {
+		loadCard(event) {
 			const name = event.target ? event.target.elements[0].value : event;
 			fetch(`https://api.scryfall.com/cards/named?fuzzy=${name}`)
 				.then((response) => response.json())
@@ -372,7 +419,7 @@ export default {
 			// Prevent default behavior (Prevent file from being opened)
 			event.preventDefault();
 		},
-		outline_element(event, target) {
+		outlineElement(event, target) {
 			// FIXME: Disabled for now because I can't make sure these outlines don't show up in renders
 			return false;
 			target = document.querySelector(".mtg-card ." + target);
@@ -407,7 +454,7 @@ export default {
 					this.upscaling = false;
 				});
 		},
-		render_current(options) {
+		renderCurrent(options) {
 			const card_display_el = document.querySelector(".card-display");
 			const card_el = document.querySelector(".mtg-card");
 			// FIXME: Doesn't work as expected
@@ -416,18 +463,18 @@ export default {
 				card_el.classList.remove("rendering");
 			};
 			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
-			const scale = 3288 / card_el.clientWidth / this.display_scale;
+			const scale = 3288 / card_el.clientWidth / this.displayScale;
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
 			const func = options.toBlob ? domtoimage.toBlob : domtoimage.toPng;
 			return func(card_display_el).then(() => {
 				return func(card_display_el, {
 					width:
-						(2 * margin_px) / this.display_scale +
-						this.display_scale * scale * card_el.clientWidth,
+						(2 * margin_px) / this.displayScale +
+						this.displayScale * scale * card_el.clientWidth,
 					height:
-						(2 * margin_px) / this.display_scale +
-						this.display_scale * scale * card_el.clientHeight,
+						(2 * margin_px) / this.displayScale +
+						this.displayScale * scale * card_el.clientHeight,
 					style: {
 						"transform-origin": "top left",
 						transform: `scale(${scale})`,
@@ -447,11 +494,11 @@ export default {
 		},
 		async render() {
 			this.rendering = true;
-			const dataUrl = await this.render_current();
+			const dataUrl = await this.renderCurrent();
 			download(`${this.card.name}.png`, dataUrl);
 			this.rendering = false;
 		},
-		async render_all(cards) {
+		async renderAll(cards) {
 			this.rendering = true;
 			const renders = [];
 			for (let c of cards) {
@@ -459,7 +506,7 @@ export default {
 				renders.push({
 					name: this.card.name + ".png",
 					lastModified: new Date(),
-					input: await this.render_current({ toBlob: true }),
+					input: await this.renderCurrent({ toBlob: true }),
 				});
 			}
 			// FIXME: See https://touffy.me/client-zip/demo/worker to handle larger archives
@@ -467,25 +514,63 @@ export default {
 			download("MTGRenders.zip", URL.createObjectURL(blob));
 			this.rendering = false;
 		},
-		update_card(event) {
+		updateCard(event) {
 			try {
 				this.card = JSON.parse(event.target.value);
 			} catch (err) {
 				console.error(err);
 			}
 		},
+		updateDefaultCardProperties(event) {
+			try {
+				this.defaultCardProperties = JSON.parse(event.target.value);
+			} catch (err) {
+				console.error(err);
+			}
+		},
+		updateOverrideCardProperties(event) {
+			try {
+				this.overrideCardProperties = JSON.parse(event.target.value);
+			} catch (err) {
+				console.error(err);
+			}
+		},
 	},
 	computed: {
-		illustration_dimensions() {
+		illustrationDimensions() {
 			if (!this.card?.image_uris?.art_crop) return [0, 0];
 			const img = new Image();
 			img.src = this.card.image_uris.art_crop;
 			return [img.width, img.height];
 		},
+		finalCard() {
+			let r = Object.assign({}, this.defaultCardProperties);
+			Object.assign(r, this.card);
+			Object.assign(r, this.overrideCardProperties);
+			return r;
+		},
 	},
 	watch: {
 		card() {
 			this.$refs.jsonView.value = JSON.stringify(this.card);
+		},
+		defaultCardProperties() {
+			this.$refs.defaultCardPropertiesJsonView.value = JSON.stringify(
+				this.defaultCardProperties
+			);
+			localStorage.setItem(
+				"defaultCardProperties",
+				JSON.stringify(this.defaultCardProperties)
+			);
+		},
+		overrideCardProperties() {
+			this.$refs.overrideCardPropertiesJsonView.value = JSON.stringify(
+				this.overrideCardProperties
+			);
+			localStorage.setItem(
+				"overrideCardProperties",
+				JSON.stringify(this.overrideCardProperties)
+			);
 		},
 	},
 };
@@ -516,6 +601,16 @@ textarea {
 
 textarea {
 	font-family: Inconsolata;
+}
+
+.header {
+	display: flex;
+	gap: 2em;
+	margin: 1em;
+}
+
+.header h1 {
+	margin: 0;
 }
 
 .menu {
@@ -551,6 +646,7 @@ textarea {
 	display: flex;
 	gap: 1em;
 	margin: 1em;
+	justify-content: space-between;
 }
 
 .card-display {
@@ -558,13 +654,14 @@ textarea {
 }
 
 .card-display .mtg-card {
-	transform: scale(v-bind(display_scale));
+	transform: scale(v-bind(displayScale));
 	transform-origin: left top;
 }
 
 .tabs {
 	display: flex;
 	gap: 0.4em;
+	user-select: none;
 }
 
 .tab {
@@ -601,7 +698,7 @@ textarea {
 }
 
 .card-info .subsection {
-	padding-bottom: 1em;
+	padding-bottom: 0.25em;
 }
 
 .card-info .subsection h3 {

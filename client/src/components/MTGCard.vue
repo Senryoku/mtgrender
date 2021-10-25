@@ -132,9 +132,9 @@
 					>
 				</div>
 			</div>
-			<div class="copyright">
-				<div>&nbsp;</div>
-				<div>{{ copyright }}</div>
+			<div class="footer-right">
+				<div v-if="card.power || card.toughness">&nbsp;</div>
+				<div class="copyright">{{ copyright }}</div>
 			</div>
 		</div>
 	</div>
@@ -206,7 +206,7 @@ export default {
 		edit_property(prop) {
 			// TODO
 			const r = prompt(`Edit Card property '${prop}'`, this.card[prop]);
-			if (r) this.card[prop] = r;
+			if (r) this.$emit("edit", prop, r);
 		},
 		scale_illustration(event) {
 			if (!this.card.illustration_scale) this.card.illustration_scale = 1;
@@ -461,12 +461,15 @@ export default {
 
 @font-face {
 	font-family: "MPlantin";
-	src: url("../assets/fonts/mplantin.woff") format("woff");
+	src: url("../assets/fonts/mplantin.eot") format("eot"),
+		url("../assets/fonts/mplantin.woff") format("woff"),
+		url("../assets/fonts/mplantin.ttf") format("truetype");
 }
 
 @font-face {
 	font-family: "MPlantin-Italic";
 	src: url("../assets/fonts/MPlantin-Italic.ttf") format("truetype");
+	font-style: italic;
 }
 
 @font-face {
@@ -766,6 +769,7 @@ export default {
 
 .copyright {
 	font-family: MPlantin;
+	margin-top: 0.2mm; /* FIXME: Workaround a weird upshift using this font */
 }
 
 .copyright div {
