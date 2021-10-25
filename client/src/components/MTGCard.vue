@@ -4,10 +4,17 @@
 			<div class="inner-frame">
 				<div class="legendary-crown" v-show="is_legendary"></div>
 				<div class="top-line">
-					<span class="name" @dblclick="edit_property('name')">{{
-						card.name
-					}}</span>
-					<div class="mana-cost" @dblclick="edit_property('mana_cost')">
+					<span
+						class="name"
+						@dblclick.prevent="edit_property('name')"
+						@mousedown.prevent=""
+						>{{ card.name }}</span
+					>
+					<div
+						class="mana-cost"
+						@dblclick.prevent="edit_property('mana_cost')"
+						@mousedown.prevent=""
+					>
 						<img
 							v-for="(uri, idx) in mana_cost"
 							class="ms ms-shadow"
@@ -28,6 +35,7 @@
 					<div
 						class="type-line"
 						@dblclick="edit_property('type_line')"
+						@mousedown.prevent=""
 						ref="type_line_el"
 					>
 						{{ card.type_line }}
@@ -45,6 +53,7 @@
 						class="saga-oracle"
 						ref="oracle_el"
 						@dblclick="edit_property('oracle_text')"
+						@mousedown.prevent=""
 					>
 						<div
 							class="saga-reminder"
@@ -74,11 +83,13 @@
 							:key="idx"
 							v-html="line"
 							@dblclick="edit_property('oracle_text')"
+							@mousedown.prevent=""
 						></div>
 						<div
 							class="oracle-flavor"
 							v-if="card.flavor_text"
 							@dblclick="edit_property('flavor_text')"
+							@mousedown.prevent=""
 						>
 							<hr />
 							{{ card.flavor_text }}
@@ -87,8 +98,10 @@
 				</template>
 			</div>
 			<div class="pt-box" v-show="card.power || card.toughness">
-				<span @dblclick="edit_property('power')">{{ card.power }}</span
-				>/<span @dblclick="edit_property('toughness')"
+				<span @dblclick="edit_property('power')" @mousedown.prevent="">{{
+					card.power
+				}}</span
+				>/<span @dblclick="edit_property('toughness')" @mousedown.prevent=""
 					>{{ card.toughness }}
 				</span>
 			</div>
@@ -98,6 +111,7 @@
 				<div
 					class="collector-number"
 					@dblclick="edit_property('collector_number')"
+					@mousedown.prevent=""
 				>
 					{{ card.collector_number }}
 				</div>
@@ -110,9 +124,12 @@
 						>{{ card.lang.toUpperCase() }}&nbsp;</span
 					>
 					<span class="artist-icon">a </span>
-					<span class="artist-name" @dblclick="edit_property('artist')">{{
-						card.artist
-					}}</span>
+					<span
+						class="artist-name"
+						@dblclick="edit_property('artist')"
+						@mousedown.prevent=""
+						>{{ card.artist }}</span
+					>
 				</div>
 			</div>
 			<div class="copyright">

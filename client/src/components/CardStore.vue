@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<button @click="save">Save</button>
 		<button @click="render_all">Render All</button>
 		{{ used_local_storage }}KB used
 		<ol class="card-list">

@@ -4,6 +4,7 @@
 			<button @click="card = JSON.parse(JSON.stringify(base_card))">
 				New Card
 			</button>
+			<button @click="save">Save</button>
 			<form @submit.prevent="load_card">
 				<input
 					type="text"
@@ -26,7 +27,7 @@
 						</ul>
 					</div>
 				</div>
-				<button type="submit">Load</button>
+				<button type="submit">Load from Scryfall</button>
 			</form>
 		</div>
 		<div class="content">
@@ -46,19 +47,31 @@
 					</div>
 				</div>
 				<div v-show="currentTab === 0" class="inner-tab card-info">
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'name')"
+						@focus.capture="outline_element($event, 'name')"
+					>
 						<label for="card-name">Name</label>
 						<input id="card-name" v-model="card.name" type="text" />
 					</div>
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'mana-cost')"
+						@focus.capture="outline_element($event, 'mana-cost')"
+					>
 						<label for="card-mana-cost">Mana Cost</label>
 						<input id="card-mana-cost" v-model="card.mana_cost" type="text" />
 					</div>
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'type-line')"
+						@focus.capture="outline_element($event, 'type-line')"
+					>
 						<label for="card-type-line">Type Line</label>
 						<input id="card-type-line" v-model="card.type_line" type="text" />
 					</div>
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'oracle')"
+						@focus.capture="outline_element($event, 'oracle')"
+					>
 						<label for="card-oracle">Oracle</label><br />
 						<textarea
 							id="card-oracle"
@@ -67,7 +80,10 @@
 							rows="6"
 						/>
 					</div>
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'pt-box')"
+						@focus.capture="outline_element($event, 'pt-box')"
+					>
 						<label for="card-power">P / T</label>
 						<input
 							id="card-power"
@@ -83,15 +99,50 @@
 							type="text"
 						/>
 					</div>
-					<div v-if="card.image_uris">
-						<label for="card-illustration">Illustration</label>
-						<input
-							id="card-illustration"
-							v-model="card.image_uris.art_crop"
-							type="text"
-						/>
+					<div
+						class="subsection"
+						@mouseenter="outline_element($event, 'illustration')"
+						@focus.capture="outline_element($event, 'illustration')"
+					>
+						<h3>Illustration</h3>
+						<div v-if="card.image_uris">
+							<label for="card-illustration">Source</label>
+							<input
+								id="card-illustration"
+								v-model="card.image_uris.art_crop"
+								type="text"
+							/>
+						</div>
+						<div class="help">
+							You can can drag the illustration and use your mouse wheel to
+							adjust its position and scale.
+						</div>
+						<div v-if="card.image_uris">
+							<label for="card-illustration-scale">Scale</label>
+							<input
+								id="card-illustration-scale"
+								v-model="card.illustration_scale"
+								type="number"
+							/>
+						</div>
+						<div v-if="card.illustration_position">
+							<label for="card-illustration-position">Position</label>
+							<input
+								id="card-illustration-position"
+								v-model="card.illustration_position.x"
+								type="number"
+							/>
+							<input
+								id="card-illustration-position"
+								v-model="card.illustration_position.y"
+								type="number"
+							/>
+						</div>
 					</div>
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'artist-name')"
+						@focus.capture="outline_element($event, 'artist-name')"
+					>
 						<label for="card-artist">Artist</label>
 						<input id="card-artist" v-model="card.artist" type="text" />
 					</div>
@@ -99,7 +150,10 @@
 						<label for="card-set">Set</label>
 						<input id="card-set" v-model="card.set" type="text" />
 					</div>
-					<div>
+					<div
+						@mouseenter="outline_element($event, 'collector-number')"
+						@focus.capture="outline_element($event, 'collector-number')"
+					>
 						<label for="card-number">Number</label>
 						<input
 							id="card-number"
@@ -134,7 +188,12 @@
 					></textarea>
 				</div>
 			</div>
-			<CardStore :currentCard="card" @load="load" @renderAll="render_all" />
+			<CardStore
+				:currentCard="card"
+				@load="load"
+				@renderAll="render_all"
+				ref="store"
+			/>
 		</div>
 	</div>
 </template>
@@ -167,6 +226,7 @@ export default {
 	},
 	data() {
 		const jsonView = ref(null);
+		const store = ref(null);
 		return {
 			card: {},
 			display_scale: 2.0,
@@ -179,6 +239,7 @@ export default {
 			upscaling: false,
 			currentTab: 0,
 			jsonView,
+			store,
 			base_card: {
 				name: "Card Name",
 				mana_cost: "{1}{R}{G}{B}",
@@ -197,6 +258,9 @@ export default {
 		this.load_card("Elspeth Conquers Death");
 	},
 	methods: {
+		save() {
+			this.$refs.store.save();
+		},
 		async autocomplete_card_name(event) {
 			this.autocompleteStatus = "updating";
 			const response = await fetch(
@@ -298,6 +362,23 @@ export default {
 			// Prevent default behavior (Prevent file from being opened)
 			event.preventDefault();
 		},
+		outline_element(event, target) {
+			// FIXME: Disabled for now because I can't make sure these outlines don't show up in renders
+			return false;
+			target = document.querySelector(".mtg-card ." + target);
+			if (target) {
+				const css_class =
+					"outlined-" + (event.type === "focus" ? "focus" : "over");
+				target.classList.add(css_class);
+				event.target.addEventListener(
+					event.type === "focus" ? "blur" : "mouseleave",
+					() => {
+						target.classList.remove(css_class);
+					},
+					{ once: true }
+				);
+			}
+		},
 		async upscale() {
 			this.upscaling = true;
 			const img = new Image();
@@ -317,14 +398,20 @@ export default {
 				});
 		},
 		render_current(options) {
+			const card_display_el = document.querySelector(".card-display");
 			const card_el = document.querySelector(".mtg-card");
+			// FIXME: Doesn't work as expected
+			card_el.classList.add("rendering");
+			const cleanup = () => {
+				card_el.classList.remove("rendering");
+			};
 			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
 			const scale = 3288 / card_el.clientWidth / this.display_scale;
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
 			const func = options.toBlob ? domtoimage.toBlob : domtoimage.toPng;
-			return func(document.querySelector(".card-display")).then(() => {
-				return func(document.querySelector(".card-display"), {
+			return func(card_display_el).then(() => {
+				return func(card_display_el, {
 					width:
 						(2 * margin_px) / this.display_scale +
 						this.display_scale * scale * card_el.clientWidth,
@@ -339,11 +426,12 @@ export default {
 					},
 				})
 					.then((dataUrl) => {
+						cleanup();
 						return dataUrl;
 					})
 					.catch((error) => {
-						console.error("oops, something went wrong!", error);
-						this.rendering = false;
+						console.error("Error generating render:", error);
+						cleanup();
 					});
 			});
 		},
@@ -399,9 +487,12 @@ export default {
 	src: url("./assets/fonts/Ligconsolata-Regular.ttf") format("truetype");
 }
 
-input {
-	border-radius: 0.3em;
+input,
+textarea {
+	border: 2px solid #ccc;
+	border-radius: 0.4em;
 	margin: 0.1em;
+	padding: 0.1em 0.3em 0.2em 0.3em;
 }
 
 textarea {
@@ -488,5 +579,47 @@ textarea {
 
 .card-info input.small-input {
 	width: 3em;
+}
+
+.card-info .subsection {
+	padding-bottom: 1em;
+}
+
+.card-info .subsection h3 {
+	margin: 0;
+}
+
+.card-info .subsection div {
+	margin-left: 1em;
+}
+
+.card-info .help {
+	position: relative;
+	font-size: 0.7em;
+	padding: 0.25em;
+	background-color: rgb(209, 233, 255);
+	border-radius: 0.25em;
+}
+
+.card-info .help::before {
+	content: "🛈";
+	position: absolute;
+	left: -1em;
+	top: 50%;
+	transform: translateY(-50%);
+}
+</style>
+
+<style>
+.mtg-card:not(.rendering) * {
+	transition: outline-offset 0.2s, outline-color 0.2s;
+	outline-color: transparent;
+	outline-offset: 20px;
+}
+
+.mtg-card:not(.rendering) .outlined-over,
+.mtg-card:not(.rendering) .outlined-focus {
+	outline: red 1px dashed;
+	outline-offset: 0;
 }
 </style>
