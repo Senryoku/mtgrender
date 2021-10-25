@@ -8,7 +8,7 @@
 						class="name"
 						@dblclick.prevent="edit_property('name')"
 						@mousedown.prevent=""
-						>{{ card.name }}</span
+						>{{ cardFace.name }}</span
 					>
 					<div
 						class="mana-cost"
@@ -38,7 +38,7 @@
 						@mousedown.prevent=""
 						ref="type_line_el"
 					>
-						{{ card.type_line }}
+						{{ cardFace.type_line }}
 					</div>
 					<span class="set-icon">
 						<i
@@ -87,22 +87,22 @@
 						></div>
 						<div
 							class="oracle-flavor"
-							v-if="card.flavor_text"
+							v-if="cardFace.flavor_text"
 							@dblclick="edit_property('flavor_text')"
 							@mousedown.prevent=""
 						>
 							<hr />
-							{{ card.flavor_text }}
+							{{ cardFace.flavor_text }}
 						</div>
 					</div>
 				</template>
 			</div>
-			<div class="pt-box" v-show="card.power || card.toughness">
+			<div class="pt-box" v-show="cardFace.power || cardFace.toughness">
 				<span @dblclick="edit_property('power')" @mousedown.prevent="">{{
-					card.power
+					cardFace.power
 				}}</span
 				>/<span @dblclick="edit_property('toughness')" @mousedown.prevent=""
-					>{{ card.toughness }}
+					>{{ cardFace.toughness }}
 				</span>
 			</div>
 		</div>
@@ -113,7 +113,7 @@
 					@dblclick="edit_property('collector_number')"
 					@mousedown.prevent=""
 				>
-					{{ card.collector_number }}
+					{{ cardFace.collector_number }}
 				</div>
 				<div>
 					<span v-if="card.set" class="set"
@@ -133,10 +133,11 @@
 				</div>
 			</div>
 			<div class="footer-right">
-				<div v-if="card.power || card.toughness">&nbsp;</div>
+				<div v-if="cardFace.power || cardFace.toughness">&nbsp;</div>
 				<div class="copyright">{{ copyright }}</div>
 			</div>
 		</div>
+		<div v-if="card.card_faces" class="flip-icon" @click="flip">⭯</div>
 	</div>
 </template>
 
@@ -176,6 +177,7 @@ export default {
 		return {
 			oracle_el,
 			type_line_el,
+			currentFace: 0,
 			dragging_illustration: null,
 		};
 	},
@@ -217,16 +219,16 @@ export default {
 			);
 		},
 		start_drag_illustration(event) {
-			if (!this.card.illustration_position)
-				this.card.illustration_position = { x: 0, y: 0 };
+			if (!this.cardFace.illustration_position)
+				this.cardFace.illustration_position = { x: 0, y: 0 };
 			this.dragging_illustration = {
-				x: this.card.illustration_position.x,
-				y: this.card.illustration_position.y,
+				x: this.cardFace.illustration_position.x,
+				y: this.cardFace.illustration_position.y,
 			};
 		},
 		cancel_drag_illustration(event) {
 			if (this.dragging_illustration) {
-				this.card.illustration_position = this.dragging_illustration;
+				this.cardFace.illustration_position = this.dragging_illustration;
 				this.end_drag_illustration();
 			}
 		},
@@ -235,32 +237,67 @@ export default {
 		},
 		drag_illustration(event) {
 			if (this.dragging_illustration) {
-				const illu_scale = this.card.illustration_scale ?? 1;
-				this.card.illustration_position.x +=
+				const illu_scale = this.cardFace.illustration_scale ?? 1;
+				this.cardFace.illustration_position.x +=
 					(this.mmperpixel * event.movementX) / this.scale;
-				this.card.illustration_position.y +=
+				this.cardFace.illustration_position.y +=
 					(this.mmperpixel * event.movementY) / this.scale;
 			}
+		},
+		fit_name() {},
+		fit_type_line() {
+			if (!this.$refs.type_line_el) return;
+			// Make sure type fits in its box
+			nextTick(() => {
+				let curr_font_size = 8;
+				this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
+				while (check_overflow(this.$refs.type_line_el) && curr_font_size > 3) {
+					curr_font_size *= 0.9;
+					this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
+				}
+			});
+		},
+		fit_oracle_text() {
+			if (!this.$refs.oracle_el) return;
+			// Make sure oracle text fits in its box
+			nextTick(() => {
+				let curr_font_size = 8;
+				this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
+				while (check_overflow(this.$refs.oracle_el) && curr_font_size > 3) {
+					curr_font_size *= 0.9;
+					this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
+				}
+			});
+		},
+		flip() {
+			this.currentFace = (this.currentFace + 1) % 2;
+			this.fit_name();
+			this.fit_oracle_text();
+			this.fit_type_line();
 		},
 	},
 	computed: {
 		mmperpixel() {
 			return 63.5 / this.$el.clientWidth;
 		},
+		cardFace() {
+			if (this.card.card_faces) return this.card.card_faces[this.currentFace];
+			return this.card;
+		},
 		is_legendary() {
-			return this.card?.type_line?.startsWith("Legendary") ? true : false;
+			return this.cardFace?.type_line?.startsWith("Legendary") ? true : false;
 		},
 		is_saga() {
 			return (
-				this.card?.layout === "saga" ||
-				this.card?.type_line?.toLowerCase().includes("saga")
+				this.cardFace?.layout === "saga" ||
+				this.cardFace?.type_line?.toLowerCase().includes("saga")
 			);
 		},
 		is_vehicle() {
 			if (!this.card?.type_line) return false;
 			return (
-				this.card.type_line.includes("Vehicle") ||
-				this.card.type_line.includes("véhicule")
+				this.cardFace.type_line.includes("Vehicle") ||
+				this.cardFace.type_line.includes("véhicule")
 			);
 		},
 		mana_cost() {
@@ -270,15 +307,15 @@ export default {
 			);
 		},
 		oracle_lines() {
-			if (!this.card?.oracle_text) return [];
-			return this.card.oracle_text.split("\n").map(this.parse_oracle);
+			if (!this.cardFace?.oracle_text) return [];
+			return this.cardFace.oracle_text.split("\n").map(this.parse_oracle);
 		},
 		saga_reminder() {
-			if (!this.card?.oracle_text) return "";
-			return this.parse_oracle(this.card.oracle_text.split("\n")[0]);
+			if (!this.cardFace?.oracle_text) return "";
+			return this.parse_oracle(this.cardFace.oracle_text.split("\n")[0]);
 		},
 		saga_steps() {
-			return this.card.oracle_text
+			return this.cardFace.oracle_text
 				.split("\n")
 				.filter((s) => s.match(/^(.+) — /))
 				.map(this.parse_oracle)
@@ -304,24 +341,24 @@ export default {
 		},
 		colors() {
 			if (
-				this.card?.colors === undefined &&
-				this.card?.color_identity === undefined &&
-				this.card?.mana_cost === undefined
+				this.cardFace?.colors === undefined &&
+				this.cardFace?.color_identity === undefined &&
+				this.cardFace?.mana_cost === undefined
 			)
 				return "Colourless";
-			const colors = this.card?.colors
-				? this.card?.colors
-				: this.card?.color_identity
-				? this.card?.color_identity
-				: [...this.card.mana_cost].filter((c) => "WUBRG".includes(c));
+			const colors = this.cardFace?.colors
+				? this.cardFace?.colors
+				: this.cardFace?.color_identity
+				? this.cardFace?.color_identity
+				: [...this.cardFace.mana_cost].filter((c) => "WUBRG".includes(c));
 			const sorted_colors = [...new Set(colors)]
 				.sort((l: string, r: string) => {
 					return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
 				})
 				.join("");
 			// TODO: Correctly handle dual mana cost (bi-colored border)
-			return this.card.type_line.includes("Artifact") ||
-				this.card.type_line.includes("Artefact")
+			return this.cardFace.type_line.includes("Artifact") ||
+				this.cardFace.type_line.includes("Artefact")
 				? "Artifact"
 				: sorted_colors.length === 0
 				? "Colourless"
@@ -405,44 +442,26 @@ export default {
 			return this.is_vehicle ? "white" : "black";
 		},
 		illustration() {
-			return `url(${this.card?.image_uris?.art_crop})`;
+			return `url(${this.cardFace?.image_uris?.art_crop})`;
 		},
 		illustration_scale() {
-			return this.card?.illustration_scale ?? 1;
+			return this.cardFace?.illustration_scale ?? 1;
 		},
 		illustration_position() {
-			return this.card?.illustration_position
+			return this.cardFace?.illustration_position
 				? {
-						x: this.card?.illustration_position.x + "mm",
-						y: this.card?.illustration_position.y + "mm",
+						x: this.cardFace?.illustration_position.x + "mm",
+						y: this.cardFace?.illustration_position.y + "mm",
 				  }
 				: { x: 0, y: 0 };
 		},
 	},
 	watch: {
-		"card.oracle_text": function (newVal, oldVal) {
-			if (!this.$refs.oracle_el) return;
-			// Make sure oracle text fits in its box
-			nextTick(() => {
-				let curr_font_size = 8;
-				this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
-				while (check_overflow(this.$refs.oracle_el) && curr_font_size > 3) {
-					curr_font_size *= 0.9;
-					this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
-				}
-			});
+		"card.oracle_text": function () {
+			this.fit_oracle_text();
 		},
-		"card.type_line": function (newVal, oldVal) {
-			if (!this.$refs.type_line_el) return;
-			// Make sure type fits in its box
-			nextTick(() => {
-				let curr_font_size = 8;
-				this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
-				while (check_overflow(this.$refs.type_line_el) && curr_font_size > 3) {
-					curr_font_size *= 0.9;
-					this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
-				}
-			});
+		"card.type_line": function () {
+			this.fit_type_line();
 		},
 	},
 };
@@ -787,5 +806,13 @@ export default {
 
 .artist-name {
 	font-family: Beleren Small Caps;
+}
+
+.flip-icon {
+	position: absolute;
+	bottom: -12mm;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 10mm;
 }
 </style>

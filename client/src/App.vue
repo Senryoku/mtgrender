@@ -44,8 +44,8 @@
 					<div
 						v-for="(tabName, idx) in [
 							'Card Info',
-							'Render',
 							'Raw JSON',
+							'Render',
 							'Global Settings',
 						]"
 						:key="idx"
@@ -187,6 +187,16 @@
 					</div>
 				</div>
 				<div v-show="currentTab === 1" class="inner-tab">
+					<textarea
+						:value="JSON.stringify(card, null, 2)"
+						@change="updateCard"
+						ref="jsonView"
+						rows="20"
+						cols="80"
+						spellcheck="false"
+					></textarea>
+				</div>
+				<div v-show="currentTab === 2" class="inner-tab">
 					{{ illustrationDimensions[0] }}x{{ illustrationDimensions[1] }}
 					<button @click="upscale" :disabled="upscaling">
 						Upscale Illustration
@@ -200,16 +210,6 @@
 						/>
 					</div>
 					<button @click="render" :disabled="rendering">Render to PNG</button>
-				</div>
-				<div v-show="currentTab === 2" class="inner-tab">
-					<textarea
-						:value="JSON.stringify(card, null, 2)"
-						@change="updateCard"
-						ref="jsonView"
-						rows="20"
-						cols="80"
-						spellcheck="false"
-					></textarea>
 				</div>
 				<div v-show="currentTab === 3" class="inner-tab">
 					<div>
