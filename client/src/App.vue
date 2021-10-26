@@ -111,6 +111,19 @@
 						<a @click="card.power = card.toughness = undefined">↺</a>
 					</div>
 					<div
+						@mouseenter="outlineElement($event, 'loyalty')"
+						@focus.capture="outlineElement($event, 'loyalty-box')"
+					>
+						<label for="card-loyalty">Loyalty</label>
+						<input
+							id="card-loyalty"
+							class="small-input"
+							v-model="card.loyalty"
+							type="text"
+						/>
+						<a @click="card.loyalty = undefined">↺</a>
+					</div>
+					<div
 						class="subsection"
 						@mouseenter="outlineElement($event, 'illustration')"
 						@focus.capture="outlineElement($event, 'illustration')"

@@ -79,7 +79,11 @@
 					</div>
 				</template>
 				<template v-else-if="planeswalker_abilities">
-					<div class="planeswalker-oracle" ref="oracle_el">
+					<div
+						class="planeswalker-oracle"
+						ref="oracle_el"
+						@dblclick="edit_property('oracle_text')"
+					>
 						<div
 							class="planeswalker-ability"
 							v-for="(ability, idx) in planeswalker_abilities"
@@ -133,7 +137,11 @@
 					>{{ cardFace.toughness }}
 				</span>
 			</div>
-			<div class="loyalty" v-show="cardFace.loyalty">
+			<div
+				class="loyalty"
+				v-show="cardFace.loyalty"
+				@dblclick="edit_property('loyalty')"
+			>
 				{{ cardFace.loyalty }}
 			</div>
 		</div>
@@ -167,7 +175,9 @@
 				<div v-if="cardFace.power || cardFace.toughness || cardFace.loyalty">
 					&nbsp;
 				</div>
-				<div class="copyright">{{ copyright }}</div>
+				<div class="copyright" @dblclick="edit_property('copyright')">
+					{{ copyright }}
+				</div>
 			</div>
 		</div>
 		<div
@@ -253,8 +263,13 @@ export default {
 		},
 		edit_property(prop) {
 			// TODO
-			const r = prompt(`Edit Card property '${prop}'`, this.card[prop]);
-			if (r) this.$emit("edit", prop, r);
+			const r = prompt(`Edit Card property '${prop}'`, this.cardFace[prop]);
+			if (r)
+				this.$emit(
+					"edit",
+					this.card.card_faces ? ["card_faces", this.currentFace, prop] : prop,
+					r
+				);
 		},
 		scale_illustration(event) {
 			let s = 1;
@@ -644,6 +659,7 @@ export default {
 	          it hides the obvious problems, but we should use custom backgrounds instead.  */
 	background-size: 100% 102%;
 	border-bottom-left-radius: 7mm 7mm;
+	border-bottom-right-radius: 11mm 7mm;
 }
 
 .legendary .inner-background {
@@ -773,7 +789,7 @@ export default {
 	height: 70.5mm;
 	border-radius: 2mm / calc(39mm / 2);
 	border-bottom-left-radius: 2mm/2mm;
-	border-bottom-right-radius: 0;
+	border-bottom-right-radius: 2mm;
 }
 
 .saga .illustration {
