@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@vue/compiler-sfc": "^3.0.4",
-		"vite": "^2.6.10"
+		"vite": "^2.6.10",
+		"vite-plugin-compress": "^2.1.0"
 	}
 }

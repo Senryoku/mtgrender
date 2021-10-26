@@ -783,6 +783,7 @@ export default {
 	background-position: v-bind(illustration_position.x)
 		v-bind(illustration_position.y);
 	background-repeat: no-repeat;
+	cursor: grab;
 }
 
 .planeswalker .illustration {
