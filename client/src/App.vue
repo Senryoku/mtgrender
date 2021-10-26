@@ -77,6 +77,12 @@
 					<div>
 						<label for="card-set">Set</label>
 						<input id="card-set" v-model="card.set" type="text" />
+						<a @click="card.set = undefined">↺</a>
+					</div>
+					<div>
+						<label for="card-rarity">Rarity</label>
+						<input id="card-rarity" v-model="card.rarity" type="text" />
+						<a @click="card.rarity = undefined">↺</a>
 					</div>
 					<div
 						@mouseenter="outlineElement($event, 'oracle')"
@@ -691,7 +697,7 @@ textarea {
 }
 
 .tab {
-	background-color: #00000040;
+	background-color: #ffffff60;
 	color: #000000a0;
 	border-radius: 0.5em 0.5em 0 0;
 	padding: 0.1em 0.4em 0 0.4em;
@@ -700,12 +706,12 @@ textarea {
 }
 
 .selected-tab {
-	background-color: #00000020;
+	background-color: #ffffff80;
 	color: #000000;
 }
 
 .inner-tab {
-	background-color: #00000020;
+	background-color: #ffffff80;
 	padding: 0.5em;
 	border-radius: 0 0 0.5em 0.5em;
 }

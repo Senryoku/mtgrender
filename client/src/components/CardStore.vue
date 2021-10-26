@@ -2,17 +2,19 @@
 	<div>
 		<button @click="render_all">Render All</button>
 		{{ used_local_storage }}KB used
-		<ol class="card-list">
-			<li
-				v-for="(card, idx) in cards"
-				:key="idx"
-				@click="load(card)"
-				:class="{ 'selected-card': card.name === currentCard.name }"
-			>
-				<span>{{ card.name }}</span>
-				<span class="card-controls"><span @click="remove(idx)">🗑</span></span>
-			</li>
-		</ol>
+		<div class="card-list-container">
+			<ol class="card-list">
+				<li
+					v-for="(card, idx) in cards"
+					:key="idx"
+					@click="load(card)"
+					:class="{ 'selected-card': card.name === currentCard.name }"
+				>
+					<div class="name">{{ card.name }}</div>
+					<span class="card-controls"><span @click="remove(idx)">🗑</span></span>
+				</li>
+			</ol>
+		</div>
 	</div>
 </template>
 
@@ -75,7 +77,7 @@ export default {
 		keydown(e) {
 			if (e.ctrlKey && e.key === "s") {
 				e.preventDefault(); // Prevent the Save dialog to open
-				this.store();
+				this.save();
 			}
 		},
 		load_default() {
@@ -98,8 +100,15 @@ export default {
 </script>
 
 <style>
+.card-list-container {
+	overflow: hidden;
+	overflow-y: auto;
+	max-height: 80vh;
+}
+
 .card-list {
 	padding: 0;
+	padding-left: 0.5em;
 	margin: 0.5em;
 }
 
@@ -110,13 +119,20 @@ export default {
 	align-items: baseline;
 	cursor: pointer;
 	padding: 0.3em 0.5em;
-	background-color: #00000015;
+	background-color: #ffffff60;
 	width: 100%;
 	list-style: none;
 }
 
+.card-list li .name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 10em;
+}
+
 .card-list li:nth-child(odd) {
-	background-color: #00000020;
+	background-color: #ffffff80;
 }
 
 .selected-card::before {

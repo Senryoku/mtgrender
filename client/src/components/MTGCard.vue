@@ -372,8 +372,17 @@ export default {
 			if (this.card.card_faces) return this.card.card_faces[this.currentFace];
 			return this.card;
 		},
+		is_land() {
+			return this.cardFace?.type_line?.startsWith("Land") ||
+				this.cardFace?.type_line?.startsWith("Terrain")
+				? true
+				: false;
+		},
 		is_legendary() {
-			return this.cardFace?.type_line?.startsWith("Legendary") ? true : false;
+			return this.cardFace?.type_line?.startsWith("Legendary") ||
+				this.cardFace?.type_line?.includes("légendaire")
+				? true
+				: false;
 		},
 		is_planeswalker() {
 			return this.cardFace?.type_line?.toLowerCase().includes("planeswalker");
@@ -457,11 +466,12 @@ export default {
 				this.cardFace?.mana_cost === undefined
 			)
 				return "Colourless";
-			const colors = this.cardFace?.colors
-				? this.cardFace?.colors
-				: this.cardFace?.color_identity
-				? this.cardFace?.color_identity
-				: [...this.cardFace.mana_cost].filter((c) => "WUBRG".includes(c));
+			const colors =
+				this.cardFace?.colors && this.cardFace?.colors.length > 0
+					? this.cardFace?.colors
+					: this.cardFace?.color_identity
+					? this.cardFace?.color_identity
+					: [...this.cardFace.mana_cost].filter((c) => "WUBRG".includes(c));
 			const sorted_colors = [...new Set(colors)]
 				.sort((l: string, r: string) => {
 					return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
@@ -480,6 +490,8 @@ export default {
 		boxes_colors() {
 			return this.colors === "Vehicle"
 				? "Artifact"
+				: this.is_land
+				? "Land"
 				: this.colors.length > 1 && this.colors.length < 5
 				? "Gold"
 				: this.colors;
@@ -488,9 +500,7 @@ export default {
 			if (this.is_saga) {
 				return `url(${
 					new URL(
-						`../assets/img/saga_bg/${
-							this.is_vehicle ? "Vehicle" : this.boxes_colors
-						}.png`,
+						`../assets/img/saga_bg/${this.boxes_colors}.png`,
 						import.meta.url
 					).href
 				})`;
