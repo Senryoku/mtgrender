@@ -9,3 +9,6 @@
 -   -   Editing UI should be aware too
 -   -   Add the MDFC icon (top left)
 -   -   Add the MDFC hint regarding the over side (type and mana cost)
+-   Support for custom set icon override
+-   -   Switch to svg based icon + css rarity tint rather than keyrune
+-   -   Allow for custom placement of the icon

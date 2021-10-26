@@ -1,8 +1,18 @@
 <template>
-	<div class="mtg-card" :class="{ legendary: is_legendary, saga: is_saga }">
+	<div
+		class="mtg-card"
+		:class="{
+			legendary: is_legendary,
+			planeswalker: is_planeswalker,
+			saga: is_saga,
+		}"
+	>
 		<div class="inner-background">
 			<div class="inner-frame">
-				<div class="legendary-crown" v-show="is_legendary"></div>
+				<div
+					class="legendary-crown"
+					v-show="is_legendary && !is_planeswalker"
+				></div>
 				<div class="top-line">
 					<span
 						class="name"
@@ -23,14 +33,7 @@
 						/>
 					</div>
 				</div>
-				<div
-					class="illustration"
-					@wheel.prevent="scale_illustration"
-					@mousedown.prevent="start_drag_illustration"
-					@mouseup.prevent="end_drag_illustration"
-					@mousemove="drag_illustration"
-					@mouseleave="cancel_drag_illustration"
-				></div>
+				<div class="planeswalker-oracle-bg" v-if="is_planeswalker"></div>
 				<div class="mid-line">
 					<div
 						class="type-line"
@@ -75,6 +78,31 @@
 						</div>
 					</div>
 				</template>
+				<template v-else-if="planeswalker_abilities">
+					<div class="planeswalker-oracle" ref="oracle_el">
+						<div
+							class="planeswalker-ability"
+							v-for="(ability, idx) in planeswalker_abilities"
+							:key="idx"
+							:class="{
+								'planeswalker-ability-with-cost': ability.cost !== null,
+							}"
+						>
+							<div
+								class="planeswalker-ability-cost"
+								v-if="ability.cost !== null"
+								:class="{
+									'planeswalker-ability-cost-minus': ability.cost < 0,
+									'planeswalker-ability-cost-zero': ability.cost === 0,
+									'planeswalker-ability-cost-plus': ability.cost > 0,
+								}"
+							>
+								{{ ability.cost > 0 ? "+" : "" }}{{ ability.cost }}
+							</div>
+							<div v-html="ability.html"></div>
+						</div>
+					</div>
+				</template>
 				<template v-else>
 					<div class="oracle" ref="oracle_el">
 						<div
@@ -105,6 +133,9 @@
 					>{{ cardFace.toughness }}
 				</span>
 			</div>
+			<div class="loyalty" v-show="cardFace.loyalty">
+				{{ cardFace.loyalty }}
+			</div>
 		</div>
 		<div class="footer">
 			<div class="footer-left">
@@ -133,10 +164,25 @@
 				</div>
 			</div>
 			<div class="footer-right">
-				<div v-if="cardFace.power || cardFace.toughness">&nbsp;</div>
+				<div v-if="cardFace.power || cardFace.toughness || cardFace.loyalty">
+					&nbsp;
+				</div>
 				<div class="copyright">{{ copyright }}</div>
 			</div>
 		</div>
+		<div
+			class="illustration"
+			:class="{
+				'behind-textbox':
+					card.illustration_textbox ||
+					(is_planeswalker && card.illustration_textbox !== false),
+			}"
+			@wheel.prevent="scale_illustration"
+			@mousedown.prevent="start_drag_illustration"
+			@mouseup.prevent="end_drag_illustration"
+			@mousemove="drag_illustration"
+			@mouseleave="cancel_drag_illustration"
+		></div>
 		<div v-if="card.card_faces" class="flip-icon" @click="flip">⭯</div>
 	</div>
 </template>
@@ -211,16 +257,28 @@ export default {
 			if (r) this.$emit("edit", prop, r);
 		},
 		scale_illustration(event) {
-			if (!this.card.illustration_scale) this.card.illustration_scale = 1;
-			this.card.illustration_scale += event.deltaY > 0 ? -0.1 : 0.1;
-			this.card.illustration_scale = Math.min(
-				Math.max(1, this.card.illustration_scale),
-				50
+			let s = 1;
+			if (this.cardFace.illustration_scale)
+				s = this.cardFace.illustration_scale;
+			s += event.deltaY > 0 ? -0.1 : 0.1;
+			s = Math.min(Math.max(1, s), 50);
+			this.$emit(
+				"edit",
+				this.card.card_faces
+					? ["card_faces", this.currentFace, "illustration_scale"]
+					: "illustration_scale",
+				s
 			);
 		},
 		start_drag_illustration(event) {
 			if (!this.cardFace.illustration_position)
-				this.cardFace.illustration_position = { x: 0, y: 0 };
+				this.$emit(
+					"edit",
+					this.card.card_faces
+						? ["card_faces", this.currentFace, "illustration_position"]
+						: "illustration_position",
+					{ x: 0, y: 0 }
+				);
 			this.dragging_illustration = {
 				x: this.cardFace.illustration_position.x,
 				y: this.cardFace.illustration_position.y,
@@ -228,7 +286,13 @@ export default {
 		},
 		cancel_drag_illustration(event) {
 			if (this.dragging_illustration) {
-				this.cardFace.illustration_position = this.dragging_illustration;
+				this.$emit(
+					"edit",
+					this.card.card_faces
+						? ["card_faces", this.currentFace, "illustration_position"]
+						: "illustration_position",
+					this.dragging_illustration
+				);
 				this.end_drag_illustration();
 			}
 		},
@@ -237,11 +301,20 @@ export default {
 		},
 		drag_illustration(event) {
 			if (this.dragging_illustration) {
-				const illu_scale = this.cardFace.illustration_scale ?? 1;
-				this.cardFace.illustration_position.x +=
-					(this.mmperpixel * event.movementX) / this.scale;
-				this.cardFace.illustration_position.y +=
-					(this.mmperpixel * event.movementY) / this.scale;
+				this.$emit(
+					"edit",
+					this.card.card_faces
+						? ["card_faces", this.currentFace, "illustration_position"]
+						: "illustration_position",
+					{
+						x:
+							this.cardFace.illustration_position.x +
+							(this.mmperpixel * event.movementX) / this.scale,
+						y:
+							this.cardFace.illustration_position.y +
+							(this.mmperpixel * event.movementY) / this.scale,
+					}
+				);
 			}
 		},
 		fit_name() {},
@@ -287,6 +360,9 @@ export default {
 		is_legendary() {
 			return this.cardFace?.type_line?.startsWith("Legendary") ? true : false;
 		},
+		is_planeswalker() {
+			return this.cardFace?.type_line?.toLowerCase().includes("planeswalker");
+		},
 		is_saga() {
 			return (
 				this.cardFace?.layout === "saga" ||
@@ -331,6 +407,26 @@ export default {
 							),
 						html: m[2],
 					};
+				});
+		},
+		planeswalker_abilities() {
+			if (!this.is_planeswalker) return null;
+			return this.cardFace.oracle_text
+				.split("\n")
+				.map(this.parse_oracle)
+				.map((line) => {
+					const r = { html: line, cost: null };
+					const m = line.match(/^[+-−]?(\d+):/);
+					console.log(m);
+					if (m) {
+						if (line[0] === "0") {
+							r.cost = 0;
+						} else if (line[0] === "+") {
+							r.cost = parseInt(m[1]);
+						} else r.cost = -parseInt(m[1]);
+						r.html = line.substr(m[0].length + 1);
+					}
+					return r;
 				});
 		},
 		copyright() {
@@ -402,11 +498,27 @@ export default {
 					).href
 				})`;
 			}
+			if (this.is_planeswalker) {
+				return `url(${
+					new URL(
+						`../assets/img/planeswalker_frames/${this.colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			}
 			return `url(${
 				new URL(`../assets/img/frames/${this.colors}.png`, import.meta.url).href
 			})`;
 		},
 		boxes() {
+			if (this.is_planeswalker) {
+				return `url(${
+					new URL(
+						`../assets/img/planeswalker_boxes/${this.boxes_colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			}
 			return `url(${
 				new URL(`../assets/img/boxes/${this.boxes_colors}.png`, import.meta.url)
 					.href
@@ -522,6 +634,16 @@ export default {
 	background-size: 100%;
 	padding-top: 1.1mm;
 	background-repeat: no-repeat;
+
+	pointer-events: none;
+	user-select: none;
+}
+
+.planeswalker .inner-background {
+	/* FIXME: This is workaround, the background are not fit for the planeswalker frame,
+	          it hides the obvious problems, but we should use custom backgrounds instead.  */
+	background-size: 100% 102%;
+	border-bottom-left-radius: 7mm 7mm;
 }
 
 .legendary .inner-background {
@@ -540,6 +662,9 @@ export default {
 	background-size: 100%;
 	background-repeat: no-repeat;
 	padding-top: 0.508mm;
+
+	pointer-events: none;
+	user-select: none;
 }
 
 .legendary .inner-frame {
@@ -587,12 +712,19 @@ export default {
 	padding: 0 1mm 0 1.5mm;
 	background-image: v-bind(boxes);
 	background-size: 100%;
+
+	pointer-events: initial;
+	user-select: initial;
 }
 
 .saga .top-line,
 .saga .mid-line {
 	width: 53mm;
 	margin-left: 2mm;
+}
+
+.planeswalker .mid-line {
+	margin-top: 1.3mm;
 }
 
 .name {
@@ -612,11 +744,13 @@ export default {
 }
 
 .illustration {
+	position: absolute;
+	z-index: -1;
+	top: 9.5mm;
+	left: 5mm;
 	width: 53.5mm;
 	height: 39mm;
 	margin: auto;
-	margin-top: 0.51mm;
-	margin-bottom: 0.55mm;
 	background-image: v-bind(illustration);
 	background-color: yellow;
 	background-size: calc(v-bind(illustration_scale) * 100%);
@@ -625,15 +759,50 @@ export default {
 	background-repeat: no-repeat;
 }
 
+.planeswalker .illustration {
+	position: absolute;
+	left: 5mm;
+	top: 10mm;
+	width: 53.2mm;
+	height: 39mm;
+	border-radius: 2mm/50%;
+}
+
+.planeswalker .illustration.behind-textbox {
+	background-color: white;
+	height: 70.5mm;
+	border-radius: 2mm / calc(39mm / 2);
+	border-bottom-left-radius: 2mm/2mm;
+	border-bottom-right-radius: 0;
+}
+
 .saga .illustration {
-	width: 26.6mm;
+	width: 26.5mm;
 	height: 64mm;
-	margin-top: 0.65mm;
-	margin-left: 30mm;
+	top: 10mm;
+	left: 32.2mm;
 }
 
 .mid-line {
+	position: absolute;
+	top: 45.8mm;
+	left: 0mm;
+	right: 0;
 	background-position: 0 bottom;
+}
+
+.planeswalker .mid-line {
+	position: absolute;
+	top: 45.1mm;
+	left: 0mm;
+	right: 0;
+}
+
+.saga .mid-line {
+	position: absolute;
+	top: 71mm;
+	left: 0mm;
+	right: 0;
 }
 
 .type-line {
@@ -652,6 +821,11 @@ export default {
 }
 
 .oracle {
+	position: absolute;
+	top: 51mm;
+	left: 0mm;
+	right: 0;
+
 	display: flex;
 	align-items: stretch;
 	justify-content: center;
@@ -665,6 +839,10 @@ export default {
 
 	font-family: MPlantin;
 	font-size: 8pt;
+	line-height: 1em;
+
+	pointer-events: initial;
+	user-select: initial;
 }
 
 .saga-oracle {
@@ -678,6 +856,50 @@ export default {
 
 	font-family: MPlantin;
 	font-size: 8pt;
+	line-height: 1em;
+
+	pointer-events: initial;
+	user-select: initial;
+}
+
+.planeswalker-oracle-bg {
+	position: absolute;
+	left: 4.4mm;
+	top: 52mm;
+	width: 50.7mm;
+	height: 25.45mm;
+	background-color: #ffffff80;
+	border-radius: 1.1mm;
+	border-bottom-left-radius: 8mm 2.1mm;
+	border-bottom-right-radius: 8mm 2.1mm;
+	box-shadow: inset -0.2mm -0.2mm 0.2mm #00000080,
+		inset 0.2mm 0.2mm 0.2mm #00000080;
+}
+
+.planeswalker-oracle {
+	position: absolute;
+	left: 0;
+	top: 52mm;
+
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.8mm;
+
+	width: 49mm;
+	height: 24mm;
+
+	font-family: MPlantin;
+	font-size: 8pt;
+	line-height: 1em;
+
+	padding: 0.5mm;
+	padding-left: 5.5mm;
+	padding-bottom: 1mm;
+
+	pointer-events: initial;
+	user-select: initial;
 }
 
 .saga-reminder {
@@ -727,6 +949,65 @@ export default {
 	vertical-align: middle;
 }
 
+.planeswalker-ability {
+	position: relative;
+}
+
+.planeswalker-ability-with-cost {
+	margin-left: 2.5mm;
+}
+
+.planeswalker-ability-cost {
+	position: absolute;
+	left: -8.5mm;
+	top: 50%;
+	transform: translateY(-50%);
+	background-size: 100%;
+	background-repeat: no-repeat;
+	width: 7mm;
+	color: white;
+	font-size: 7pt;
+	text-align: center;
+	font-family: Beleren;
+}
+
+.planeswalker-ability-cost-plus {
+	background-image: url("../assets/img/planeswalker/LoyaltyPlus.png");
+	height: 4.7mm;
+	line-height: 5.2mm;
+}
+
+.planeswalker-ability-cost-zero {
+	background-image: url("../assets/img/planeswalker/LoyaltyZero.png");
+	height: 4.2mm;
+	line-height: 4.2mm;
+}
+
+.planeswalker-ability-cost-minus {
+	background-image: url("../assets/img/planeswalker/LoyaltyMinus.png");
+	height: 4.7mm;
+	line-height: 3.9mm;
+}
+
+.planeswalker-ability-cost::after {
+	content: ":";
+	position: absolute;
+	right: -0.7mm;
+	top: 50%;
+	transform: translateY(-50%);
+	color: black;
+	font-family: MPlantin;
+	font-size: 8pt;
+}
+
+.planeswalker-ability-cost-minus::after {
+	top: 1mm;
+}
+
+.planeswalker-ability-cost-zero::after {
+	top: 1.7mm;
+}
+
 .oracle-inner,
 .oracle-flavor,
 .oracle-reminder {
@@ -767,12 +1048,38 @@ export default {
 	line-height: 5.5mm;
 	font-size: 9.6pt;
 	color: v-bind(pt_box_color);
+
+	pointer-events: initial;
+	user-select: initial;
+}
+
+.loyalty {
+	position: absolute;
+	right: 0;
+	bottom: -2.8mm;
+	width: 10mm;
+	height: 7mm;
+	background-image: url("../assets/img/planeswalker/Loyalty.png");
+	background-size: 100%;
+	background-repeat: no-repeat;
+
+	text-align: center;
+	line-height: 7mm;
+	font-size: 9.6pt;
+	color: white;
+
+	pointer-events: initial;
+	user-select: initial;
 }
 
 .footer {
+	position: absolute;
+	top: 81.5mm;
+	left: 50%;
+	transform: translateX(-50%);
+
 	width: 55mm;
 	margin: auto;
-	margin-top: 0;
 
 	display: flex;
 	justify-content: space-between;
@@ -782,13 +1089,18 @@ export default {
 	font-size: 4.5pt;
 }
 
+.footer-left > div,
+.footer-right > div {
+	height: 1.8mm;
+}
+
 .collector-number {
 	letter-spacing: 0.2mm;
 }
 
 .copyright {
 	font-family: MPlantin;
-	margin-top: 0.2mm; /* FIXME: Workaround a weird upshift using this font */
+	margin-top: 0.3mm; /* FIXME: Workaround a weird upshift using this font */
 }
 
 .copyright div {

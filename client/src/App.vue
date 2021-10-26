@@ -33,11 +33,7 @@
 		</div>
 		<div class="content">
 			<div class="card-display">
-				<MTGCard
-					:card="finalCard"
-					:scale="displayScale"
-					@edit="(k, v) => (card[k] = v)"
-				/>
+				<MTGCard :card="finalCard" :scale="displayScale" @edit="editCard" />
 			</div>
 			<div style="flex-grow: 1">
 				<div class="tabs">
@@ -45,8 +41,8 @@
 						v-for="(tabName, idx) in [
 							'Card Info',
 							'Raw JSON',
-							'Render',
-							'Global Settings',
+							'Render Settings',
+							'Global Properties',
 						]"
 						:key="idx"
 						@click="currentTab = idx"
@@ -154,6 +150,16 @@
 								type="number"
 							/>
 							<a @click="card.illustration_position = { x: 0, y: 0 }">↺</a>
+						</div>
+						<div v-if="illustration_textbox">
+							<label for="card-illustration-bleedthrough"
+								>Bleedtrough Textbox</label
+							>
+							<input
+								type="checkbox"
+								id="card-illustration-bleedthrough"
+								v-model="card.illustration_textbox"
+							/>
 						</div>
 					</div>
 					<div class="subsection">
@@ -356,6 +362,13 @@ export default {
 				});
 			return false;
 		},
+		editCard(key, value) {
+			if (Array.isArray(key)) {
+				let obj = this.card;
+				for (let idx = 0; idx < key.length - 1; ++idx) obj = obj[key[idx]];
+				obj[key[key.length - 1]] = value;
+			} else this.card[key] = value;
+		},
 		async dropHandler(event) {
 			console.log("File(s) dropped");
 
@@ -466,7 +479,7 @@ export default {
 			const scale = 3288 / card_el.clientWidth / this.displayScale;
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
-			const func = options.toBlob ? domtoimage.toBlob : domtoimage.toPng;
+			const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
 			return func(card_display_el).then(() => {
 				return func(card_display_el, {
 					width:
