@@ -755,12 +755,14 @@ export default {
 
 .name {
 	font-size: 9.454pt;
+	margin-top: -0.4mm;
 }
 
 .mana-cost {
 	font-size: 6.5pt;
 	display: flex;
 	gap: 0.3mm;
+	margin-top: -0.4mm;
 }
 
 .mana-cost .ms {
