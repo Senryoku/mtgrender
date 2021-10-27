@@ -53,6 +53,10 @@
 					</div>
 				</div>
 				<div v-show="currentTab === 0" class="inner-tab card-info">
+					<div>
+						<label for="card-layout">Layout</label>
+						<input id="card-layout" v-model="card.layout" type="text" />
+					</div>
 					<div
 						@mouseenter="outlineElement($event, 'name')"
 						@focus.capture="outlineElement($event, 'name')"
@@ -170,7 +174,7 @@
 							/>
 							<a @click="card.illustration_position = { x: 0, y: 0 }">↺</a>
 						</div>
-						<div v-if="illustration_textbox">
+						<div v-if="card.illustration_textbox">
 							<label for="card-illustration-bleedthrough"
 								>Bleedtrough Textbox</label
 							>

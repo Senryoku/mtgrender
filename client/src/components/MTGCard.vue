@@ -5,6 +5,7 @@
 			legendary: is_legendary,
 			planeswalker: is_planeswalker,
 			saga: is_saga,
+			adventure: is_adventure,
 		}"
 	>
 		<div class="inner-background">
@@ -51,7 +52,72 @@
 						></i>
 					</span>
 				</div>
-				<template v-if="is_saga">
+				<template v-if="is_adventure">
+					<div class="adventure-part">
+						<div class="adventure-top-line">
+							<span
+								class="adventure-name"
+								@dblclick.prevent="edit_property(['card_faces', 1, 'name'])"
+								@mousedown.prevent=""
+								>{{ card.card_faces[1].name }}</span
+							>
+							<div
+								class="adventure-mana-cost"
+								@dblclick.prevent="
+									edit_property(['card_faces', 1, 'mana_cost'])
+								"
+								@mousedown.prevent=""
+							>
+								<img
+									v-for="(uri, idx) in adventure_mana_cost"
+									class="ms ms-shadow"
+									:key="idx"
+									:src="uri"
+								/>
+							</div>
+						</div>
+						<div class="adventure-type">{{ card.card_faces[1].type_line }}</div>
+						<div class="adventure-oracle" ref="adventure_oracle_el">
+							<div
+								class="oracle-inner"
+								v-for="(line, idx) in adventure_oracle_lines"
+								:key="idx"
+								v-html="line"
+								@dblclick="edit_property(['card_faces', 1, 'oracle_text'])"
+								@mousedown.prevent=""
+							></div>
+							<div
+								class="oracle-flavor"
+								v-if="card.card_faces[1].flavor_text"
+								@dblclick="edit_property(['card_faces', 1, 'flavor_text'])"
+								@mousedown.prevent=""
+							>
+								<hr />
+								{{ card.card_faces[1].flavor_text }}
+							</div>
+						</div>
+					</div>
+					<div class="oracle adventure-main-oracle" ref="oracle_el">
+						<div
+							class="oracle-inner"
+							v-for="(line, idx) in oracle_lines"
+							:key="idx"
+							v-html="line"
+							@dblclick="edit_property(['card_faces', 0, 'oracle_text'])"
+							@mousedown.prevent=""
+						></div>
+						<div
+							class="oracle-flavor"
+							v-if="card.card_faces[0].flavor_text"
+							@dblclick="edit_property(['card_faces', 0, 'flavor_text'])"
+							@mousedown.prevent=""
+						>
+							<hr />
+							{{ card.card_faces[0].flavor_text }}
+						</div>
+					</div>
+				</template>
+				<template v-else-if="is_saga">
 					<div
 						class="saga-oracle"
 						ref="oracle_el"
@@ -152,7 +218,7 @@
 					@dblclick="edit_property('collector_number')"
 					@mousedown.prevent=""
 				>
-					{{ cardFace.collector_number }}
+					{{ (is_adventure ? card : cardFace).collector_number }}
 				</div>
 				<div>
 					<span v-if="card.set" class="set"
@@ -193,7 +259,7 @@
 			@mousemove="drag_illustration"
 			@mouseleave="cancel_drag_illustration"
 		></div>
-		<div v-if="card.card_faces" class="flip-icon" @click="flip">⭯</div>
+		<div v-if="is_dualface" class="flip-icon" @click="flip">⭯</div>
 	</div>
 </template>
 
@@ -229,9 +295,11 @@ export default {
 	},
 	data() {
 		const oracle_el = ref(null);
+		const adventure_oracle_el = ref(null);
 		const type_line_el = ref(null);
 		return {
 			oracle_el,
+			adventure_oracle_el,
 			type_line_el,
 			currentFace: 0,
 			dragging_illustration: null,
@@ -267,7 +335,7 @@ export default {
 			if (r)
 				this.$emit(
 					"edit",
-					this.card.card_faces ? ["card_faces", this.currentFace, prop] : prop,
+					this.is_dualface ? ["card_faces", this.currentFace, prop] : prop,
 					r
 				);
 		},
@@ -332,29 +400,36 @@ export default {
 				);
 			}
 		},
-		fit_name() {},
+		fit_font_size(el) {
+			let curr_font_size = 8;
+			el.style.fontSize = curr_font_size + "pt";
+			while (check_overflow(el) && curr_font_size > 3) {
+				curr_font_size *= 0.9;
+				el.style.fontSize = curr_font_size + "pt";
+			}
+		},
+		fit() {
+			this.fit_name();
+			this.fit_type_line();
+			this.fit_oracle_text();
+		},
+		fit_name() {
+			// TODO
+		},
 		fit_type_line() {
 			if (!this.$refs.type_line_el) return;
 			// Make sure type fits in its box
 			nextTick(() => {
-				let curr_font_size = 8;
-				this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
-				while (check_overflow(this.$refs.type_line_el) && curr_font_size > 3) {
-					curr_font_size *= 0.9;
-					this.$refs.type_line_el.style.fontSize = curr_font_size + "pt";
-				}
+				this.fit_font_size(this.$refs.type_line_el);
 			});
 		},
 		fit_oracle_text() {
 			if (!this.$refs.oracle_el) return;
 			// Make sure oracle text fits in its box
 			nextTick(() => {
-				let curr_font_size = 8;
-				this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
-				while (check_overflow(this.$refs.oracle_el) && curr_font_size > 3) {
-					curr_font_size *= 0.9;
-					this.$refs.oracle_el.style.fontSize = curr_font_size + "pt";
-				}
+				this.fit_font_size(this.$refs.oracle_el);
+				if (this.$refs.adventure_oracle_el)
+					this.fit_font_size(this.$refs.adventure_oracle_el);
 			});
 		},
 		flip() {
@@ -384,6 +459,9 @@ export default {
 				? true
 				: false;
 		},
+		is_adventure() {
+			return this.card.layout === "adventure";
+		},
 		is_planeswalker() {
 			return this.cardFace?.type_line?.toLowerCase().includes("planeswalker");
 		},
@@ -400,15 +478,30 @@ export default {
 				this.cardFace.type_line.includes("véhicule")
 			);
 		},
+		is_dualface() {
+			return this.card.card_faces && !this.is_adventure;
+		},
 		mana_cost() {
-			if (!this.card?.mana_cost) return [];
-			return [...this.card.mana_cost.matchAll(mana_regex)].map(
+			if (!this.cardFace?.mana_cost) return [];
+			return [...this.cardFace.mana_cost.matchAll(mana_regex)].map(
+				(m) => mana_symbols[m[0]].svg_uri
+			);
+		},
+		adventure_mana_cost() {
+			if (!this.card?.card_faces?.[1]?.mana_cost) return [];
+			return [...this.card.card_faces[1].mana_cost.matchAll(mana_regex)].map(
 				(m) => mana_symbols[m[0]].svg_uri
 			);
 		},
 		oracle_lines() {
 			if (!this.cardFace?.oracle_text) return [];
 			return this.cardFace.oracle_text.split("\n").map(this.parse_oracle);
+		},
+		adventure_oracle_lines() {
+			if (!this.card.card_faces?.[1]?.oracle_text) return [];
+			return this.card.card_faces[1].oracle_text
+				.split("\n")
+				.map(this.parse_oracle);
 		},
 		saga_reminder() {
 			if (!this.cardFace?.oracle_text) return "";
@@ -497,17 +590,10 @@ export default {
 				: this.colors;
 		},
 		background() {
-			if (this.is_saga) {
-				return `url(${
-					new URL(
-						`../assets/img/saga_bg/${this.boxes_colors}.png`,
-						import.meta.url
-					).href
-				})`;
-			}
+			const folder = this.is_saga ? "saga_bg" : "bg";
 			return `url(${
 				new URL(
-					`../assets/img/bg/${
+					`../assets/img/${folder}/${
 						this.is_vehicle ? "Vehicle" : this.boxes_colors
 					}.png`,
 					import.meta.url
@@ -515,38 +601,25 @@ export default {
 			})`;
 		},
 		frame() {
-			if (this.is_saga) {
-				return `url(${
-					new URL(
-						`../assets/img/saga_frames/${this.colors}.png`,
-						import.meta.url
-					).href
-				})`;
-			}
-			if (this.is_planeswalker) {
-				return `url(${
-					new URL(
-						`../assets/img/planeswalker_frames/${this.colors}.png`,
-						import.meta.url
-					).href
-				})`;
-			}
+			const folder = this.is_adventure
+				? "adventure_frames"
+				: this.is_saga
+				? "saga_frames"
+				: this.is_planeswalker
+				? "planeswalker_frames"
+				: "frames";
 			return `url(${
-				new URL(`../assets/img/frames/${this.colors}.png`, import.meta.url).href
+				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
+					.href
 			})`;
 		},
 		boxes() {
-			if (this.is_planeswalker) {
-				return `url(${
-					new URL(
-						`../assets/img/planeswalker_boxes/${this.boxes_colors}.png`,
-						import.meta.url
-					).href
-				})`;
-			}
+			const folder = this.is_planeswalker ? "planeswalker_boxes" : "boxes";
 			return `url(${
-				new URL(`../assets/img/boxes/${this.boxes_colors}.png`, import.meta.url)
-					.href
+				new URL(
+					`../assets/img/${folder}/${this.boxes_colors}.png`,
+					import.meta.url
+				).href
 			})`;
 		},
 		legendary_crown() {
@@ -579,7 +652,9 @@ export default {
 			return this.is_vehicle ? "white" : "black";
 		},
 		illustration() {
-			return `url(${this.cardFace?.image_uris?.art_crop})`;
+			return `url(${
+				(this.is_adventure ? this.card : this.cardFace)?.image_uris?.art_crop
+			})`;
 		},
 		illustration_scale() {
 			return this.cardFace?.illustration_scale ?? 1;
@@ -599,6 +674,9 @@ export default {
 		},
 		"card.type_line": function () {
 			this.fit_type_line();
+		},
+		"card.card_faces": function () {
+			this.fit();
 		},
 	},
 };
@@ -765,7 +843,8 @@ export default {
 	margin-top: -0.4mm;
 }
 
-.mana-cost .ms {
+.mana-cost .ms,
+.adventure-mana-cost .ms {
 	width: 1.35em;
 	border-radius: 50%;
 	box-shadow: -0.2mm 0.2mm 0 rgba(0, 0, 0, 0.85);
@@ -814,7 +893,7 @@ export default {
 
 .mid-line {
 	position: absolute;
-	top: 45.8mm;
+	top: 45.6mm;
 	left: 0mm;
 	right: 0;
 	background-position: 0 bottom;
@@ -865,6 +944,69 @@ export default {
 	height: 25mm;
 	margin: auto;
 	margin-top: 0.8mm;
+
+	font-family: MPlantin;
+	font-size: 8pt;
+	line-height: 1em;
+
+	pointer-events: initial;
+	user-select: initial;
+}
+
+/* Workaround the fact that adventure frames have a sligthly larger ratio */
+.adventure .inner-frame {
+	width: calc(58mm * 0.98);
+}
+
+.adventure .top-line,
+.adventure .mid-line {
+	margin-left: 0.8mm;
+}
+
+.adventure-main-oracle {
+	left: 29mm;
+	width: 25.5mm;
+}
+
+.adventure-part {
+	position: absolute;
+	top: 51.4mm;
+	left: 2mm;
+	width: 25.5mm;
+	height: 26mm;
+
+	display: flex;
+	align-items: stretch;
+	flex-direction: column;
+}
+
+.adventure-top-line,
+.adventure-type {
+	color: white;
+	height: 4.2mm;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 7pt;
+	line-height: 7pt;
+	flex-shrink: 0;
+}
+
+.adventure-mana-cost {
+	display: flex;
+	font-size: 5pt;
+	gap: 0.3mm;
+	margin-top: -0.4mm;
+}
+
+.adventure-oracle {
+	flex-grow: 1;
+
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.8mm;
 
 	font-family: MPlantin;
 	font-size: 8pt;
@@ -1155,5 +1297,7 @@ export default {
 	left: 50%;
 	transform: translateX(-50%);
 	font-size: 10mm;
+	user-select: none;
+	cursor: pointer;
 }
 </style>
