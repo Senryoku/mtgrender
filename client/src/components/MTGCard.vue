@@ -1196,6 +1196,9 @@ export default {
 
 .planeswalker-ability-with-cost {
 	margin-left: 2.5mm;
+	min-height: 4mm;
+	display: flex;
+	align-items: center;
 }
 
 .planeswalker-ability-cost {
