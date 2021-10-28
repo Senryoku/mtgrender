@@ -1414,8 +1414,8 @@ export default {
 
 .mdfc-hint {
 	position: absolute;
-	bottom: 6.1mm;
-	left: 2mm;
+	bottom: 8mm;
+	left: 2.2mm;
 	width: 28mm;
 	height: 3.8mm;
 
