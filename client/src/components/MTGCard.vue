@@ -2,6 +2,7 @@
 	<div
 		class="mtg-card"
 		:class="{
+			mdfc: is_mdfc,
 			legendary: is_legendary,
 			planeswalker: is_planeswalker,
 			saga: is_saga,
@@ -19,7 +20,7 @@
 						class="name"
 						@dblclick.prevent="edit_property('name')"
 						@mousedown.prevent=""
-						>{{ cardFace.name }}</span
+						>{{ card_face.name }}</span
 					>
 					<div
 						class="mana-cost"
@@ -42,7 +43,7 @@
 						@mousedown.prevent=""
 						ref="type_line_el"
 					>
-						{{ cardFace.type_line }}
+						{{ card_face.type_line }}
 					</div>
 					<span class="set-icon">
 						<i
@@ -77,7 +78,7 @@
 							</div>
 						</div>
 						<div class="adventure-type">{{ card.card_faces[1].type_line }}</div>
-						<div class="adventure-oracle" ref="adventure_oracle_el">
+						<div class="oracle adventure-oracle" ref="adventure_oracle_el">
 							<div
 								class="oracle-inner"
 								v-for="(line, idx) in adventure_oracle_lines"
@@ -119,7 +120,7 @@
 				</template>
 				<template v-else-if="is_saga">
 					<div
-						class="saga-oracle"
+						class="oracle saga-oracle"
 						ref="oracle_el"
 						@dblclick="edit_property('oracle_text')"
 						@mousedown.prevent=""
@@ -146,7 +147,7 @@
 				</template>
 				<template v-else-if="planeswalker_abilities">
 					<div
-						class="planeswalker-oracle"
+						class="oracle planeswalker-oracle"
 						ref="oracle_el"
 						@dblclick="edit_property('oracle_text')"
 					>
@@ -174,7 +175,7 @@
 					</div>
 				</template>
 				<template v-else>
-					<div class="oracle" ref="oracle_el">
+					<div class="oracle normal-oracle" ref="oracle_el">
 						<div
 							class="oracle-inner"
 							v-for="(line, idx) in oracle_lines"
@@ -185,30 +186,30 @@
 						></div>
 						<div
 							class="oracle-flavor"
-							v-if="cardFace.flavor_text"
+							v-if="card_face.flavor_text"
 							@dblclick="edit_property('flavor_text')"
 							@mousedown.prevent=""
 						>
 							<hr />
-							{{ cardFace.flavor_text }}
+							{{ card_face.flavor_text }}
 						</div>
 					</div>
 				</template>
 			</div>
-			<div class="pt-box" v-show="cardFace.power || cardFace.toughness">
+			<div class="pt-box" v-show="card_face.power || card_face.toughness">
 				<span @dblclick="edit_property('power')" @mousedown.prevent="">{{
-					cardFace.power
+					card_face.power
 				}}</span
 				>/<span @dblclick="edit_property('toughness')" @mousedown.prevent=""
-					>{{ cardFace.toughness }}
+					>{{ card_face.toughness }}
 				</span>
 			</div>
 			<div
 				class="loyalty"
-				v-show="cardFace.loyalty"
+				v-show="card_face.loyalty"
 				@dblclick="edit_property('loyalty')"
 			>
-				{{ cardFace.loyalty }}
+				{{ card_face.loyalty }}
 			</div>
 		</div>
 		<div class="footer">
@@ -218,7 +219,7 @@
 					@dblclick="edit_property('collector_number')"
 					@mousedown.prevent=""
 				>
-					{{ (is_adventure ? card : cardFace).collector_number }}
+					{{ (is_adventure ? card : card_face).collector_number }}
 				</div>
 				<div>
 					<span v-if="card.set" class="set"
@@ -238,7 +239,7 @@
 				</div>
 			</div>
 			<div class="footer-right">
-				<div v-if="cardFace.power || cardFace.toughness || cardFace.loyalty">
+				<div v-if="card_face.power || card_face.toughness || card_face.loyalty">
 					&nbsp;
 				</div>
 				<div class="copyright" @dblclick="edit_property('copyright')">
@@ -259,7 +260,19 @@
 			@mousemove="drag_illustration"
 			@mouseleave="cancel_drag_illustration"
 		></div>
-		<div v-if="is_dualface" class="flip-icon" @click="flip">⭯</div>
+		<div v-if="is_mdfc" class="mdfc-icon"></div>
+		<div v-if="is_mdfc" class="mdfc-hint">
+			<span>{{ mdfc_hint_text }}</span>
+			<div class="mana-cost mdfc-hint-mana-cost">
+				<img
+					v-for="(uri, idx) in mdfc_back_mana_cost"
+					class="ms ms-shadow"
+					:key="idx"
+					:src="uri"
+				/>
+			</div>
+		</div>
+		<div v-if="is_dualfaced" class="flip-icon" @click="flip">⭯</div>
 	</div>
 </template>
 
@@ -331,18 +344,18 @@ export default {
 		},
 		edit_property(prop) {
 			// TODO
-			const r = prompt(`Edit Card property '${prop}'`, this.cardFace[prop]);
+			const r = prompt(`Edit Card property '${prop}'`, this.card_face[prop]);
 			if (r)
 				this.$emit(
 					"edit",
-					this.is_dualface ? ["card_faces", this.currentFace, prop] : prop,
+					this.d ? ["card_faces", this.currentFace, prop] : prop,
 					r
 				);
 		},
 		scale_illustration(event) {
 			let s = 1;
-			if (this.cardFace.illustration_scale)
-				s = this.cardFace.illustration_scale;
+			if (this.card_face.illustration_scale)
+				s = this.card_face.illustration_scale;
 			s += event.deltaY > 0 ? -0.1 : 0.1;
 			s = Math.min(Math.max(1, s), 50);
 			this.$emit(
@@ -354,7 +367,7 @@ export default {
 			);
 		},
 		start_drag_illustration(event) {
-			if (!this.cardFace.illustration_position)
+			if (!this.card_face.illustration_position)
 				this.$emit(
 					"edit",
 					this.card.card_faces
@@ -363,8 +376,8 @@ export default {
 					{ x: 0, y: 0 }
 				);
 			this.dragging_illustration = {
-				x: this.cardFace.illustration_position.x,
-				y: this.cardFace.illustration_position.y,
+				x: this.card_face.illustration_position.x,
+				y: this.card_face.illustration_position.y,
 			};
 		},
 		cancel_drag_illustration(event) {
@@ -391,10 +404,10 @@ export default {
 						: "illustration_position",
 					{
 						x:
-							this.cardFace.illustration_position.x +
+							this.card_face.illustration_position.x +
 							(this.mmperpixel * event.movementX) / this.scale,
 						y:
-							this.cardFace.illustration_position.y +
+							this.card_face.illustration_position.y +
 							(this.mmperpixel * event.movementY) / this.scale,
 					}
 				);
@@ -438,24 +451,59 @@ export default {
 			this.fit_oracle_text();
 			this.fit_type_line();
 		},
+		compute_colors(face) {
+			if (
+				face?.colors === undefined &&
+				face?.color_identity === undefined &&
+				face?.mana_cost === undefined
+			)
+				return "Colourless";
+			let colors =
+				face?.colors && face?.colors.length > 0
+					? face?.colors
+					: face?.color_identity
+					? face?.color_identity
+					: [...face.mana_cost].filter((c) => "WUBRG".includes(c));
+			if (colors.length === 0 && this.card.color_identity.length > 0)
+				colors = this.card.color_identity;
+			const sorted_colors = [...new Set(colors)]
+				.sort((l: string, r: string) => {
+					return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
+				})
+				.join("");
+			// TODO: Correctly handle dual mana cost (bi-colored border)
+			return face.type_line.includes("Artifact") ||
+				face.type_line.includes("Artefact")
+				? "Artifact"
+				: sorted_colors.length === 0
+				? "Colourless"
+				: sorted_colors.length > 2
+				? "Gold"
+				: sorted_colors;
+		},
 	},
 	computed: {
 		mmperpixel() {
 			return 63.5 / this.$el.clientWidth;
 		},
-		cardFace() {
+		card_face() {
 			if (this.card.card_faces) return this.card.card_faces[this.currentFace];
 			return this.card;
 		},
+		back_face() {
+			if (this.card.card_faces)
+				return this.card.card_faces[(this.currentFace + 1) % 2];
+			return this.card;
+		},
 		is_land() {
-			return this.cardFace?.type_line?.startsWith("Land") ||
-				this.cardFace?.type_line?.startsWith("Terrain")
+			return this.card_face?.type_line?.startsWith("Land") ||
+				this.card_face?.type_line?.startsWith("Terrain")
 				? true
 				: false;
 		},
 		is_legendary() {
-			return this.cardFace?.type_line?.startsWith("Legendary") ||
-				this.cardFace?.type_line?.includes("légendaire")
+			return this.card_face?.type_line?.startsWith("Legendary") ||
+				this.card_face?.type_line?.includes("légendaire")
 				? true
 				: false;
 		},
@@ -463,27 +511,30 @@ export default {
 			return this.card.layout === "adventure";
 		},
 		is_planeswalker() {
-			return this.cardFace?.type_line?.toLowerCase().includes("planeswalker");
+			return this.card_face?.type_line?.toLowerCase().includes("planeswalker");
 		},
 		is_saga() {
 			return (
-				this.cardFace?.layout === "saga" ||
-				this.cardFace?.type_line?.toLowerCase().includes("saga")
+				this.card_face?.layout === "saga" ||
+				this.card_face?.type_line?.toLowerCase().includes("saga")
 			);
 		},
 		is_vehicle() {
 			if (!this.card?.type_line) return false;
 			return (
-				this.cardFace.type_line.includes("Vehicle") ||
-				this.cardFace.type_line.includes("véhicule")
+				this.card_face.type_line.includes("Vehicle") ||
+				this.card_face.type_line.includes("véhicule")
 			);
 		},
-		is_dualface() {
+		is_dualfaced() {
 			return this.card.card_faces && !this.is_adventure;
 		},
+		is_mdfc() {
+			return this.card.layout === "modal_dfc";
+		},
 		mana_cost() {
-			if (!this.cardFace?.mana_cost) return [];
-			return [...this.cardFace.mana_cost.matchAll(mana_regex)].map(
+			if (!this.card_face?.mana_cost) return [];
+			return [...this.card_face.mana_cost.matchAll(mana_regex)].map(
 				(m) => mana_symbols[m[0]].svg_uri
 			);
 		},
@@ -493,9 +544,26 @@ export default {
 				(m) => mana_symbols[m[0]].svg_uri
 			);
 		},
+		mdfc_back_mana_cost() {
+			if (!this.card?.card_faces?.[(this.currentFace + 1) % 2]?.mana_cost)
+				return [];
+			return [
+				...this.card.card_faces[(this.currentFace + 1) % 2].mana_cost.matchAll(
+					mana_regex
+				),
+			].map((m) => mana_symbols[m[0]].svg_uri);
+		},
+		mdfc_hint_text() {
+			return (
+				this.card_face.mdfc_hint ??
+				this.back_face?.type_line
+					?.substr(this.back_face.type_line.indexOf("—") + 1)
+					.trim()
+			);
+		},
 		oracle_lines() {
-			if (!this.cardFace?.oracle_text) return [];
-			return this.cardFace.oracle_text.split("\n").map(this.parse_oracle);
+			if (!this.card_face?.oracle_text) return [];
+			return this.card_face.oracle_text.split("\n").map(this.parse_oracle);
 		},
 		adventure_oracle_lines() {
 			if (!this.card.card_faces?.[1]?.oracle_text) return [];
@@ -504,11 +572,11 @@ export default {
 				.map(this.parse_oracle);
 		},
 		saga_reminder() {
-			if (!this.cardFace?.oracle_text) return "";
-			return this.parse_oracle(this.cardFace.oracle_text.split("\n")[0]);
+			if (!this.card_face?.oracle_text) return "";
+			return this.parse_oracle(this.card_face.oracle_text.split("\n")[0]);
 		},
 		saga_steps() {
-			return this.cardFace.oracle_text
+			return this.card_face.oracle_text
 				.split("\n")
 				.filter((s) => s.match(/^(.+) — /))
 				.map(this.parse_oracle)
@@ -528,7 +596,7 @@ export default {
 		},
 		planeswalker_abilities() {
 			if (!this.is_planeswalker) return null;
-			return this.cardFace.oracle_text
+			return this.card_face.oracle_text
 				.split("\n")
 				.map(this.parse_oracle)
 				.map((line) => {
@@ -553,37 +621,12 @@ export default {
 			);
 		},
 		colors() {
-			if (
-				this.cardFace?.colors === undefined &&
-				this.cardFace?.color_identity === undefined &&
-				this.cardFace?.mana_cost === undefined
-			)
-				return "Colourless";
-			const colors =
-				this.cardFace?.colors && this.cardFace?.colors.length > 0
-					? this.cardFace?.colors
-					: this.cardFace?.color_identity
-					? this.cardFace?.color_identity
-					: [...this.cardFace.mana_cost].filter((c) => "WUBRG".includes(c));
-			const sorted_colors = [...new Set(colors)]
-				.sort((l: string, r: string) => {
-					return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
-				})
-				.join("");
-			// TODO: Correctly handle dual mana cost (bi-colored border)
-			return this.cardFace.type_line.includes("Artifact") ||
-				this.cardFace.type_line.includes("Artefact")
-				? "Artifact"
-				: sorted_colors.length === 0
-				? "Colourless"
-				: sorted_colors.length > 2
-				? "Gold"
-				: sorted_colors;
+			return this.compute_colors(this.card_face);
 		},
 		boxes_colors() {
 			return this.colors === "Vehicle"
 				? "Artifact"
-				: this.is_land
+				: this.is_land && this.card.color_identity?.length === 0 // FIXME: Fixes colors for cards like 'Agadeem, the Undercrypt', but may cause problem elsewhere?
 				? "Land"
 				: this.colors.length > 1 && this.colors.length < 5
 				? "Gold"
@@ -607,6 +650,8 @@ export default {
 				? "saga_frames"
 				: this.is_planeswalker
 				? "planeswalker_frames"
+				: this.is_mdfc
+				? "mdfc_frames"
 				: "frames";
 			return `url(${
 				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
@@ -614,7 +659,11 @@ export default {
 			})`;
 		},
 		boxes() {
-			const folder = this.is_planeswalker ? "planeswalker_boxes" : "boxes";
+			const folder = this.is_planeswalker
+				? "planeswalker_boxes"
+				: this.is_mdfc
+				? "mdfc_boxes"
+				: "boxes";
 			return `url(${
 				new URL(
 					`../assets/img/${folder}/${this.boxes_colors}.png`,
@@ -648,22 +697,47 @@ export default {
 				).href
 			})`;
 		},
+		mdfc_icon() {
+			return `url(${
+				new URL(
+					`../assets/img/mdfc${this.currentFace === 0 ? "" : "_back"}_icons/${
+						this.boxes_colors
+					}.png`,
+					import.meta.url
+				).href
+			})`;
+		},
+		mdfc_hint() {
+			let colors = this.compute_colors(this.back_face);
+			if (colors.length > 1 && colors.length < 5) colors = "Gold";
+			return `url(${
+				new URL(
+					`../assets/img/mdfc${
+						this.currentFace === 0 ? "" : "_back"
+					}_hints/${colors}.png`,
+					import.meta.url
+				).href
+			})`;
+		},
+		mdfc_hint_color() {
+			return this.currentFace === 0 ? "white" : "black";
+		},
 		pt_box_color() {
 			return this.is_vehicle ? "white" : "black";
 		},
 		illustration() {
 			return `url(${
-				(this.is_adventure ? this.card : this.cardFace)?.image_uris?.art_crop
+				(this.is_adventure ? this.card : this.card_face)?.image_uris?.art_crop
 			})`;
 		},
 		illustration_scale() {
-			return this.cardFace?.illustration_scale ?? 1;
+			return this.card_face?.illustration_scale ?? 1;
 		},
 		illustration_position() {
-			return this.cardFace?.illustration_position
+			return this.card_face?.illustration_position
 				? {
-						x: this.cardFace?.illustration_position.x + "mm",
-						y: this.cardFace?.illustration_position.y + "mm",
+						x: this.card_face?.illustration_position.x + "mm",
+						y: this.card_face?.illustration_position.y + "mm",
 				  }
 				: { x: 0, y: 0 };
 		},
@@ -797,7 +871,7 @@ export default {
 .legendary-crown {
 	position: absolute;
 	left: -2mm;
-	top: -7.5px;
+	top: -2mm;
 	width: 60.2mm;
 	height: 100%;
 	background-image: v-bind(legendary_crown);
@@ -812,7 +886,8 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	height: 5.1mm;
-	margin: 0 0.5mm;
+	width: 53mm;
+	margin: auto;
 	padding: 0 1mm 0 1.5mm;
 	background-image: v-bind(boxes);
 	background-size: 100%;
@@ -929,8 +1004,23 @@ export default {
 }
 
 .oracle {
+	font-family: MPlantin;
+	font-size: 8pt;
+	line-height: 1em;
+
+	pointer-events: initial;
+	user-select: initial;
+}
+
+.oracle:deep(.ms) {
+	width: 0.8em;
+	margin: 0 0.07em;
+	vertical-align: middle;
+}
+
+.normal-oracle {
 	position: absolute;
-	top: 51mm;
+	top: 51.8mm;
 	left: 0mm;
 	right: 0;
 
@@ -943,14 +1033,6 @@ export default {
 	width: 53mm;
 	height: 25mm;
 	margin: auto;
-	margin-top: 0.8mm;
-
-	font-family: MPlantin;
-	font-size: 8pt;
-	line-height: 1em;
-
-	pointer-events: initial;
-	user-select: initial;
 }
 
 /* Workaround the fact that adventure frames have a sligthly larger ratio */
@@ -964,8 +1046,17 @@ export default {
 }
 
 .adventure-main-oracle {
+	position: absolute;
+	top: 51mm;
 	left: 29mm;
 	width: 25.5mm;
+	height: 25mm;
+
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.8mm;
 }
 
 .adventure-part {
@@ -1024,13 +1115,6 @@ export default {
 	width: 27mm;
 	background-size: 100%;
 	background-image: v-bind(saga_text_box);
-
-	font-family: MPlantin;
-	font-size: 8pt;
-	line-height: 1em;
-
-	pointer-events: initial;
-	user-select: initial;
 }
 
 .planeswalker-oracle-bg {
@@ -1061,16 +1145,9 @@ export default {
 	width: 49mm;
 	height: 24mm;
 
-	font-family: MPlantin;
-	font-size: 8pt;
-	line-height: 1em;
-
 	padding: 0.5mm;
 	padding-left: 5.5mm;
 	padding-bottom: 1mm;
-
-	pointer-events: initial;
-	user-select: initial;
 }
 
 .saga-reminder {
@@ -1111,13 +1188,6 @@ export default {
 
 .saga-step-number img {
 	width: 5mm;
-}
-
-.oracle:deep(.ms),
-.saga-oracle:deep(.ms) {
-	width: 0.8em;
-	margin: 0 0.07em;
-	vertical-align: middle;
 }
 
 .planeswalker-ability {
@@ -1295,9 +1365,81 @@ export default {
 	position: absolute;
 	bottom: -12mm;
 	left: 50%;
-	transform: translateX(-50%);
 	font-size: 10mm;
 	user-select: none;
 	cursor: pointer;
+	transform: translateX(-50%) rotateX(60deg);
+}
+
+.mdfc:not(.planeswalker) .inner-frame {
+	width: 57.9mm;
+	margin: 0 0 0 -0.5mm;
+}
+
+.mdfc:not(.planeswalker) .legendary-crown {
+	left: -0.5mm;
+}
+
+.mdfc:not(.planeswalker) .top-line,
+.mdfc:not(.planeswalker) .mid-line {
+	margin-left: 1.8mm;
+}
+
+.mdfc:not(.planeswalker) .top-line .name {
+	padding-left: 5mm;
+}
+
+.mdfc.legendary:not(.planeswalker) .inner-frame {
+	/* Workdaround to hide frame behind the legendary crown */
+	border-top-left-radius: 10mm;
+}
+
+.mdfc:not(.planeswalker) .normal-oracle {
+	left: 1mm;
+	height: 22mm;
+}
+
+.mdfc-icon {
+	position: absolute;
+	top: 3.9mm;
+	left: 3mm;
+	width: 6mm;
+	aspect-ratio: calc(294 / 238);
+	background-image: v-bind(mdfc_icon);
+	background-size: 100%;
+}
+
+.mdfc-hint {
+	position: absolute;
+	bottom: 6.1mm;
+	left: 2mm;
+	width: 28mm;
+	height: 3.8mm;
+
+	display: flex;
+	justify-content: space-between;
+	align-content: stretch;
+	align-items: center;
+
+	font-size: 5pt;
+	color: v-bind(mdfc_hint_color);
+	background-image: v-bind(mdfc_hint);
+	background-size: 100%;
+
+	padding: 0 2.6mm;
+
+	box-sizing: border-box;
+}
+
+.mdfc-hint span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex-shrink: 1;
+	max-width: 20mm;
+}
+
+.mdfc-hint .mana-cost {
+	font-size: 4pt;
 }
 </style>
