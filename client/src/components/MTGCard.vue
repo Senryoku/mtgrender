@@ -1151,7 +1151,7 @@ export default {
 	flex-direction: column;
 	gap: 0.8mm;
 
-	width: 49.8mm;
+	width: 49.5mm;
 	height: 24mm;
 
 	padding: 0.5mm;
@@ -1412,7 +1412,7 @@ export default {
 
 .mdfc .planeswalker-oracle {
 	left: 1mm;
-	height: 21mm;
+	height: 22mm;
 }
 
 .mdfc-icon {
@@ -1423,6 +1423,10 @@ export default {
 	aspect-ratio: calc(294 / 238);
 	background-image: v-bind(mdfc_icon);
 	background-size: 100%;
+}
+
+.planeswalker .mdfc-icon {
+	top: 3mm;
 }
 
 .mdfc-hint {
@@ -1445,6 +1449,10 @@ export default {
 	padding: 0 2.6mm;
 
 	box-sizing: border-box;
+}
+
+.planeswalker .mdfc-hint {
+	bottom: 7mm;
 }
 
 .mdfc-hint span {
