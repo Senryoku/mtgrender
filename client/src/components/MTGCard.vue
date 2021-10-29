@@ -5,6 +5,7 @@
 			mdfc: is_mdfc,
 			legendary: is_legendary,
 			planeswalker: is_planeswalker,
+			'planeswalker-large': is_large_planeswalker,
 			saga: is_saga,
 			adventure: is_adventure,
 			'extended-art': card.art_variant === 'extended',
@@ -512,6 +513,9 @@ export default {
 		is_planeswalker() {
 			return this.card_face?.type_line?.toLowerCase().includes("planeswalker");
 		},
+		is_large_planeswalker() {
+			return this.is_planeswalker && this.planeswalker_abilities.length > 3;
+		},
 		is_saga() {
 			return (
 				this.card_face?.layout === "saga" ||
@@ -635,7 +639,9 @@ export default {
 		},
 		background() {
 			const folder = this.is_planeswalker
-				? "planeswalker_bg"
+				? this.is_large_planeswalker
+					? "planeswalker_large_bg"
+					: "planeswalker_bg"
 				: this.is_saga
 				? "saga_bg"
 				: "bg";
@@ -654,7 +660,11 @@ export default {
 				: this.is_saga
 				? "saga_frames"
 				: this.is_planeswalker
-				? this.extended_art
+				? this.is_large_planeswalker
+					? this.extended_art
+						? "extended_planeswalker_large_frames"
+						: "planeswalker_large_frames"
+					: this.extended_art
 					? "extended_planeswalker_frames"
 					: "planeswalker_frames"
 				: this.is_mdfc
@@ -916,6 +926,10 @@ export default {
 	margin-top: 1.3mm;
 }
 
+.planeswalker-large .mid-line {
+	margin-top: -4.6mm;
+}
+
 .name {
 	font-size: 9.454pt;
 	margin-top: -0.4mm;
@@ -1167,6 +1181,11 @@ export default {
 		inset 0.2mm 0.2mm 0.2mm #00000080;
 }
 
+.planeswalker-large .planeswalker-oracle-bg {
+	top: 47mm;
+	height: 31.45mm;
+}
+
 .planeswalker-oracle {
 	position: absolute;
 	left: 0;
@@ -1184,6 +1203,11 @@ export default {
 	padding: 0.5mm;
 	padding-left: 5.5mm;
 	padding-bottom: 1mm;
+}
+
+.planeswalker-large .planeswalker-oracle {
+	top: 47.5mm;
+	height: 29mm;
 }
 
 /************** Saga *************/
@@ -1280,6 +1304,7 @@ export default {
 
 .planeswalker-ability {
 	position: relative;
+	flex-shrink: 0;
 }
 
 .planeswalker-ability-with-cost {
@@ -1500,6 +1525,11 @@ export default {
 .mdfc .planeswalker-oracle {
 	left: 1mm;
 	height: 22mm;
+}
+
+.mdfc.planeswalker-large .planeswalker-oracle {
+	left: 1mm;
+	height: 28mm;
 }
 
 .mdfc-icon {

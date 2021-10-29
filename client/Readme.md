@@ -3,12 +3,12 @@
 ## TODO list
 
 -   Priorities:
--   -   Extended Art support
+-   -   ~~Extended Art support~~ (MDFC not supported yet)
 -   -   Rethink card hierarchy: inner-frame filter shouldn't apply to its current current child, probably flatten everything.
 -   ~~Support for Planeswalkers~~
 -   -   ~~Redo borders to cover the curse of the illustration frame~~
 -   -   Alternating background tint on abilities
--   -   Add support for the "\_large" version for the frame
+-   -   ~~Add support for the "\_large" version for the frame~~
 -   -   Way harder: Allow for dynamic sizing of frame and background! (dynamic svg for the frame?)
 -   Support for MDFCs
 -   -   ~~Basic support for card faces display~~
