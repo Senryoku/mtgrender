@@ -151,6 +151,14 @@
 							You can can drag the illustration and use your mouse wheel to
 							adjust its position and scale.
 						</div>
+						<div>
+							<label for="card-extended-art">Extended Art</label>
+							<input
+								id="card-extended-art"
+								v-model="card.extended_art"
+								type="checkbox"
+							/>
+						</div>
 						<div v-if="card.image_uris">
 							<label for="card-illustration-scale">Scale</label>
 							<input
@@ -458,6 +466,7 @@ export default {
 		outlineElement(event, target) {
 			// FIXME: Disabled for now because I can't make sure these outlines don't show up in renders
 			return false;
+			/*
 			target = document.querySelector(".mtg-card ." + target);
 			if (target) {
 				const css_class =
@@ -471,6 +480,7 @@ export default {
 					{ once: true }
 				);
 			}
+			*/
 		},
 		async upscale() {
 			this.upscaling = true;

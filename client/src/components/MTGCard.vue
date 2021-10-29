@@ -7,6 +7,7 @@
 			planeswalker: is_planeswalker,
 			saga: is_saga,
 			adventure: is_adventure,
+			'extended-art': card.extended_art,
 		}"
 	>
 		<div class="inner-background">
@@ -949,6 +950,27 @@ export default {
 		v-bind(illustration_position.y);
 	background-repeat: no-repeat;
 	cursor: grab;
+}
+
+.extended-art .illustration {
+	z-index: 1;
+	left: 0;
+	top: 8mm;
+	width: 100%;
+	height: 45mm;
+	background-color: black;
+	mask-image: linear-gradient(
+		rgba(0, 0, 0, 0) 0,
+		rgba(0, 0, 0, 1) 4%,
+		rgba(0, 0, 0, 1) 92%,
+		rgba(0, 0, 0, 0)
+	);
+}
+
+.extended-art .top-line,
+.extended-art .mid-line {
+	/* FIXME: Not in the correct stacking context rn */
+	z-index: 2;
 }
 
 .planeswalker .illustration {
