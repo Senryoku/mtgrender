@@ -8,13 +8,15 @@
 -   ~~Support for Planeswalkers~~
 -   -   ~~Redo borders to cover the curse of the illustration frame~~
 -   -   Alternating background tint on abilities
--   -   Allow for dynamic sizing of frame and background! (dynamic svg for the frame?)
+-   -   Add support for the "\_large" version for the frame
+-   -   Way harder: Allow for dynamic sizing of frame and background! (dynamic svg for the frame?)
 -   Support for MDFCs
 -   -   ~~Basic support for card faces display~~
 -   -   ~~Rendering should aware that there is two faces to render~~
 -   -   Editing UI should be aware too
--   -   Add the MDFC icon (top left)
--   -   Add the MDFC hint regarding the over side (type and mana cost)
+-   -   ~~Add the MDFC icon (top left)~~
+-   -   ~~Add the MDFC hint regarding the over side (type and mana cost)~~
+-   -   MDFC extended art frame
 -   Support for Planeswalker MDFC
 -   -   Hybrid frame
 -   ~~Support Adventure frame~~

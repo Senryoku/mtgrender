@@ -651,9 +651,13 @@ export default {
 				: this.is_saga
 				? "saga_frames"
 				: this.is_planeswalker
-				? "planeswalker_frames"
+				? this.card.extended_art || this.card.full_art
+					? "extended_planeswalker_frames"
+					: "planeswalker_frames"
 				: this.is_mdfc
 				? "mdfc_frames"
+				: this.card.extended_art || this.card.full_art
+				? "extended_frames"
 				: "frames";
 			return `url(${
 				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
@@ -667,6 +671,8 @@ export default {
 				? this.currentFace === 0
 					? "mdfc_boxes"
 					: "mdfc_back_boxes"
+				: this.card.extended_art || this.card.full_art
+				? "extended_boxes"
 				: "boxes";
 			return `url(${
 				new URL(
@@ -676,11 +682,13 @@ export default {
 			})`;
 		},
 		legendary_crown() {
+			const folder =
+				this.card.extended_art || this.card.full_art
+					? "extended_legendary_crowns"
+					: "legendary_crowns";
 			return `url(${
-				new URL(
-					`../assets/img/legendary_crowns/${this.colors}.png`,
-					import.meta.url
-				).href
+				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
+					.href
 			})`;
 		},
 		pt_box() {
@@ -731,6 +739,12 @@ export default {
 		},
 		pt_box_color() {
 			return this.is_vehicle ? "white" : "black";
+		},
+		mid_line_color() {
+			return (this.card.extended_art || this.card.full_art) &&
+				!this.is_planeswalker
+				? "white"
+				: "black";
 		},
 		illustration() {
 			return `url(${
@@ -874,6 +888,11 @@ export default {
 	z-index: -1;
 }
 
+.extended-art .legendary-crown,
+.full-art .legendary-crown {
+	top: -2.3mm;
+}
+
 .top-line,
 .mid-line {
 	display: flex;
@@ -888,6 +907,10 @@ export default {
 
 	pointer-events: initial;
 	user-select: initial;
+}
+
+.mid-line {
+	color: v-bind(mid_line_color);
 }
 
 .planeswalker .mid-line {
@@ -930,45 +953,6 @@ export default {
 	cursor: grab;
 }
 
-.extended-art .illustration {
-	z-index: 1;
-	left: 0;
-	top: 7mm;
-	width: 100%;
-	height: 48mm;
-	background-color: black;
-	mask-image: linear-gradient(
-		rgba(0, 0, 0, 0) 0,
-		rgba(0, 0, 0, 1) 6%,
-		rgba(0, 0, 0, 1) 90%,
-		rgba(0, 0, 0, 0)
-	);
-}
-
-.extended-art .inner-frame,
-.full-art .inner-frame {
-	z-index: 2;
-	/* FIXME: This hides more than it should, especially visible with the legendary crown */
-	mask: linear-gradient(
-		rgba(0, 0, 0, 1) -20%,
-		rgba(0, 0, 0, 1) 5.5mm,
-		rgba(0, 0, 0, 0) 6mm,
-		rgba(0, 0, 0, 0) 45.2mm,
-		rgba(0, 0, 0, 1) 46mm
-	);
-}
-
-.full-art .illustration {
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	background-color: initial;
-	z-index: 1;
-}
-
 .planeswalker .illustration {
 	position: absolute;
 	left: 4mm;
@@ -981,9 +965,53 @@ export default {
 .planeswalker .illustration.behind-textbox {
 	background-color: white;
 	height: 72mm;
+}
+
+.planeswalker.extended-art .illustration.behind-textbox {
+	mask-image: linear-gradient(
+		rgba(0, 0, 0, 0) 0,
+		rgba(0, 0, 0, 1) 3%,
+		rgba(0, 0, 0, 1) 97%,
+		rgba(0, 0, 0, 0) 100%
+	);
+}
+
+.planeswalker:not(.full-art):not(.extended-art) .illustration.behind-textbox {
 	border-radius: 2mm / calc(39mm / 2);
 	border-bottom-left-radius: 2mm/2mm;
 	border-bottom-right-radius: 2mm;
+}
+
+.extended-art .illustration {
+	z-index: 1;
+	left: 0;
+	top: 7mm;
+	width: 100%;
+	height: 48mm;
+	background-color: black;
+	mask-image: linear-gradient(
+		rgba(0, 0, 0, 0) 0,
+		rgba(0, 0, 0, 1) 6%,
+		rgba(0, 0, 0, 1) 94%,
+		rgba(0, 0, 0, 0) 100%
+	);
+}
+
+.extended-art .inner-frame,
+.full-art .inner-frame {
+	z-index: 2;
+}
+
+.planeswalker.full-art .illustration,
+.full-art .illustration {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background-color: initial;
+	z-index: 1;
 }
 
 .mid-line {
@@ -1356,6 +1384,8 @@ export default {
 
 	pointer-events: initial;
 	user-select: initial;
+
+	z-index: 3;
 }
 
 .loyalty {
@@ -1375,6 +1405,7 @@ export default {
 
 	pointer-events: initial;
 	user-select: initial;
+	z-index: 3;
 }
 
 .footer {
@@ -1392,6 +1423,8 @@ export default {
 	font-family: Relay Medium;
 	font-size: 1.5mm;
 	font-size: 4.5pt;
+
+	z-index: 3;
 }
 
 .footer-left > div,
@@ -1462,6 +1495,7 @@ export default {
 
 .mdfc .normal-oracle {
 	height: 22mm;
+	left: 1mm;
 }
 
 .mdfc .planeswalker-oracle {
@@ -1477,6 +1511,7 @@ export default {
 	aspect-ratio: calc(294 / 238);
 	background-image: v-bind(mdfc_icon);
 	background-size: 100%;
+	z-index: 3;
 }
 
 .planeswalker .mdfc-icon {
@@ -1503,6 +1538,7 @@ export default {
 	padding: 0 2.6mm;
 
 	box-sizing: border-box;
+	z-index: 3;
 }
 
 .planeswalker .mdfc-hint {
