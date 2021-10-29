@@ -8,5 +8,5 @@ export default defineConfig({
 		target: ["es2020"],
 	},
 	assetsInclude: ["**/*.png"],
-	plugins: [vue(), compress({ brotli: false })],
+	plugins: [vue()/*, compress({ brotli: false })*/],
 });

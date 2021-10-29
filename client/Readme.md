@@ -2,7 +2,9 @@
 
 ## TODO list
 
--   Rethink card hierarchy: inner-frame filter shouldn't apply to its current current child, probably flatten everything.
+-   Priorities:
+-   -   Extended Art support
+-   -   Rethink card hierarchy: inner-frame filter shouldn't apply to its current current child, probably flatten everything.
 -   ~~Support for Planeswalkers~~
 -   -   ~~Redo borders to cover the curse of the illustration frame~~
 -   -   Alternating background tint on abilities
@@ -22,3 +24,6 @@
 -   -   Switch to svg based icon + css rarity tint rather than keyrune
 -   -   Allow for custom placement of the icon
 -   Illustration upscaling
+-   Optimize the render PNG? (20MB+ files is meh.)
+-   Webworker for client-zip
+-   Display a warning for overriden card properties in UI
