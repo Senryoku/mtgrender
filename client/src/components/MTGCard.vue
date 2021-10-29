@@ -7,8 +7,8 @@
 			planeswalker: is_planeswalker,
 			saga: is_saga,
 			adventure: is_adventure,
-			'extended-art': card.extended_art,
-			'full-art': card.full_art,
+			'extended-art': card.art_variant === 'extended',
+			'full-art': card.art_variant === 'full',
 		}"
 	>
 		<div class="inner-background"></div>
@@ -560,6 +560,9 @@ export default {
 					.trim()
 			);
 		},
+		extended_art() {
+			return ["extended", "full"].includes(this.card.art_variant);
+		},
 		oracle_lines() {
 			if (!this.card_face?.oracle_text) return [];
 			return this.card_face.oracle_text.split("\n").map(this.parse_oracle);
@@ -651,12 +654,12 @@ export default {
 				: this.is_saga
 				? "saga_frames"
 				: this.is_planeswalker
-				? this.card.extended_art || this.card.full_art
+				? this.extended_art
 					? "extended_planeswalker_frames"
 					: "planeswalker_frames"
 				: this.is_mdfc
 				? "mdfc_frames"
-				: this.card.extended_art || this.card.full_art
+				: this.extended_art
 				? "extended_frames"
 				: "frames";
 			return `url(${
@@ -671,7 +674,7 @@ export default {
 				? this.currentFace === 0
 					? "mdfc_boxes"
 					: "mdfc_back_boxes"
-				: this.card.extended_art || this.card.full_art
+				: this.extended_art
 				? "extended_boxes"
 				: "boxes";
 			return `url(${
@@ -682,10 +685,9 @@ export default {
 			})`;
 		},
 		legendary_crown() {
-			const folder =
-				this.card.extended_art || this.card.full_art
-					? "extended_legendary_crowns"
-					: "legendary_crowns";
+			const folder = this.extended_art
+				? "extended_legendary_crowns"
+				: "legendary_crowns";
 			return `url(${
 				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
 					.href
@@ -741,10 +743,7 @@ export default {
 			return this.is_vehicle ? "white" : "black";
 		},
 		mid_line_color() {
-			return (this.card.extended_art || this.card.full_art) &&
-				!this.is_planeswalker
-				? "white"
-				: "black";
+			return this.extended_art && !this.is_planeswalker ? "white" : "black";
 		},
 		illustration() {
 			return `url(${

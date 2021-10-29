@@ -152,20 +152,13 @@
 							adjust its position and scale.
 						</div>
 						<div>
-							<label for="card-extended-art">Extended Art</label>
-							<input
-								id="card-extended-art"
-								v-model="card.extended_art"
-								type="checkbox"
-							/>
-						</div>
-						<div>
-							<label for="card-full-art">Full Art</label>
-							<input
-								id="card-full-art"
-								v-model="card.full_art"
-								type="checkbox"
-							/>
+							<label for="card-art-variant">Art Variant</label>
+							<select id="card-art-variant" v-model="card.art_variant">
+								<option :value="undefined"></option>
+								<option value="normal">Normal</option>
+								<option value="extended">Extended</option>
+								<option value="full">Full</option>
+							</select>
 						</div>
 						<div v-if="card.image_uris">
 							<label for="card-illustration-scale">Scale</label>
