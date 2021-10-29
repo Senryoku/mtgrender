@@ -633,7 +633,11 @@ export default {
 				: this.colors;
 		},
 		background() {
-			const folder = this.is_saga ? "saga_bg" : "bg";
+			const folder = this.is_planeswalker
+				? "planeswalker_bg"
+				: this.is_saga
+				? "saga_bg"
+				: "bg";
 			return `url(${
 				new URL(
 					`../assets/img/${folder}/${
@@ -816,18 +820,13 @@ export default {
 	user-select: none;
 }
 
-.planeswalker .inner-background {
-	/* FIXME: This is workaround, the background are not fit for the planeswalker frame,
-	          it hides the obvious problems, but we should use custom backgrounds instead.  */
-	background-size: 100% 102%;
-	border-bottom-left-radius: 7mm 7mm;
-	border-bottom-right-radius: 11mm 7mm;
+.legendary .inner-background {
+	padding-top: 0;
 }
 
-.legendary .inner-background {
+.legendary:not(.planeswalker) .inner-background {
 	background-position: 0 -1.1mm;
 	margin-top: 1.1mm;
-	padding-top: 0;
 }
 
 .inner-frame {
@@ -847,6 +846,11 @@ export default {
 
 .legendary .inner-frame {
 	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
+}
+
+.planeswalker .inner-frame {
+	width: calc(100% - 2px);
+	height: 80mm;
 }
 
 .saga .inner-frame {
@@ -944,16 +948,16 @@ export default {
 
 .planeswalker .illustration {
 	position: absolute;
-	left: 5mm;
-	top: 10mm;
-	width: 53.2mm;
+	left: 4mm;
+	top: 8.2mm;
+	width: 55mm;
 	height: 39mm;
-	border-radius: 2mm/50%;
+	/*border-radius: 2mm/50%;*/
 }
 
 .planeswalker .illustration.behind-textbox {
 	background-color: white;
-	height: 70.5mm;
+	height: 72mm;
 	border-radius: 2mm / calc(39mm / 2);
 	border-bottom-left-radius: 2mm/2mm;
 	border-bottom-right-radius: 2mm;
@@ -974,10 +978,15 @@ export default {
 	background-position: 0 bottom;
 }
 
+.planeswalker .top-line,
+.planeswalker .mid-line {
+	width: 53.75mm;
+}
+
 .planeswalker .mid-line {
 	position: absolute;
-	top: 45.1mm;
-	left: 0mm;
+	top: 45.8mm;
+	left: 0;
 	right: 0;
 }
 
@@ -1120,8 +1129,8 @@ export default {
 .planeswalker-oracle-bg {
 	position: absolute;
 	left: 4.4mm;
-	top: 52mm;
-	width: 50.7mm;
+	top: 53mm;
+	width: 51.2mm;
 	height: 25.45mm;
 	background-color: #ffffff80;
 	border-radius: 1.1mm;
@@ -1134,7 +1143,7 @@ export default {
 .planeswalker-oracle {
 	position: absolute;
 	left: 0;
-	top: 52mm;
+	top: 53mm;
 
 	display: flex;
 	align-items: stretch;
@@ -1142,7 +1151,7 @@ export default {
 	flex-direction: column;
 	gap: 0.8mm;
 
-	width: 49mm;
+	width: 49.8mm;
 	height: 24mm;
 
 	padding: 0.5mm;
@@ -1388,7 +1397,7 @@ export default {
 	margin-left: 1.8mm;
 }
 
-.mdfc:not(.planeswalker) .top-line .name {
+.mdfc .top-line .name {
 	padding-left: 5mm;
 }
 
@@ -1397,9 +1406,13 @@ export default {
 	border-top-left-radius: 10mm;
 }
 
-.mdfc:not(.planeswalker) .normal-oracle {
-	left: 1mm;
+.mdfc .normal-oracle {
 	height: 22mm;
+}
+
+.mdfc .planeswalker-oracle {
+	left: 1mm;
+	height: 21mm;
 }
 
 .mdfc-icon {
