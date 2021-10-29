@@ -122,7 +122,6 @@
 			<template v-else-if="is_saga">
 				<div
 					class="oracle saga-oracle"
-					ref="oracle_el"
 					@dblclick="edit_property('oracle_text')"
 					@mousedown.prevent=""
 				>
@@ -132,7 +131,7 @@
 						v-html="saga_reminder"
 					></div>
 					<div class="saga-frame"></div>
-					<div class="saga-steps">
+					<div class="saga-steps" ref="oracle_el">
 						<div class="saga-step" v-for="(step, idx) in saga_steps" :key="idx">
 							<div class="saga-step-number">
 								<img v-for="step in step.steps" :key="step" :src="step" />
@@ -291,6 +290,13 @@ function check_overflow(el) {
 
 	const isOverflowing =
 		el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
+	console.log(
+		el,
+		el.clientWidth,
+		el.scrollWidth,
+		el.clientHeight,
+		el.scrollHeight
+	);
 	el.style.overflow = curOverflow;
 
 	return isOverflowing;
@@ -437,12 +443,15 @@ export default {
 			// Hide overflowing elements
 			const numbers = document.querySelectorAll(".saga-step-number");
 			for (let number of numbers) number.style.display = "none";
+			const saga_frame = document.querySelector(".saga-frame");
+			if (saga_frame) saga_frame.style.display = "none";
 			// Make sure oracle text fits in its box
 			nextTick(() => {
 				this.fit_font_size(this.$refs.oracle_el);
 				if (this.$refs.adventure_oracle_el)
 					this.fit_font_size(this.$refs.adventure_oracle_el);
 				for (let number of numbers) number.style.display = "";
+				if (saga_frame) saga_frame.style.display = "initial";
 			});
 		},
 		flip() {
@@ -1266,7 +1275,7 @@ export default {
 	height: 12mm;
 	font-size: 7.3pt;
 	line-height: 7.3pt;
-	padding: 2mm 1mm;
+	padding: 2mm 0.7mm 2mm 0.7mm;
 }
 
 .saga-steps {
