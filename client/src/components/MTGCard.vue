@@ -290,13 +290,6 @@ function check_overflow(el) {
 
 	const isOverflowing =
 		el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
-	console.log(
-		el,
-		el.clientWidth,
-		el.scrollWidth,
-		el.clientHeight,
-		el.scrollHeight
-	);
 	el.style.overflow = curOverflow;
 
 	return isOverflowing;
@@ -440,18 +433,11 @@ export default {
 		},
 		fit_oracle_text() {
 			if (!this.$refs.oracle_el) return;
-			// Hide overflowing elements
-			const numbers = document.querySelectorAll(".saga-step-number");
-			for (let number of numbers) number.style.display = "none";
-			const saga_frame = document.querySelector(".saga-frame");
-			if (saga_frame) saga_frame.style.display = "none";
 			// Make sure oracle text fits in its box
 			nextTick(() => {
 				this.fit_font_size(this.$refs.oracle_el);
 				if (this.$refs.adventure_oracle_el)
 					this.fit_font_size(this.$refs.adventure_oracle_el);
-				for (let number of numbers) number.style.display = "";
-				if (saga_frame) saga_frame.style.display = "initial";
 			});
 		},
 		flip() {
