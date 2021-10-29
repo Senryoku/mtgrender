@@ -159,6 +159,14 @@
 								type="checkbox"
 							/>
 						</div>
+						<div>
+							<label for="card-full-art">Full Art</label>
+							<input
+								id="card-full-art"
+								v-model="card.full_art"
+								type="checkbox"
+							/>
+						</div>
 						<div v-if="card.image_uris">
 							<label for="card-illustration-scale">Scale</label>
 							<input
