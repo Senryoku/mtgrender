@@ -666,7 +666,9 @@ export default {
 			const folder = this.is_planeswalker
 				? "planeswalker_boxes"
 				: this.is_mdfc
-				? "mdfc_boxes"
+				? this.currentFace === 0
+					? "mdfc_boxes"
+					: "mdfc_back_boxes"
 				: "boxes";
 			return `url(${
 				new URL(
@@ -722,6 +724,9 @@ export default {
 					import.meta.url
 				).href
 			})`;
+		},
+		mdfc_text_color() {
+			return this.currentFace === 0 ? "black" : "white";
 		},
 		mdfc_hint_color() {
 			return this.currentFace === 0 ? "white" : "black";
@@ -1394,7 +1399,9 @@ export default {
 
 .mdfc:not(.planeswalker) .top-line,
 .mdfc:not(.planeswalker) .mid-line {
+	/* FIXME: This should apply to planeswalker, but MDFC-PL frames and boxes aren't done yet */
 	margin-left: 1.8mm;
+	color: v-bind(mdfc_text_color);
 }
 
 .mdfc .top-line .name {
