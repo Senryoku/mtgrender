@@ -3,7 +3,7 @@
 ## TODO list
 
 -   Priorities:
--   -   ~~Extended Art support~~ (MDFCs and Adventures not supported yet)
+-   -   ~~Extended Art support~~
 -   -   Rethink card hierarchy: inner-frame filter shouldn't apply to its current current child, probably flatten everything.
 -   ~~Support for Planeswalkers~~
 -   -   ~~Redo borders to cover the curse of the illustration frame~~

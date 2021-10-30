@@ -650,23 +650,18 @@ export default {
 			})`;
 		},
 		frame() {
-			const folder = this.is_adventure
+			let folder = this.is_adventure
 				? "adventure_frames"
 				: this.is_saga
 				? "saga_frames"
 				: this.is_planeswalker
 				? this.is_large_planeswalker
-					? this.extended_art
-						? "extended_planeswalker_large_frames"
-						: "planeswalker_large_frames"
-					: this.extended_art
-					? "extended_planeswalker_frames"
+					? "planeswalker_large_frames"
 					: "planeswalker_frames"
 				: this.is_mdfc
 				? "mdfc_frames"
-				: this.extended_art
-				? "extended_frames"
 				: "frames";
+			if (this.extended_art && !this.is_saga) folder = "extended_" + folder;
 			return `url(${
 				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
 					.href
