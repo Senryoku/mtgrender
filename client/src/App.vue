@@ -241,9 +241,14 @@
 				</div>
 				<div v-show="currentTab === 2" class="inner-tab">
 					{{ illustrationDimensions[0] }}x{{ illustrationDimensions[1] }}
-					<button @click="upscale" :disabled="upscaling">
-						Upscale Illustration
-					</button>
+					<div>
+						<label for="illustration-upscaling"> Upscale Illustration </label>
+						<input
+							type="checkbox"
+							id="illustration-upscaling"
+							v-model="renderOptions.upscale"
+						/>
+					</div>
 					<div>
 						<label for="render-margin">Margin (mm)</label>
 						<input
@@ -299,7 +304,9 @@ import "keyrune";
 import MTGCard from "./components/MTGCard.vue";
 import CardStore from "./components/CardStore.vue";
 
-const upscaler = new Upscaler({});
+const upscaler = new Upscaler({
+	model: "div2k/rdn-C3-D10-G64-G064-x2",
+});
 
 function download(filename, data) {
 	const link = document.createElement("a");
@@ -318,6 +325,10 @@ export default {
 	data() {
 		const jsonView = ref(null);
 		const store = ref(null);
+		const savedRenderOptions = localStorage.getItem("renderOptions");
+		const renderOptions = savedRenderOptions
+			? JSON.parse(savedRenderOptions)
+			: { margin: 3, upscale: false };
 		const defaultCardProperties = JSON.parse(
 			localStorage.getItem("defaultCardProperties") ?? "{}"
 		);
@@ -331,11 +342,10 @@ export default {
 			displayScale: 2.0,
 			searchCardName: "",
 			autocompleteStatus: null,
-			renderOptions: {
-				margin: 3,
-			},
+			renderOptions,
 			rendering: false,
 			upscaling: false,
+			upscaleCache: {},
 			currentTab: 0,
 			jsonView,
 			store,
@@ -489,34 +499,58 @@ export default {
 			}
 			*/
 		},
-		async upscale() {
+		async upscale(imageURL, progress_callback) {
 			this.upscaling = true;
-			const img = new Image();
-			img.src = this.card.image_uris.art_crop;
-			upscaler
-				.upscale(img, {
-					output: "tensor",
+			const blob = await fetch(imageURL).then((response) => response.blob());
+			const imageObjectURL = URL.createObjectURL(blob);
+			const default_progress = (arg) => {
+				console.log("Upscaling... ", arg);
+			};
+			return upscaler
+				.upscale(imageObjectURL, {
+					patchSize: 64,
+					padding: 6,
+					progress: progress_callback ?? default_progress,
 				})
 				.then((img) => {
-					console.log(img);
-					//this.card.image_uris.art_crop = img.src;
 					this.upscaling = false;
+					return img;
 				})
 				.catch((error) => {
 					alert(error);
 					this.upscaling = false;
 				});
 		},
-		renderCurrent(options) {
+		async renderCurrent(options) {
 			const card_display_el = document.querySelector(".card-display");
 			const card_el = document.querySelector(".mtg-card");
 			// FIXME: Doesn't work as expected
 			card_el.classList.add("rendering");
-			const cleanup = () => {
+			const cleanup_func = [];
+			cleanup_func.push(() => {
 				card_el.classList.remove("rendering");
+			});
+			const cleanup = () => {
+				for (let c of cleanup_func) c();
 			};
 			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
 			const scale = 3288 / card_el.clientWidth / this.displayScale;
+
+			if (this.renderOptions.upscale) {
+				const original = this.card.image_uris.art_crop;
+				// TODO: Correctly handle multiple faces
+				if (!(original in this.upscaleCache)) {
+					this.upscaleCache[original] = await this.upscale(original);
+				}
+				document.querySelector(".illustration").style.backgroundImage =
+					"url(" + this.upscaleCache[original] + ")";
+				cleanup_func.push(() => {
+					document.querySelector(".illustration").style.backgroundImage =
+						"initial";
+				});
+				await new this.$nextTick();
+			}
+
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
 			const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
@@ -545,8 +579,13 @@ export default {
 		},
 		async render() {
 			this.rendering = true;
-			const dataUrl = await this.renderCurrent();
-			download(`${this.card.name}.png`, dataUrl);
+			// TODO: Handle multiple faces
+			try {
+				const dataUrl = await this.renderCurrent();
+				download(`${this.card.name}.png`, dataUrl);
+			} catch (err) {
+				alert(err);
+			}
 			this.rendering = false;
 		},
 		async renderAll(cards) {
@@ -604,6 +643,15 @@ export default {
 	watch: {
 		card() {
 			this.$refs.jsonView.value = JSON.stringify(this.card);
+		},
+		renderOptions: {
+			handler() {
+				localStorage.setItem(
+					"renderOptions",
+					JSON.stringify(this.renderOptions)
+				);
+			},
+			deep: true,
 		},
 		defaultCardProperties() {
 			this.$refs.defaultCardPropertiesJsonView.value = JSON.stringify(
