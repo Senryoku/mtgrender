@@ -295,7 +295,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { createApp, ref } from "vue";
 import domtoimage from "dom-to-image";
 import Upscaler from "upscaler";
 import { downloadZip } from "client-zip";
@@ -303,6 +303,8 @@ import "keyrune";
 
 import MTGCard from "./components/MTGCard.vue";
 import CardStore from "./components/CardStore.vue";
+import Modal from "./components/Modal.vue";
+import Progress from "./components/Progress.vue";
 
 const upscaler = new Upscaler({
 	model: "div2k/rdn-C3-D10-G64-G064-x2",
@@ -314,6 +316,12 @@ function download(filename, data) {
 	link.href = data;
 	link.click();
 	link.remove();
+}
+
+function openModal(props = {}) {
+	const div = document.createElement("div");
+	document.body.appendChild(div);
+	return createApp(Modal, props).mount(div);
 }
 
 export default {
@@ -517,7 +525,8 @@ export default {
 					return img;
 				})
 				.catch((error) => {
-					alert(error);
+					console.error(error);
+					progress_callback?.(error);
 					this.upscaling = false;
 				});
 		},
@@ -537,20 +546,33 @@ export default {
 			const scale = 3288 / card_el.clientWidth / this.displayScale;
 
 			if (this.renderOptions.upscale) {
+				options?.progress?.push_step("Upscaling Illustration");
 				const original = this.card.image_uris.art_crop;
 				// TODO: Correctly handle multiple faces
 				if (!(original in this.upscaleCache)) {
-					this.upscaleCache[original] = await this.upscale(original);
-				}
-				document.querySelector(".illustration").style.backgroundImage =
+					this.upscaleCache[original] = await this.upscale(
+						original,
+						(percent) => {
+							if (isNaN(percent)) options?.progress?.fail_step(percent);
+							else
+								options?.progress?.update_step(
+									`${(100 * percent).toFixed(2)}%`
+								);
+						}
+					);
+				} else options?.progress?.update_step("Cached!");
+				const illustration_el = card_el.querySelector(".illustration");
+				const backgroundImageBackup = illustration_el.style.backgroundImage;
+				illustration_el.style.backgroundImage =
 					"url(" + this.upscaleCache[original] + ")";
 				cleanup_func.push(() => {
-					document.querySelector(".illustration").style.backgroundImage =
-						"initial";
+					illustration_el.style.backgroundImage = backgroundImageBackup;
 				});
 				await new this.$nextTick();
+				options?.progress?.end_step();
 			}
 
+			options?.progress?.push_step("Rendering");
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
 			const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
@@ -568,40 +590,56 @@ export default {
 					},
 				})
 					.then((dataUrl) => {
+						options?.progress?.end_task("Done!");
 						cleanup();
 						return dataUrl;
 					})
 					.catch((error) => {
 						console.error("Error generating render:", error);
+						options?.progress?.fail_task();
 						cleanup();
 					});
 			});
 		},
 		async render() {
 			this.rendering = true;
+			const modal = openModal({ disposable: false });
+			const progress = createApp(Progress).mount(modal.$refs.defaultSlot);
+			progress.push_task({ name: `Rendering '${this.card.name}'` });
 			// TODO: Handle multiple faces
 			try {
-				const dataUrl = await this.renderCurrent();
+				const dataUrl = await this.renderCurrent({ progress });
 				download(`${this.card.name}.png`, dataUrl);
+				modal.close();
 			} catch (err) {
-				alert(err);
+				progress.fail_task(err);
+				modal.set_disposable(true);
 			}
 			this.rendering = false;
 		},
 		async renderAll(cards) {
 			this.rendering = true;
+			const modal = openModal({ disposable: false });
+			const progress = createApp(Progress).mount(modal.$refs.defaultSlot);
 			const renders = [];
 			for (let c of cards) {
-				this.card = c;
-				renders.push({
-					name: this.card.name + ".png",
-					lastModified: new Date(),
-					input: await this.renderCurrent({ toBlob: true }),
-				});
+				progress.push_task({ name: `Rendering '${c.name}'` });
+				try {
+					this.card = c;
+					renders.push({
+						name: this.card.name + ".png",
+						lastModified: new Date(),
+						input: await this.renderCurrent({ toBlob: true, progress }),
+					});
+				} catch (err) {
+					progress.fail_task(err);
+					modal.set_disposable(true);
+				}
 			}
 			// FIXME: See https://touffy.me/client-zip/demo/worker to handle larger archives
 			const blob = await downloadZip(renders).blob();
 			download("MTGRenders.zip", URL.createObjectURL(blob));
+			modal.set_disposable(true);
 			this.rendering = false;
 		},
 		updateCard(event) {

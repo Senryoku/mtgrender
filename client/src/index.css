@@ -1,11 +1,9 @@
-#app {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
+html {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	margin: 0;
-}
 
-html {
 	background-color: #77a0a8;
 	background-image: url("https://www.transparenttextures.com/patterns/cardboard.png");
 }
