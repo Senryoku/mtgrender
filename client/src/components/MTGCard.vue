@@ -295,11 +295,19 @@ function check_overflow(el) {
 	return isOverflowing;
 }
 
+function contains(str, search) {
+	if (!str || !search) return false;
+	if (Array.isArray(search))
+		return search.some((s) => str.toLowerCase().includes(s.toLowerCase()));
+	return str.toLowerCase().includes(search.toLowerCase());
+}
+
 export default {
 	name: "MTGCard",
 	props: {
 		card: Object,
 		scale: Number,
+		renderMargin: Number,
 	},
 	data() {
 		const oracle_el = ref(null);
@@ -467,8 +475,7 @@ export default {
 				})
 				.join("");
 			// TODO: Correctly handle dual mana cost (bi-colored border)
-			return face.type_line.includes("Artifact") ||
-				face.type_line.includes("Artefact")
+			return contains(face.type_line, ["Artifact", "Artefact", "Artéfact"])
 				? "Artifact"
 				: sorted_colors.length === 0
 				? "Colourless"
@@ -514,15 +521,12 @@ export default {
 		is_saga() {
 			return (
 				this.card_face?.layout === "saga" ||
-				this.card_face?.type_line?.toLowerCase().includes("saga")
+				contains(this.card_face?.type_line, "Saga")
 			);
 		},
 		is_vehicle() {
 			if (!this.card?.type_line) return false;
-			return (
-				this.card_face.type_line.includes("Vehicle") ||
-				this.card_face.type_line.includes("véhicule")
-			);
+			return contains(this.card_face.type_line, ["Vehicle", "Véhicule"]);
 		},
 		is_dualfaced() {
 			return this.card.card_faces && !this.is_adventure;
@@ -759,7 +763,7 @@ export default {
 						x: this.card_face?.illustration_position.x + "mm",
 						y: this.card_face?.illustration_position.y + "mm",
 				  }
-				: { x: 0, y: 0 };
+				: { x: "0mm", y: "0mm" };
 		},
 	},
 	watch: {
@@ -1574,5 +1578,43 @@ export default {
 
 .mdfc-hint .mana-cost {
 	font-size: 4pt;
+}
+
+/* Extend art as much as possible when adding a bordering while rendering */
+
+.rendering.extended-art .illustration {
+	width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
+	background-size: calc(
+		v-bind(illustration_scale) *
+			(100% - 2mm * v-bind(renderMargin) * v-bind(scale))
+	);
+	background-position: calc(
+			v-bind(illustration_position.x) + 1mm * v-bind(renderMargin) *
+				v-bind(scale)
+		)
+		calc(v-bind(illustration_position.y));
+	left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+}
+
+.rendering.full-art .illustration {
+	width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
+	height: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
+	background-size: calc(
+		v-bind(illustration_scale) *
+			(100% - 2mm * v-bind(renderMargin) * v-bind(scale))
+	);
+	background-position: calc(
+			v-bind(illustration_position.x) + 1mm * v-bind(renderMargin) *
+				v-bind(scale)
+		)
+		calc(
+			v-bind(illustration_position.y) + 1mm * v-bind(renderMargin) *
+				v-bind(scale)
+		);
+	top: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+	bottom: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+	left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
 }
 </style>

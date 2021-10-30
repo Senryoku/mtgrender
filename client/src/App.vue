@@ -33,7 +33,12 @@
 		</div>
 		<div class="content">
 			<div class="card-display">
-				<MTGCard :card="finalCard" :scale="displayScale" @edit="editCard" />
+				<MTGCard
+					:card="finalCard"
+					:scale="displayScale"
+					:renderMargin="renderOptions.margin"
+					@edit="editCard"
+				/>
 			</div>
 			<div style="flex-grow: 1">
 				<div class="tabs">
@@ -418,6 +423,7 @@ export default {
 						if (file.type === "application/json") {
 							try {
 								this.card = JSON.parse(await file.text());
+								this.save();
 							} catch (err) {
 								alert(err);
 							}
@@ -436,7 +442,7 @@ export default {
 								reader.readAsDataURL(file);
 							}
 						} else {
-							alert(`Expected json file, got '${file.type}'.`);
+							alert(`Unexpected file type, got '${file.type}'.`);
 						}
 					} else if (event.dataTransfer.items[i].kind === "string") {
 						// Is it an URL?
@@ -517,16 +523,14 @@ export default {
 			return func(card_display_el).then(() => {
 				return func(card_display_el, {
 					width:
-						(2 * margin_px) / this.displayScale +
-						this.displayScale * scale * card_el.clientWidth,
+						2 * margin_px + this.displayScale * scale * card_el.clientWidth,
 					height:
-						(2 * margin_px) / this.displayScale +
-						this.displayScale * scale * card_el.clientHeight,
+						2 * margin_px + this.displayScale * scale * card_el.clientHeight,
 					style: {
 						"transform-origin": "top left",
 						transform: `scale(${scale})`,
 						"background-color": "black",
-						padding: `${this.renderOptions.margin}mm`,
+						padding: `${this.renderOptions.margin * this.displayScale}mm`,
 					},
 				})
 					.then((dataUrl) => {

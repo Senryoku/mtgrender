@@ -71,7 +71,11 @@ export default {
 			}
 		},
 		store() {
-			localStorage.setItem("cards", JSON.stringify(this.cards));
+			try {
+				localStorage.setItem("cards", JSON.stringify(this.cards));
+			} catch (err) {
+				alert("Error saving in localStorage:", err);
+			}
 			// TODO: Notify user
 		},
 		keydown(e) {
