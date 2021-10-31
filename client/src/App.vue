@@ -63,27 +63,6 @@
 						<label for="card-layout">Layout</label>
 						<input id="card-layout" v-model="card.layout" type="text" />
 					</div>
-					<div
-						@mouseenter="outlineElement($event, 'name')"
-						@focus.capture="outlineElement($event, 'name')"
-					>
-						<label for="card-name">Name</label>
-						<input id="card-name" v-model="card.name" type="text" />
-					</div>
-					<div
-						@mouseenter="outlineElement($event, 'mana-cost')"
-						@focus.capture="outlineElement($event, 'mana-cost')"
-					>
-						<label for="card-mana-cost">Mana Cost</label>
-						<input id="card-mana-cost" v-model="card.mana_cost" type="text" />
-					</div>
-					<div
-						@mouseenter="outlineElement($event, 'type-line')"
-						@focus.capture="outlineElement($event, 'type-line')"
-					>
-						<label for="card-type-line">Type Line</label>
-						<input id="card-type-line" v-model="card.type_line" type="text" />
-					</div>
 					<div>
 						<label for="card-set">Set</label>
 						<input id="card-set" v-model="card.set" type="text" />
@@ -94,145 +73,31 @@
 						<input id="card-rarity" v-model="card.rarity" type="text" />
 						<a @click="card.rarity = undefined">↺</a>
 					</div>
-					<div
-						@mouseenter="outlineElement($event, 'oracle')"
-						@focus.capture="outlineElement($event, 'oracle')"
-					>
-						<label for="card-oracle">Oracle</label><br />
-						<textarea
-							id="card-oracle"
-							v-model="card.oracle_text"
-							cols="40"
-							rows="6"
-						/>
-					</div>
-					<div
-						@mouseenter="outlineElement($event, 'pt-box')"
-						@focus.capture="outlineElement($event, 'pt-box')"
-					>
-						<label for="card-power">P / T</label>
-						<input
-							id="card-power"
-							class="small-input"
-							v-model="card.power"
-							type="text"
-						/>
-						/
-						<input
-							id="card-toughness"
-							class="small-input"
-							v-model="card.toughness"
-							type="text"
-						/>
-						<a @click="card.power = card.toughness = undefined">↺</a>
-					</div>
-					<div
-						@mouseenter="outlineElement($event, 'loyalty')"
-						@focus.capture="outlineElement($event, 'loyalty-box')"
-					>
-						<label for="card-loyalty">Loyalty</label>
-						<input
-							id="card-loyalty"
-							class="small-input"
-							v-model="card.loyalty"
-							type="text"
-						/>
-						<a @click="card.loyalty = undefined">↺</a>
-					</div>
-					<div
-						class="subsection"
-						@mouseenter="outlineElement($event, 'illustration')"
-						@focus.capture="outlineElement($event, 'illustration')"
-					>
-						<h3>
-							Illustration ({{ illustrationDimensions[0] }}x{{
-								illustrationDimensions[1]
-							}})
-						</h3>
-						<div v-if="card.image_uris">
-							<label for="card-illustration">Source</label>
-							<input
-								id="card-illustration"
-								v-model="card.image_uris.art_crop"
-								type="text"
-							/>
-						</div>
-						<div class="help">
-							You can can drag the illustration and use your mouse wheel to
-							adjust its position and scale.
-						</div>
+					<template v-if="card.card_faces && card.card_faces.length > 1">
 						<div>
-							<label for="card-art-variant">Art Variant</label>
-							<select id="card-art-variant" v-model="card.art_variant">
-								<option :value="undefined"></option>
-								<option value="normal">Normal</option>
-								<option value="extended">Extended</option>
-								<option value="full">Full</option>
-							</select>
+							<label for="card-full-name">Full Name</label>
+							<input id="card-full-name" v-model="card.name" type="text" />
 						</div>
-						<div v-if="card.image_uris">
-							<label for="card-illustration-scale">Scale</label>
-							<input
-								id="card-illustration-scale"
-								v-model="card.illustration_scale"
-								type="number"
-							/>
-							<a @click="card.illustration_scale = 1.0">↺</a>
+						<div class="dual-face-editor">
+							<div>
+								<h2>Front</h2>
+								<CardFaceEditor
+									v-model="card.card_faces[0]"
+									@outline="outlineElement"
+								/>
+							</div>
+							<div>
+								<h2>Back</h2>
+								<CardFaceEditor
+									v-model="card.card_faces[1]"
+									@outline="outlineElement"
+								/>
+							</div>
 						</div>
-						<div v-if="card.illustration_position">
-							<label for="card-illustration-position">Position</label>
-							<input
-								id="card-illustration-position"
-								v-model="card.illustration_position.x"
-								type="number"
-							/>
-							<input
-								id="card-illustration-position"
-								v-model="card.illustration_position.y"
-								type="number"
-							/>
-							<a @click="card.illustration_position = { x: 0, y: 0 }">↺</a>
-						</div>
-						<div v-if="card.illustration_textbox">
-							<label for="card-illustration-bleedthrough"
-								>Bleedtrough Textbox</label
-							>
-							<input
-								type="checkbox"
-								id="card-illustration-bleedthrough"
-								v-model="card.illustration_textbox"
-							/>
-						</div>
-					</div>
-					<div class="subsection">
-						<h3>Footer</h3>
-						<div
-							@mouseenter="outlineElement($event, 'artist-name')"
-							@focus.capture="outlineElement($event, 'artist-name')"
-						>
-							<label for="card-artist">Artist</label>
-							<input id="card-artist" v-model="card.artist" type="text" />
-						</div>
-						<div
-							@mouseenter="outlineElement($event, 'collector-number')"
-							@focus.capture="outlineElement($event, 'collector-number')"
-						>
-							<label for="card-number">Number</label>
-							<input
-								id="card-number"
-								v-model="card.collector_number"
-								type="text"
-							/>
-						</div>
-						<div
-							@mouseenter="outlineElement($event, 'copyright')"
-							@focus.capture="outlineElement($event, 'copyright')"
-						>
-							<label for="copyright">Copyright</label>
-							<input id="copyright" v-model="card.copyright" type="text" />
-							<a @click="card.copyright = undefined">↺</a>
-						</div>
-					</div>
+					</template>
+					<template v-else>
+						<CardFaceEditor v-model="card" @outline="outlineElement" />
+					</template>
 				</div>
 				<div v-show="currentTab === 1" class="inner-tab">
 					<textarea
@@ -290,6 +155,7 @@ import { downloadZip } from "client-zip";
 import "keyrune";
 
 import MTGCard from "./components/MTGCard.vue";
+import CardFaceEditor from "./components/CardFaceEditor.vue";
 import CardStore from "./components/CardStore.vue";
 import RenderSettings from "./components/RenderSettings.vue";
 import Modal from "./components/Modal.vue";
@@ -317,6 +183,7 @@ export default {
 	name: "App",
 	components: {
 		MTGCard,
+		CardFaceEditor,
 		CardStore,
 		RenderSettings,
 	},
@@ -665,12 +532,6 @@ export default {
 		},
 	},
 	computed: {
-		illustrationDimensions() {
-			if (!this.card?.image_uris?.art_crop) return [0, 0];
-			const img = new Image();
-			img.src = this.card.image_uris.art_crop;
-			return [img.width, img.height];
-		},
 		finalCard() {
 			let r = Object.assign({}, this.defaultCardProperties);
 			Object.assign(r, this.card);
@@ -713,7 +574,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @font-face {
 	font-family: "Inconsolata";
 	src: url("./assets/fonts/Ligconsolata-Regular.ttf") format("truetype");
@@ -744,7 +605,9 @@ textarea {
 	width: 100%;
 	box-sizing: border-box;
 }
+</style>
 
+<style scoped>
 .header {
 	display: flex;
 	gap: 2em;
@@ -815,6 +678,11 @@ textarea {
 	font-weight: 900;
 }
 
+.dual-face-editor {
+	display: flex;
+	gap: 1em;
+}
+
 .selected-tab {
 	background-color: #ffffff80;
 	color: #000000;
@@ -824,6 +692,12 @@ textarea {
 	background-color: #ffffff80;
 	padding: 0.5em;
 	border-radius: 0 0 0.5em 0.5em;
+}
+</style>
+
+<style>
+.card-info h2 {
+	margin: 0.2em 0.4em;
 }
 
 .card-info label {

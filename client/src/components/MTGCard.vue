@@ -8,8 +8,8 @@
 			'planeswalker-large': is_large_planeswalker,
 			saga: is_saga,
 			adventure: is_adventure,
-			'extended-art': card.art_variant === 'extended',
-			'full-art': card.art_variant === 'full',
+			'extended-art': card_face.art_variant === 'extended',
+			'full-art': card_face.art_variant === 'full',
 		}"
 	>
 		<div class="inner-background"></div>
@@ -564,7 +564,7 @@ export default {
 			);
 		},
 		extended_art() {
-			return ["extended", "full"].includes(this.card.art_variant);
+			return ["extended", "full"].includes(this.card_face.art_variant);
 		},
 		oracle_lines() {
 			if (!this.card_face?.oracle_text) return [];
