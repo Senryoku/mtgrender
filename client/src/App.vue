@@ -29,6 +29,7 @@
 					</div>
 					<button type="submit">Load from Scryfall</button>
 				</form>
+				<button @click="render" :disabled="rendering">Render to PNG</button>
 			</div>
 		</div>
 		<div class="content">
@@ -143,7 +144,11 @@
 						@mouseenter="outlineElement($event, 'illustration')"
 						@focus.capture="outlineElement($event, 'illustration')"
 					>
-						<h3>Illustration</h3>
+						<h3>
+							Illustration ({{ illustrationDimensions[0] }}x{{
+								illustrationDimensions[1]
+							}})
+						</h3>
 						<div v-if="card.image_uris">
 							<label for="card-illustration">Source</label>
 							<input
@@ -234,30 +239,13 @@
 						:value="JSON.stringify(card, null, 2)"
 						@change="updateCard"
 						ref="jsonView"
+						class="large-textarea"
 						rows="20"
-						cols="80"
 						spellcheck="false"
 					></textarea>
 				</div>
 				<div v-show="currentTab === 2" class="inner-tab">
-					{{ illustrationDimensions[0] }}x{{ illustrationDimensions[1] }}
-					<div>
-						<label for="illustration-upscaling"> Upscale Illustration </label>
-						<input
-							type="checkbox"
-							id="illustration-upscaling"
-							v-model="renderOptions.upscale"
-						/>
-					</div>
-					<div>
-						<label for="render-margin">Margin (mm)</label>
-						<input
-							id="render-margin"
-							type="number"
-							v-model="renderOptions.margin"
-						/>
-					</div>
-					<button @click="render" :disabled="rendering">Render to PNG</button>
+					<RenderSettings v-model="renderOptions" />
 				</div>
 				<div v-show="currentTab === 3" class="inner-tab">
 					<div>
@@ -266,8 +254,8 @@
 							:value="JSON.stringify(defaultCardProperties, null, 2)"
 							@change="updateDefaultCardProperties"
 							ref="defaultCardPropertiesJsonView"
+							class="large-textarea"
 							rows="20"
-							cols="80"
 							spellcheck="false"
 						></textarea>
 					</div>
@@ -277,8 +265,8 @@
 							:value="JSON.stringify(overrideCardProperties, null, 2)"
 							@change="updateOverrideCardProperties"
 							ref="overrideCardPropertiesJsonView"
+							class="large-textarea"
 							rows="20"
-							cols="80"
 							spellcheck="false"
 						></textarea>
 					</div>
@@ -303,6 +291,7 @@ import "keyrune";
 
 import MTGCard from "./components/MTGCard.vue";
 import CardStore from "./components/CardStore.vue";
+import RenderSettings from "./components/RenderSettings.vue";
 import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
 
@@ -329,6 +318,7 @@ export default {
 	components: {
 		MTGCard,
 		CardStore,
+		RenderSettings,
 	},
 	data() {
 		const jsonView = ref(null);
@@ -546,7 +536,7 @@ export default {
 			const scale = 3288 / card_el.clientWidth / this.displayScale;
 
 			if (this.renderOptions.upscale) {
-				options?.progress?.push_step("Upscaling Illustration");
+				options?.progress?.push_step("Upscale Illustration");
 				const original = this.card.image_uris.art_crop;
 				// TODO: Correctly handle multiple faces
 				if (!(original in this.upscaleCache)) {
@@ -572,40 +562,48 @@ export default {
 				options?.progress?.end_step();
 			}
 
-			options?.progress?.push_step("Rendering");
+			options?.progress?.push_step("Pre Render");
 			// FIXME: Call toPng twice to workaround image not loading on the first call
 			// See https://github.com/tsayen/dom-to-image/issues/394
 			const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
-			return func(card_display_el).then(() => {
-				return func(card_display_el, {
-					width:
-						2 * margin_px + this.displayScale * scale * card_el.clientWidth,
-					height:
-						2 * margin_px + this.displayScale * scale * card_el.clientHeight,
-					style: {
-						"transform-origin": "top left",
-						transform: `scale(${scale})`,
-						"background-color": "black",
-						padding: `${this.renderOptions.margin * this.displayScale}mm`,
-					},
-				})
-					.then((dataUrl) => {
-						options?.progress?.end_task("Done!");
-						cleanup();
-						return dataUrl;
+			return func(card_display_el)
+				.then(() => {
+					options?.progress?.end_step();
+					options?.progress?.push_step("Final Render");
+					return func(card_display_el, {
+						width:
+							2 * margin_px + this.displayScale * scale * card_el.clientWidth,
+						height:
+							2 * margin_px + this.displayScale * scale * card_el.clientHeight,
+						style: {
+							"transform-origin": "top left",
+							transform: `scale(${scale})`,
+							"background-color": "black",
+							padding: `${this.renderOptions.margin * this.displayScale}mm`,
+						},
 					})
-					.catch((error) => {
-						console.error("Error generating render:", error);
-						options?.progress?.fail_task();
-						cleanup();
-					});
-			});
+						.then((dataUrl) => {
+							options?.progress?.end_task();
+							cleanup();
+							return dataUrl;
+						})
+						.catch((error) => {
+							console.error("Error generating render:", error);
+							options?.progress?.fail_task(error.message);
+							cleanup();
+						});
+				})
+				.catch((error) => {
+					console.error("Error generating first render:", error);
+					options?.progress?.fail_task(error.message);
+					cleanup();
+				});
 		},
 		async render() {
 			this.rendering = true;
 			const modal = openModal({ disposable: false });
 			const progress = createApp(Progress).mount(modal.$refs.defaultSlot);
-			progress.push_task({ name: `Rendering '${this.card.name}'` });
+			progress.push_task({ name: `Render '${this.card.name}'` });
 			// TODO: Handle multiple faces
 			try {
 				const dataUrl = await this.renderCurrent({ progress });
@@ -623,7 +621,7 @@ export default {
 			const progress = createApp(Progress).mount(modal.$refs.defaultSlot);
 			const renders = [];
 			for (let c of cards) {
-				progress.push_task({ name: `Rendering '${c.name}'` });
+				progress.push_task({ name: `Render '${c.name}'` });
 				try {
 					this.card = c;
 					renders.push({
@@ -636,8 +634,10 @@ export default {
 					modal.set_disposable(true);
 				}
 			}
+			progress.push_task({ name: `Create ZIP archive` });
 			// FIXME: See https://touffy.me/client-zip/demo/worker to handle larger archives
 			const blob = await downloadZip(renders).blob();
+			progress.end_task();
 			download("MTGRenders.zip", URL.createObjectURL(blob));
 			modal.set_disposable(true);
 			this.rendering = false;
@@ -738,6 +738,11 @@ textarea {
 
 textarea {
 	font-family: Inconsolata;
+}
+
+.large-textarea {
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .header {

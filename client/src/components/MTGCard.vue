@@ -224,7 +224,7 @@
 					<span v-if="card.lang" class="language"
 						>{{ card.lang.toUpperCase() }}&nbsp;</span
 					>
-					<span class="artist-icon">a </span>
+					<span class="artist-icon" v-if="card.artist">a </span>
 					<span
 						class="artist-name"
 						@dblclick="edit_property('artist')"
@@ -1559,13 +1559,14 @@ export default {
 	background-size: 100%;
 
 	padding: 0 2.6mm;
+	padding-top: 0.1mm; /* FIXME: Shouldn't be needed? */
 
 	box-sizing: border-box;
 	z-index: 3;
 }
 
 .planeswalker .mdfc-hint {
-	bottom: 7mm;
+	bottom: 6mm;
 }
 
 .mdfc-hint span {

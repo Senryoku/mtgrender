@@ -1,30 +1,52 @@
 <template>
 	<div class="progress">
-		<div v-for="(task, idx) in tasks" :key="idx" class="task">
+		<div
+			v-for="(task, idx) in tasks"
+			:key="idx"
+			class="task"
+			:class="{
+				'task-success': task.status === 'success',
+				'task-fail': task.status === 'fail',
+			}"
+			@click="collapse(idx)"
+		>
 			<div class="task-name">
 				<span v-if="task.status === 'success'" class="success">✓ </span>
 				<span v-else-if="task.status === 'fail'" class="fail">✗ </span>
 				<Spinner v-else /><span>{{ task.name }}</span>
 			</div>
-			<div v-for="(step, step_idx) in task.steps" :key="step_idx" class="step">
-				<span v-if="step.status === 'success'" class="success">✓</span>
-				<span v-else-if="step.status === 'fail'" class="fail">✗</span>
-				<Spinner v-else />
-				<span v-if="step.progress">{{ step.progress }}</span>
-				<span>{{ step.name }}</span>
-			</div>
-			<div v-if="task.message" class="message" :class="task.message.type">
-				{{ task.message.text }}
-			</div>
+			<collapse-transition dimension="height">
+				<div v-show="!task.collapsed">
+					<div class="steps">
+						<div
+							v-for="(step, step_idx) in task.steps"
+							:key="step_idx"
+							class="step"
+						>
+							<span v-if="step.status === 'success'" class="success">✓</span>
+							<span v-else-if="step.status === 'fail'" class="fail">✗</span>
+							<Spinner v-else />
+							<span>{{ step.progress }}</span>
+							<span>{{ step.name }}</span>
+						</div>
+					</div>
+					<div v-if="task.message" class="message" :class="task.message.type">
+						{{ task.message.text }}
+					</div>
+				</div>
+			</collapse-transition>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
+import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
+
 import Spinner from "./Spinner.vue";
+
 export default {
 	props: { defaulttasks: Array },
-	components: { Spinner },
+	components: { CollapseTransition, Spinner },
 	data(inst) {
 		return {
 			tasks: inst.$props.defaulttasks ?? [],
@@ -34,9 +56,12 @@ export default {
 		get_tasks() {
 			return this.tasks;
 		},
+		// API
 		push_task(task) {
 			if (typeof task === "string") task = { name: task };
 			if (!task.steps) task.steps = [];
+			if (!task.status) task.status = null;
+			if (!task.collapsed) task.collapsed = false;
 			this.tasks.push(task);
 		},
 		push_step(step) {
@@ -45,23 +70,41 @@ export default {
 		},
 		update_step(progress) {
 			const task = this.last_task;
-			task.steps[task.steps.length - 1].progress = progress;
+			if (task) {
+				task.steps[task.steps.length - 1].progress = progress;
+			} else console.warn("Call to update_step without a valid step.");
 		},
-		end_step() {
-			this.last_step.status = "success";
+		end_step(progress) {
+			if (this.last_step) {
+				if (progress) this.last_step.progress = progress;
+				this.last_step.status = "success";
+			} else console.warn("Call to end_step without a valid step.");
 		},
-		fail_step() {
-			this.last_step.status = "fail";
+		fail_step(progress) {
+			if (this.last_step) {
+				if (progress) this.last_step.progress = progress;
+				this.last_step.status = "fail";
+			} else console.warn("Call to fail_step without a valid step.");
 		},
 		end_task(message) {
-			this.end_step();
-			this.last_task.status = "success";
-			if (message) this.last_task.message = { type: "success", text: message };
+			if (this.last_task) {
+				if (this.last_step) this.end_step();
+				this.last_task.status = "success";
+				this.last_task.collapsed = true;
+				if (message)
+					this.last_task.message = { type: "success", text: message };
+			} else console.warn("Call to end_task without a valid task.");
 		},
 		fail_task(message) {
-			this.fail_step();
-			this.last_task.status = "fail";
-			if (message) this.last_task.message = { type: "error", text: message };
+			if (this.last_task) {
+				if (this.last_step) this.fail_step();
+				this.last_task.status = "fail";
+				if (message) this.last_task.message = { type: "error", text: message };
+			} else console.warn("Call to fail_task without a valid task.");
+		},
+		// Internal
+		collapse(idx) {
+			this.tasks[idx].collapsed = !this.tasks[idx].collapsed;
 		},
 	},
 	computed: {
@@ -79,25 +122,55 @@ export default {
 .progress {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5em;
+	gap: 0.1em;
+	text-align: left;
+	min-width: 40vw;
 }
 
 .task {
-	box-shadow: 2px 2px 10px #0006;
-	padding: 0.5em;
-	border-radius: 0.5em;
+	padding: 0.25em;
+	padding-bottom: calc(0.25em + 4px);
+	box-shadow: inset 0 -4px 4px 0px #fff8;
+	background-color: #ddd;
+}
+
+.task-success {
+	background-color: rgb(195, 218, 195);
+}
+
+.task-fail {
+	background-color: rgb(218, 181, 181);
 }
 
 .task-name {
 	display: flex;
 	gap: 1em;
-	font-size: 1.5em;
+	font-size: 1.1em;
 	margin: 0.5em;
+}
+
+.steps {
+	margin-left: 3em;
+	text-align: center;
+	transition: height 0.25s ease;
 }
 
 .step {
 	display: flex;
-	justify-content: space-between;
+	gap: 1em;
+}
+
+.step > *:nth-child(1) {
+	flex-basis: 1em;
+}
+
+.step > *:nth-child(2) {
+	flex-basis: 6em;
+}
+
+.step > *:nth-child(3) {
+	flex-grow: 1;
+	text-align: left;
 }
 
 .success {
@@ -110,9 +183,9 @@ export default {
 }
 
 .message {
-	background-color: #0002;
-	padding: 0.2em 0.5em;
+	background-color: #fff;
+	padding: 0.5em 1em;
 	border-radius: 0.2em;
-	margin: 1em;
+	margin-top: 1em;
 }
 </style>

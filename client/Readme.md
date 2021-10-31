@@ -26,7 +26,7 @@
 -   Support for custom set icon override
 -   -   Switch to svg based icon + css rarity tint rather than keyrune
 -   -   Allow for custom placement of the icon
--   Illustration upscaling
+-   ~~Illustration upscaling~~
 -   Optimize the render PNG? (20MB+ files is meh.)
 -   Webworker for client-zip
 -   Display a warning for overriden card properties in UI

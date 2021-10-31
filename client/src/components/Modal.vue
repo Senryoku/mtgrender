@@ -1,7 +1,9 @@
 <template>
 	<div id="modal" @click="outside_click">
-		<div class="modal-content" @click="$event.stopPropagation()">
-			<slot><div ref="defaultSlot"></div></slot>
+		<div class="modal-wrapper" @click="$event.stopPropagation()">
+			<div class="modal-content">
+				<slot><div ref="defaultSlot"></div></slot>
+			</div>
 			<div class="controls">
 				<button v-show="is_disposable" @click="close">Ok</button>
 			</div>
@@ -71,20 +73,24 @@ export default defineComponent({
 	opacity: 1;
 }
 
-.modal-content {
+.modal-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 1em;
 
-	padding: 2em;
+	padding: 1.5em 1em 1em 1em;
 	border-radius: 2em;
 	background-color: white;
 	box-shadow: 4px 4px 6px #000a;
+}
 
-	max-width: 90vw;
-	max-height: 90vh;
+.modal-content {
+	max-width: 80vw;
+	max-height: 80vh;
 	overflow: auto;
+	padding: 0.5em 1.5em;
+	box-sizing: border-box;
 }
 
 button {

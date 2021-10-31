@@ -111,8 +111,7 @@ export default {
 }
 
 .card-list {
-	padding: 0;
-	padding-left: 0.5em;
+	padding: 0 0.5em;
 	margin: 0.5em;
 }
 
