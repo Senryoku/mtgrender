@@ -1068,7 +1068,7 @@ export default {
 .oracle:deep(.ms) {
 	width: 0.8em;
 	margin: 0 0.07em;
-	vertical-align: middle;
+	vertical-align: baseline;
 }
 
 .normal-oracle {
