@@ -39,6 +39,7 @@
 					:scale="displayScale"
 					:renderMargin="renderOptions.margin"
 					@edit="editCard"
+					ref="cardComponent"
 				/>
 			</div>
 			<div style="flex-grow: 1">
@@ -188,6 +189,7 @@ export default {
 		RenderSettings,
 	},
 	data() {
+		const cardComponent = ref(null);
 		const jsonView = ref(null);
 		const store = ref(null);
 		const savedRenderOptions = localStorage.getItem("renderOptions");
@@ -202,6 +204,7 @@ export default {
 		);
 		return {
 			card: {},
+			cardComponent,
 			defaultCardProperties,
 			overrideCardProperties,
 			displayScale: 2.0,
@@ -388,98 +391,131 @@ export default {
 				});
 		},
 		async renderCurrent(options) {
-			const card_display_el = document.querySelector(".card-display");
-			const card_el = document.querySelector(".mtg-card");
-			// FIXME: Doesn't work as expected
-			card_el.classList.add("rendering");
-			const cleanup_func = [];
-			cleanup_func.push(() => {
-				card_el.classList.remove("rendering");
+			const cardComp = this.$refs.cardComponent;
+			options?.progress?.push_task({
+				name: `Render '${cardComp.card_face.name}'`,
 			});
-			const cleanup = () => {
-				for (let c of cleanup_func) c();
-			};
-			const margin_px = (3288 / 63.5) * this.renderOptions.margin;
-			const scale = 3288 / card_el.clientWidth / this.displayScale;
 
-			if (this.renderOptions.upscale) {
-				options?.progress?.push_step("Upscale Illustration");
-				const original = this.card.image_uris.art_crop;
-				// TODO: Correctly handle multiple faces
-				if (!(original in this.upscaleCache)) {
-					this.upscaleCache[original] = await this.upscale(
-						original,
-						(percent) => {
-							if (isNaN(percent)) options?.progress?.fail_step(percent);
-							else
-								options?.progress?.update_step(
-									`${(100 * percent).toFixed(2)}%`
-								);
-						}
-					);
-				} else options?.progress?.update_step("Cached!");
-				const illustration_el = card_el.querySelector(".illustration");
-				const backgroundImageBackup = illustration_el.style.backgroundImage;
-				illustration_el.style.backgroundImage =
-					"url(" + this.upscaleCache[original] + ")";
+			try {
+				const card_display_el = document.querySelector(".card-display");
+				const card_el = document.querySelector(".mtg-card");
+				// FIXME: Doesn't work as expected
+				card_el.classList.add("rendering");
+				const cleanup_func = [];
 				cleanup_func.push(() => {
-					illustration_el.style.backgroundImage = backgroundImageBackup;
+					card_el.classList.remove("rendering");
 				});
-				await new this.$nextTick();
-				options?.progress?.end_step();
-			}
+				const cleanup = () => {
+					for (let c of cleanup_func) c();
+				};
+				const margin_px = (3288 / 63.5) * this.renderOptions.margin;
+				const scale = 3288 / card_el.clientWidth / this.displayScale;
 
-			options?.progress?.push_step("Pre Render");
-			// FIXME: Call toPng twice to workaround image not loading on the first call
-			// See https://github.com/tsayen/dom-to-image/issues/394
-			const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
-			return func(card_display_el)
-				.then(() => {
-					options?.progress?.end_step();
-					options?.progress?.push_step("Final Render");
-					return func(card_display_el, {
-						width:
-							2 * margin_px + this.displayScale * scale * card_el.clientWidth,
-						height:
-							2 * margin_px + this.displayScale * scale * card_el.clientHeight,
-						style: {
-							"transform-origin": "top left",
-							transform: `scale(${scale})`,
-							"background-color": "black",
-							padding: `${this.renderOptions.margin * this.displayScale}mm`,
-						},
-					})
-						.then((dataUrl) => {
-							options?.progress?.end_task();
-							cleanup();
-							return dataUrl;
-						})
-						.catch((error) => {
-							console.error("Error generating render:", error);
-							options?.progress?.fail_task(error.message);
-							cleanup();
+				if (this.renderOptions.upscale) {
+					options?.progress?.push_step("Upscale Illustration");
+					const original =
+						cardComp.card_face?.image_uris?.art_crop ??
+						this.card.image_uris?.art_crop;
+					if (original) {
+						if (!(original in this.upscaleCache)) {
+							this.upscaleCache[original] = await this.upscale(
+								original,
+								(percent) => {
+									if (isNaN(percent)) options?.progress?.fail_step(percent);
+									else
+										options?.progress?.update_step(
+											`${(100 * percent).toFixed(2)}%`
+										);
+								}
+							);
+						} else options?.progress?.update_step("Cached!");
+						const illustration_el = card_el.querySelector(".illustration");
+						const backgroundImageBackup = illustration_el.style.backgroundImage;
+						illustration_el.style.backgroundImage =
+							"url(" + this.upscaleCache[original] + ")";
+						cleanup_func.push(() => {
+							illustration_el.style.backgroundImage = backgroundImageBackup;
 						});
-				})
-				.catch((error) => {
-					console.error("Error generating first render:", error);
-					options?.progress?.fail_task(error.message);
-					cleanup();
-				});
+						await new this.$nextTick();
+						options?.progress?.end_step();
+					} else {
+						console.warn(
+							`Upscaler: '${cardComp.card_face.name}' do not have an illustration.`
+						);
+						options?.progress?.fail_step("No image");
+					}
+				}
+
+				options?.progress?.push_step("Pre Render");
+				// FIXME: Call toPng twice to workaround image not loading on the first call
+				// See https://github.com/tsayen/dom-to-image/issues/394
+				const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
+				return func(card_display_el)
+					.then(() => {
+						options?.progress?.end_step();
+						options?.progress?.push_step("Final Render");
+						return func(card_display_el, {
+							width:
+								2 * margin_px + this.displayScale * scale * card_el.clientWidth,
+							height:
+								2 * margin_px +
+								this.displayScale * scale * card_el.clientHeight,
+							style: {
+								"transform-origin": "top left",
+								transform: `scale(${scale})`,
+								"background-color": "black",
+								padding: `${this.renderOptions.margin * this.displayScale}mm`,
+							},
+						})
+							.then((dataUrl) => {
+								options?.progress?.end_task();
+								cleanup();
+								return dataUrl;
+							})
+							.catch((error) => {
+								console.error("Error generating render:", error);
+								options?.progress?.fail_task(error.message);
+								cleanup();
+							});
+					})
+					.catch((error) => {
+						console.error("Error generating first render:", error);
+						options?.progress?.fail_task(error.message);
+						cleanup();
+					});
+			} catch (err) {
+				options?.progress?.fail_task(err);
+			}
+			return null;
 		},
 		async render() {
 			this.rendering = true;
 			const modal = openModal({ disposable: false });
 			const progress = createApp(Progress).mount(modal.$refs.defaultSlot);
-			progress.push_task({ name: `Render '${this.card.name}'` });
 			// TODO: Handle multiple faces
+			let errored = false;
 			try {
-				const dataUrl = await this.renderCurrent({ progress });
-				download(`${this.card.name}.png`, dataUrl);
-				modal.close();
+				if (this.$refs.cardComponent.is_dualfaced) {
+					for (let idx = 0; idx < this.card.card_faces.length; ++idx) {
+						this.$refs.cardComponent.set_face(idx);
+						const dataUrl = await this.renderCurrent({ progress });
+						if (dataUrl)
+							download(
+								`${this.$refs.cardComponent.card_face.name}.png`,
+								dataUrl
+							);
+						else errored = true;
+					}
+				} else {
+					const dataUrl = await this.renderCurrent({ progress });
+					if (dataUrl) download(`${this.card.name}.png`, dataUrl);
+					else errored = true;
+				}
 			} catch (err) {
-				progress.fail_task(err);
-				modal.set_disposable(true);
+				console.error(err);
 			}
+			if (errored) modal.set_disposable(true);
+			else modal.close();
 			this.rendering = false;
 		},
 		async renderAll(cards) {
@@ -488,17 +524,34 @@ export default {
 			const progress = createApp(Progress).mount(modal.$refs.defaultSlot);
 			const renders = [];
 			for (let c of cards) {
-				progress.push_task({ name: `Render '${c.name}'` });
 				try {
 					this.card = c;
-					renders.push({
-						name: this.card.name + ".png",
-						lastModified: new Date(),
-						input: await this.renderCurrent({ toBlob: true, progress }),
-					});
+					await this.$nextTick();
+					if (this.$refs.cardComponent.is_dualfaced) {
+						for (let idx = 0; idx < this.card.card_faces.length; ++idx) {
+							this.$refs.cardComponent.set_face(idx);
+							const input = await this.renderCurrent({
+								toBlob: true,
+								progress,
+							});
+							if (input)
+								renders.push({
+									name: this.$refs.cardComponent.card_face.name + ".png",
+									lastModified: new Date(),
+									input,
+								});
+						}
+					} else {
+						const input = await this.renderCurrent({ toBlob: true, progress });
+						if (input)
+							renders.push({
+								name: this.card.name + ".png",
+								lastModified: new Date(),
+								input,
+							});
+					}
 				} catch (err) {
-					progress.fail_task(err);
-					modal.set_disposable(true);
+					console.error(err);
 				}
 			}
 			progress.push_task({ name: `Create ZIP archive` });

@@ -322,6 +322,9 @@ export default {
 		};
 	},
 	methods: {
+		set_face(idx) {
+			this.currentFace = idx;
+		},
 		gen_mana_symbol(str, classes = []) {
 			if ("{" + str + "}" in mana_symbols) {
 				let el = new Image();
