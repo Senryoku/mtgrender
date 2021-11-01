@@ -511,6 +511,7 @@ export default {
 								optipngWorker.onmessage = function (event) {
 									const message = event.data;
 									if (message.type == "stdout") {
+										console.log("OptiPNG Worker:", message.data);
 										let match_input = message.data.match(
 											/Input file size = (\d+) bytes/
 										);

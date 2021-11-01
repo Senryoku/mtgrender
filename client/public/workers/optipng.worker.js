@@ -1,6 +1,6 @@
 (function () {
 	// import optipng script.
-	importScripts("optipng.min.js");
+	importScripts("optipng.js");
 
 	// get stdout
 	function print(text) {
@@ -19,14 +19,7 @@
 			});
 
 			print("Received command: " + JSON.stringify(args));
-
-			var time = performance.now();
-			var result = optipng(message.file.data, args, print);
-			var totalTime = performance.now() - time;
-
-			print("Finished processing (took " + totalTime.toFixed(0) + "ms)");
-
-			postMessage({ type: "done", data: result, time: totalTime });
+			optipng(message.file.data, args, print);
 		}
 	};
 	postMessage({ type: "ready" });
