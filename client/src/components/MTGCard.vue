@@ -1231,12 +1231,12 @@ export default {
 
 .saga .top-line,
 .saga .mid-line {
-	margin-left: 1.5mm;
+	margin-left: 1.6mm;
 }
 
 .saga .mid-line {
 	position: absolute;
-	top: 70.4mm;
+	top: 70.6mm;
 	left: 0mm;
 	right: 0;
 }
