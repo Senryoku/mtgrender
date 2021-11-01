@@ -95,11 +95,14 @@ export default {
 		end_task(message) {
 			if (this.last_task) {
 				if (this.last_step) this.end_step();
-				this.last_task.status = "success";
-				this.last_task.end = performance.now();
-				this.last_task.collapsed = true;
-				if (message)
-					this.last_task.message = { type: "success", text: message };
+				const lt = this.last_task;
+				lt.status = "success";
+				lt.end = performance.now();
+				// Auto-collapse after 1sec.
+				lt.pending_collapse = setTimeout(() => {
+					lt.collapsed = true;
+				}, 1000);
+				if (message) lt.message = { type: "success", text: message };
 			} else console.warn("Call to end_task without a valid task.");
 		},
 		fail_task(message) {
@@ -111,6 +114,10 @@ export default {
 		},
 		// Internal
 		collapse(idx) {
+			if (this.tasks[idx].pending_collapse) {
+				clearTimeout(this.tasks[idx].pending_collapse);
+				this.tasks[idx].pending_collapse = undefined;
+			}
 			this.tasks[idx].collapsed = !this.tasks[idx].collapsed;
 		},
 		display_progress(progress) {
@@ -151,10 +158,28 @@ export default {
 
 .task-success {
 	background-color: rgb(195, 218, 195);
+	animation: task-pulse 1s 1;
+	--pulse-color: 60, 133, 60;
 }
 
 .task-fail {
 	background-color: rgb(218, 181, 181);
+	animation: task-pulse 1s 1;
+	--pulse-color: 133, 60, 60;
+}
+
+@keyframes task-pulse {
+	0% {
+		box-shadow: inset 0 -4px 4px 0px #fff8,
+			0 0 0 0 rgba(var(--pulse-color), 0.4);
+	}
+	70% {
+		box-shadow: inset 0 -4px 4px 0px #fff8,
+			0 0 0 20px rgba(var(--pulse-color), 0);
+	}
+	100% {
+		box-shadow: inset 0 -4px 4px 0px #fff8, 0 0 0 0 rgba(var(--pulse-color), 0);
+	}
 }
 
 .task-name {
