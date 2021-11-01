@@ -8,6 +8,10 @@
 		/>
 	</div>
 	<div>
+		<label for="optimize"> Optimize output PNG (Slow)</label>
+		<input type="checkbox" id="optimize" v-model="modelValue.optimize" />
+	</div>
+	<div>
 		<label for="render-margin">Margin (mm)</label>
 		<input id="render-margin" type="number" v-model="modelValue.margin" />
 	</div>
@@ -22,4 +26,8 @@ export default {
 </script>
 
 <style scoped>
+label {
+	display: inline-block;
+	width: 15em;
+}
 </style>

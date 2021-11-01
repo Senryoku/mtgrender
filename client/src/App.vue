@@ -152,6 +152,7 @@
 import { createApp, ref } from "vue";
 import domtoimage from "dom-to-image";
 import Upscaler from "upscaler";
+import optipng from "optipng-js";
 import { downloadZip } from "client-zip";
 import "keyrune";
 
@@ -178,6 +179,23 @@ function openModal(props = {}) {
 	const div = document.createElement("div");
 	document.body.appendChild(div);
 	return createApp(Modal, props).mount(div);
+}
+
+let optipngWorker;
+function loadWebWorker() {
+	if (!optipngWorker)
+		optipngWorker = new Worker("./workers/optipng.worker.js", {
+			type: "module",
+		});
+}
+
+function Uint8ToString(u8a) {
+	const CHUNK_SZ = 0x8000;
+	const c = [];
+	for (let i = 0; i < u8a.length; i += CHUNK_SZ) {
+		c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SZ)));
+	}
+	return c.join("");
 }
 
 export default {
@@ -449,40 +467,112 @@ export default {
 				options?.progress?.push_step("Pre Render");
 				// FIXME: Call toPng twice to workaround image not loading on the first call
 				// See https://github.com/tsayen/dom-to-image/issues/394
-				const func = options?.toBlob ? domtoimage.toBlob : domtoimage.toPng;
-				return func(card_display_el)
-					.then(() => {
-						options?.progress?.end_step();
-						options?.progress?.push_step("Final Render");
-						return func(card_display_el, {
-							width:
-								2 * margin_px + this.displayScale * scale * card_el.clientWidth,
-							height:
-								2 * margin_px +
-								this.displayScale * scale * card_el.clientHeight,
-							style: {
-								"transform-origin": "top left",
-								transform: `scale(${scale})`,
-								"background-color": "black",
-								padding: `${this.renderOptions.margin * this.displayScale}mm`,
-							},
-						})
-							.then((dataUrl) => {
-								options?.progress?.end_task();
-								cleanup();
-								return dataUrl;
-							})
-							.catch((error) => {
-								console.error("Error generating render:", error);
-								options?.progress?.fail_task(error.message);
-								cleanup();
+				const func =
+					options?.toBlob || this.renderOptions.optimize
+						? domtoimage.toBlob
+						: domtoimage.toPng;
+
+				await func(card_display_el).catch((error) => {
+					console.error("Error generating first render:", error);
+					options?.progress?.fail_task(error.message);
+					cleanup();
+				});
+
+				options?.progress?.end_step();
+				options?.progress?.push_step("Final Render");
+				let result = await func(card_display_el, {
+					width:
+						2 * margin_px + this.displayScale * scale * card_el.clientWidth,
+					height:
+						2 * margin_px + this.displayScale * scale * card_el.clientHeight,
+					style: {
+						"transform-origin": "top left",
+						transform: `scale(${scale})`,
+						"background-color": "black",
+						padding: `${this.renderOptions.margin * this.displayScale}mm`,
+					},
+				}).catch((error) => {
+					console.error("Error generating render:", error);
+					options?.progress?.fail_task(error.message);
+					cleanup();
+				});
+
+				if (result) {
+					options?.progress?.end_step();
+					if (this.renderOptions.optimize) {
+						options?.progress?.push_step("Optimize output PNG");
+						try {
+							let input_file_size = 0,
+								output_file_size = 0;
+
+							loadWebWorker();
+							let optimizedPromise = new Promise((resolve) => {
+								optipngWorker.onmessage = function (event) {
+									const message = event.data;
+									if (message.type == "stdout") {
+										let match_input = message.data.match(
+											/Input file size = (\d+) bytes/
+										);
+										if (match_input) {
+											input_file_size = parseInt(match_input[1]);
+											options?.progress?.update_step(
+												`Original Size: ${(
+													input_file_size /
+													1024 /
+													1024
+												).toFixed(2)}MB`
+											);
+										}
+										let match_output = message.data.match(
+											/Output file size = (\d+) bytes/
+										);
+										if (match_output) {
+											output_file_size = parseInt(match_output[1]);
+											options?.progress?.update_step(
+												`${(input_file_size / 1024 / 1024).toFixed(2)}MB => ${(
+													output_file_size /
+													1024 /
+													1024
+												).toFixed(2)}MB`
+											);
+										}
+									} else if (message.type == "done") {
+										resolve(message.data);
+									}
+								};
 							});
-					})
-					.catch((error) => {
-						console.error("Error generating first render:", error);
-						options?.progress?.fail_task(error.message);
-						cleanup();
-					});
+
+							optipngWorker.postMessage({
+								type: "command",
+								arguments: ["-o1"],
+								file: {
+									name: `${cardComp.card_face.name}.png`,
+									data: new Uint8Array(await result.arrayBuffer()),
+								},
+							});
+
+							let optimized = (await optimizedPromise).data;
+
+							result = options?.toBlob
+								? optimized
+								: "data:image/png;base64," + btoa(Uint8ToString(optimized));
+							options?.progress?.end_step(
+								`${(input_file_size / 1024 / 1024).toFixed(2)}MB => ${(
+									output_file_size /
+									1024 /
+									1024
+								).toFixed(2)}MB`
+							);
+							options?.progress?.end_task();
+						} catch (err) {
+							options?.progress?.fail_step(err);
+							options?.progress?.fail_task();
+							result = null;
+						}
+					} else options?.progress?.end_task();
+					cleanup();
+					return result;
+				}
 			} catch (err) {
 				options?.progress?.fail_task(err);
 			}
@@ -515,7 +605,10 @@ export default {
 				console.error(err);
 			}
 			if (errored) modal.set_disposable(true);
-			else modal.close();
+			else
+				setTimeout(() => {
+					modal.close();
+				}, 1000);
 			this.rendering = false;
 		},
 		async renderAll(cards) {

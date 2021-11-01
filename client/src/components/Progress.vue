@@ -26,8 +26,11 @@
 							<span v-if="step.status === 'success'" class="success">✓</span>
 							<span v-else-if="step.status === 'fail'" class="fail">✗</span>
 							<Spinner v-else />
-							<span>{{ step.progress }}</span>
 							<span>{{ step.name }}</span>
+							<span>{{ step.progress }}</span>
+							<span v-show="step.start && step.end"
+								>{{ step.end - step.start }}ms</span
+							>
 						</div>
 					</div>
 					<div v-if="task.message" class="message" :class="task.message.type">
@@ -62,10 +65,12 @@ export default {
 			if (!task.steps) task.steps = [];
 			if (!task.status) task.status = null;
 			if (!task.collapsed) task.collapsed = false;
+			task.start = performance.now();
 			this.tasks.push(task);
 		},
 		push_step(step) {
-			if (typeof step === "string") step = { name: step };
+			if (typeof step === "string")
+				step = { name: step, start: performance.now() };
 			this.last_task.steps.push(step);
 		},
 		update_step(progress) {
@@ -77,6 +82,7 @@ export default {
 		end_step(progress) {
 			if (this.last_step) {
 				if (progress) this.last_step.progress = progress;
+				this.last_step.end = performance.now();
 				this.last_step.status = "success";
 			} else console.warn("Call to end_step without a valid step.");
 		},
@@ -90,6 +96,7 @@ export default {
 			if (this.last_task) {
 				if (this.last_step) this.end_step();
 				this.last_task.status = "success";
+				this.last_task.end = performance.now();
 				this.last_task.collapsed = true;
 				if (message)
 					this.last_task.message = { type: "success", text: message };
@@ -165,12 +172,11 @@ export default {
 }
 
 .step > *:nth-child(2) {
-	flex-basis: 6em;
+	text-align: left;
 }
 
 .step > *:nth-child(3) {
 	flex-grow: 1;
-	text-align: left;
 }
 
 .success {
