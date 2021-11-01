@@ -1104,8 +1104,8 @@ export default {
 
 .adventure-main-oracle {
 	position: absolute;
-	top: 51mm;
-	left: 29mm;
+	top: 51.4mm;
+	left: 29.8mm;
 	width: 25.5mm;
 	height: 25mm;
 
@@ -1120,8 +1120,8 @@ export default {
 	position: absolute;
 	top: 51.4mm;
 	left: 2mm;
-	width: 25.5mm;
-	height: 26mm;
+	width: 26mm;
+	height: 25.2mm;
 
 	display: flex;
 	align-items: stretch;
@@ -1138,6 +1138,7 @@ export default {
 	font-size: 7pt;
 	line-height: 7pt;
 	flex-shrink: 0;
+	margin-left: 0.6mm;
 }
 
 .adventure-mana-cost {
@@ -1145,10 +1146,12 @@ export default {
 	font-size: 5pt;
 	gap: 0.3mm;
 	margin-top: -0.4mm;
+	margin-right: 0.5mm;
 }
 
 .adventure-oracle {
 	flex-grow: 1;
+	margin: 0.8mm 0 0.2mm 0;
 
 	display: flex;
 	align-items: stretch;
