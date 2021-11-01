@@ -606,10 +606,10 @@ export default {
 			} catch (err) {
 				console.error(err);
 			}
-			if (errored) modal.set_disposable(true);
-			else
+			modal.set_disposable(true);
+			if (!errored)
 				setTimeout(() => {
-					modal.close();
+					//modal.close();
 				}, 1000);
 			this.rendering = false;
 		},

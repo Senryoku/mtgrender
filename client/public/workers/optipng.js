@@ -18,7 +18,6 @@ var Module = typeof Module !== "undefined" ? Module : {};
 
 function optipng(optipng_input_file, options, printFunction) {
 	if (typeof optipng_input_file === "undefined") return;
-	console.log("optipng file", optipng_input_file);
 
 	var stdout = "";
 	var stderr = "";
@@ -58,7 +57,6 @@ function optipng(optipng_input_file, options, printFunction) {
 		// Mounting input file
 		preRun: [
 			() => {
-				console.log("preRun file", optipng_input_file);
 				FS.writeFile("/input.png", optipng_input_file, {
 					encoding: "binary",
 				});
