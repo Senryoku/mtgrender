@@ -441,9 +441,10 @@ export default {
 								(percent) => {
 									if (isNaN(percent)) options?.progress?.fail_step(percent);
 									else
-										options?.progress?.update_step(
-											`${(100 * percent).toFixed(2)}%`
-										);
+										options?.progress?.update_step({
+											type: "percent",
+											value: (100 * percent).toFixed(2),
+										});
 								}
 							);
 						} else options?.progress?.update_step("Cached!");

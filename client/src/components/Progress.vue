@@ -27,7 +27,7 @@
 							<span v-else-if="step.status === 'fail'" class="fail">✗</span>
 							<Spinner v-else />
 							<span>{{ step.name }}</span>
-							<span>{{ step.progress }}</span>
+							<span v-html="display_progress(step.progress)"></span>
 							<span v-show="step.start && step.end"
 								>{{ step.end - step.start }}ms</span
 							>
@@ -112,6 +112,14 @@ export default {
 		// Internal
 		collapse(idx) {
 			this.tasks[idx].collapsed = !this.tasks[idx].collapsed;
+		},
+		display_progress(progress) {
+			if (!progress || typeof progress === "string") return progress;
+			else if (progress.type === "percent")
+				return `${progress.value}% <progress max="100" value="${progress.value}">${progress.value}</progress>`;
+			else if (progress.type === "ratio")
+				return `${progress.value}/${progress.max} <progress max="${progress.max}" value="${progress.value}">${progress.value}/${progress.max}</progress>`;
+			return progress;
 		},
 	},
 	computed: {
