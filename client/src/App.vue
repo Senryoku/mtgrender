@@ -1,5 +1,5 @@
 <template>
-	<div @drop="dropHandler" @dragover="dragOverHandler">
+	<div @drop="dropHandler" @dragover="dragOverHandler" class="app">
 		<div class="header">
 			<h1>MTGRender</h1>
 			<div class="menu">
@@ -146,6 +146,12 @@
 				@renderAll="renderAll"
 				ref="store"
 			/>
+		</div>
+		<div class="footer">
+			MTGRender uses images from templates by Chilli_Axe. MTGRender is
+			unofficial Fan Content permitted under the Fan Content Policy. Not
+			approved/endorsed by Wizards. Portions of the materials used are property
+			of Wizards of the Coast. ©Wizards of the Coast LLC
 		</div>
 	</div>
 </template>
@@ -801,9 +807,12 @@ textarea {
 	src: url("./assets/fonts/belerensmallcaps-bold.ttf") format("truetype");
 }
 
-#app {
+.app {
 	margin: 0;
 	padding: 0;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
 .header {
@@ -850,6 +859,7 @@ textarea {
 }
 
 .content {
+	flex-grow: 1;
 	display: flex;
 	gap: 1em;
 	margin: 1em 2em;
@@ -896,6 +906,13 @@ textarea {
 	background-color: #ffffff80;
 	padding: 0.5em;
 	border-radius: 0 0.5em 0.5em 0.5em;
+}
+
+.footer {
+	color: white;
+	font-size: 0.8em;
+	padding: 0.6em 1em;
+	background-image: linear-gradient(transparent, #6e939bd0 0.6em);
 }
 </style>
 
