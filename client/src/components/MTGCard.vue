@@ -48,13 +48,21 @@
 				>
 					{{ card_face.type_line }}
 				</div>
-				<span class="set-icon">
-					<i
-						v-if="card.set"
-						class="ss ss-grad"
-						:class="`ss-${card.set} ss-${card.rarity}`"
-					></i>
-				</span>
+				<div
+					class="set-icon-container"
+					:class="`set-icon-${card.rarity}`"
+					v-if="icon?.uri"
+				>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon-outline"></div>
+					<div class="set-icon"></div>
+				</div>
 			</div>
 			<template v-if="is_adventure">
 				<div class="adventure-part">
@@ -282,6 +290,11 @@ const mana_regex = /{([^}]+)}/g;
 const mana_symbols = {};
 import mana_symbols_list from "../assets/data/symbology.json";
 for (let symbol of mana_symbols_list) mana_symbols[symbol.symbol] = symbol;
+import MTGSets from "../assets/data/sets.json";
+let SetMap = new Map();
+for (let set of MTGSets) {
+	SetMap[set.code] = set;
+}
 
 function check_overflow(el) {
 	const curOverflow = el.style.overflow;
@@ -313,14 +326,35 @@ export default {
 		const oracle_el = ref(null);
 		const adventure_oracle_el = ref(null);
 		const type_line_el = ref(null);
+		const set_icon = ref(null);
 		return {
 			oracle_el,
 			adventure_oracle_el,
 			type_line_el,
+			set_icon,
 			currentFace: 0,
 			dragging_illustration: null,
 		};
 	},
+	/*
+	updated() {
+		console.log("updated");
+		this.$nextTick(function () {
+			// TODO
+			// FIXME: Not called the first time a card is rendered?
+			// Update set icon style
+			if (this.$refs.set_icon) {
+				let svg = this.$refs.set_icon.getSVGDocument();
+				if (svg) {
+					let path = svg.querySelector("path");
+					console.log("path", path);
+					path?.setAttribute("fill", "green");
+					path?.setAttribute("stroke", "white");
+				}
+			}
+		});
+	},
+	*/
 	methods: {
 		set_face(idx) {
 			this.currentFace = idx;
@@ -768,6 +802,21 @@ export default {
 				  }
 				: { x: "0mm", y: "0mm" };
 		},
+		icon() {
+			if (this.card.icon) {
+			} else if (this.card.set in SetMap) {
+				return {
+					uri:
+						"url(" +
+						new URL(
+							`../assets/img/set_icons/${this.card.set}.svg?raw`,
+							import.meta.url
+						).href +
+						")",
+				};
+			}
+			return {};
+		},
 	},
 	watch: {
 		"card.oracle_text": function () {
@@ -1050,13 +1099,103 @@ export default {
 	line-height: 5mm;
 }
 
-.set-icon {
-	font-size: 4mm;
+.set-icon-common {
+	--set-icon-rarity-color: rgb(33, 33, 33);
+	--set-icon-rarity-color-alt: rgb(33, 33, 33);
+	--stroke-color: white;
 }
 
-.set-icon i {
-	margin-top: -0.6mm;
-	margin-right: 0.6mm;
+.set-icon-uncommon {
+	--set-icon-rarity-color: rgb(185, 220, 235);
+	--set-icon-rarity-color-alt: rgb(70, 100, 110);
+	--stroke-color: black;
+}
+
+.set-icon-rare {
+	--set-icon-rarity-color: rgb(230, 205, 140);
+	--set-icon-rarity-color-alt: rgb(118, 98, 55);
+	--stroke-color: black;
+}
+
+.set-icon-mythic {
+	--set-icon-rarity-color: rgb(245, 145, 5);
+	--set-icon-rarity-color-alt: rgb(180, 50, 25);
+	--stroke-color: black;
+}
+
+.set-icon-special {
+	--set-icon-rarity-color: rgb(195, 155, 200);
+	--set-icon-rarity-color-alt: rgb(100, 40, 120);
+	--stroke-color: white;
+}
+
+.set-icon-container {
+	position: relative;
+	margin-right: 0.2mm;
+	/*filter: drop-shadow(0 0 0.1mm var(--stroke-color));*/
+}
+
+.set-icon {
+	height: 3.2mm;
+	width: 6mm;
+	mask: v-bind(icon.uri) center right no-repeat;
+	background-color: var(--set-icon-rarity-color);
+	background-image: linear-gradient(
+		45deg,
+		var(--set-icon-rarity-color-alt),
+		var(--set-icon-rarity-color),
+		var(--set-icon-rarity-color-alt)
+	);
+}
+
+.set-icon-outline {
+	position: absolute;
+	height: 3.2mm;
+	width: 6mm;
+	color: var(--set-icon-rarity-color);
+	mask: v-bind(icon.uri) center right no-repeat;
+	background-color: var(--stroke-color);
+	--offset: 0.1mm;
+}
+
+.set-icon-outline:nth-child(1) {
+	top: var(--offset);
+	left: 0;
+}
+
+.set-icon-outline:nth-child(2) {
+	top: calc(-1 * var(--offset));
+	left: 0;
+}
+
+.set-icon-outline:nth-child(3) {
+	top: 0;
+	left: var(--offset);
+}
+
+.set-icon-outline:nth-child(4) {
+	top: 0;
+	left: calc(-1 * var(--offset));
+}
+
+.set-icon-outline:nth-child(5) {
+	top: var(--offset);
+	left: var(--offset);
+}
+
+.set-icon-outline:nth-child(6) {
+	top: var(--offset);
+	left: calc(-1 * var(--offset));
+}
+
+.set-icon-outline:nth-child(7) {
+	top: calc(-1 * var(--offset));
+	left: var(--offset);
+}
+
+.set-icon-outline:nth-child(8) {
+	top: calc(-1 * var(--offset));
+	left: calc(-1 * var(--offset));
 }
 
 .oracle {
