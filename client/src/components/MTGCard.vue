@@ -318,6 +318,9 @@ export default {
 			dragging_illustration: null,
 		};
 	},
+	updated() {
+		this.fit();
+	},
 	methods: {
 		set_face(idx) {
 			this.currentFace = idx;
