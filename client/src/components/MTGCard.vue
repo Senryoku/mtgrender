@@ -48,6 +48,10 @@
 				>
 					{{ card_face.type_line }}
 				</div>
+				<div class="set-icon-container">
+					<img class="set-icon" :src="set_icon_uri" />
+				</div>
+				<!--
 				<span class="set-icon">
 					<i
 						v-if="card.set"
@@ -55,6 +59,7 @@
 						:class="`ss-${card.set} ss-${card.rarity}`"
 					></i>
 				</span>
+				-->
 			</div>
 			<template v-if="is_adventure">
 				<div class="adventure-part">
@@ -282,6 +287,7 @@ const mana_regex = /{([^}]+)}/g;
 const mana_symbols = {};
 import mana_symbols_list from "../assets/data/symbology.json";
 for (let symbol of mana_symbols_list) mana_symbols[symbol.symbol] = symbol;
+import sets_with_icons from "../assets/data/sets_with_icons.json";
 
 function check_overflow(el) {
 	const curOverflow = el.style.overflow;
@@ -768,6 +774,17 @@ export default {
 				  }
 				: { x: "0mm", y: "0mm" };
 		},
+		set_icon_uri() {
+			if (this.card.set_icon) return this.card.set_icon;
+			if (sets_with_icons.includes(this.card?.set))
+				return new URL(
+					`../assets/img/set_icons/${this.card?.set}_${
+						this.card?.rarity ?? "common"
+					}.png`,
+					import.meta.url
+				).href;
+			return null;
+		},
 	},
 	watch: {
 		"card.oracle_text": function () {
@@ -1050,13 +1067,18 @@ export default {
 	line-height: 5mm;
 }
 
-.set-icon {
-	font-size: 4mm;
+.set-icon-container {
+	height: 3.6mm;
+	width: 7mm;
+	margin-right: 0.2mm;
+	display: flex;
+	justify-content: right;
+	align-items: center;
 }
 
-.set-icon i {
-	margin-top: -0.6mm;
-	margin-right: 0.6mm;
+.set-icon {
+	max-height: 100%;
+	max-width: 100%;
 }
 
 .oracle {

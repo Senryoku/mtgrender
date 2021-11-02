@@ -72,6 +72,16 @@
 						<a @click="card.set = undefined">↺</a>
 					</div>
 					<div>
+						<label for="card-set-icon">Set Icon</label>
+						<input
+							id="card-set-icon"
+							v-model="card.set_icon"
+							type="text"
+							placeholder="Leave Blank to use the official set icon"
+						/>
+						<a @click="card.set_icon = undefined">↺</a>
+					</div>
+					<div>
 						<label for="card-rarity">Rarity</label>
 						<input id="card-rarity" v-model="card.rarity" type="text" />
 						<a @click="card.rarity = undefined">↺</a>
@@ -161,7 +171,6 @@ import { createApp, ref } from "vue";
 import domtoimage from "dom-to-image";
 import Upscaler from "upscaler";
 import { downloadZip } from "client-zip";
-import "keyrune";
 
 import MTGCard from "./components/MTGCard.vue";
 import CardFaceEditor from "./components/CardFaceEditor.vue";
@@ -169,7 +178,6 @@ import CardStore from "./components/CardStore.vue";
 import RenderSettings from "./components/RenderSettings.vue";
 import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
-import ToastContainer from "./components/ToastContainer.vue";
 
 const upscaler = new Upscaler({
 	model: "div2k/rdn-C3-D10-G64-G064-x2",

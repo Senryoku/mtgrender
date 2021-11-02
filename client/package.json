@@ -10,7 +10,6 @@
 		"@vitejs/plugin-vue": "^1.9.3",
 		"client-zip": "^2.0.0",
 		"dom-to-image": "^2.6.0",
-		"keyrune": "^3.8.3",
 		"upscaler": "^0.8.27",
 		"vue": "^3.0.4"
 	},
