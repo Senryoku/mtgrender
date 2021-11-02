@@ -4,7 +4,9 @@
 			<h1>MTGRender</h1>
 			<div class="menu">
 				<button @click="card = Object.assign({}, baseCard)">New Card</button>
-				<button @click="save">Save</button>
+				<button @click="save">
+					Save<span class="shortcut">[Ctrl+S]</span>
+				</button>
 				<form @submit.prevent="loadCard">
 					<input
 						type="text"
@@ -152,7 +154,6 @@
 import { createApp, ref } from "vue";
 import domtoimage from "dom-to-image";
 import Upscaler from "upscaler";
-import optipng from "optipng-js";
 import { downloadZip } from "client-zip";
 import "keyrune";
 
@@ -162,6 +163,7 @@ import CardStore from "./components/CardStore.vue";
 import RenderSettings from "./components/RenderSettings.vue";
 import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
+import ToastContainer from "./components/ToastContainer.vue";
 
 const upscaler = new Upscaler({
 	model: "div2k/rdn-C3-D10-G64-G064-x2",
@@ -252,8 +254,13 @@ export default {
 	mounted() {
 		if (!this.$refs.store.load_default())
 			this.loadCard("Elspeth Conquers Death");
+		document.addEventListener("keydown", this.keydown);
+	},
+	unmounted() {
+		document.removeEventListener("keydown", this.keydown);
 	},
 	methods: {
+		keydown(e) {},
 		save() {
 			this.$refs.store.save();
 		},
@@ -290,6 +297,7 @@ export default {
 						console.log(data);
 						alert("Not found.\nDetails: " + data.details);
 					} else {
+						this.toast(`Loaded '${data.name}' from Scryfall.`);
 						this.card = data;
 					}
 				});
@@ -729,7 +737,8 @@ export default {
 }
 
 a,
-button {
+button,
+.clickable {
 	cursor: pointer;
 }
 
@@ -738,11 +747,36 @@ a:hover {
 }
 
 input,
-textarea {
-	border: 2px solid #ccc;
+textarea,
+button,
+select {
+	border: 2px solid #9fb5bb;
 	border-radius: 0.4em;
 	margin: 0.1em;
 	padding: 0.1em 0.3em 0.2em 0.3em;
+	background: #e2f0f3;
+}
+
+input[type="button"],
+button {
+	color: white;
+	background: #6c9ba5;
+	border: 2px solid #80b6c2;
+	box-shadow: 1px 1px 1px #000000;
+	transition: border 0.1s ease;
+	padding: 0.2em 0.6em 0.4em 0.6em;
+}
+
+input[type="button"]:hover,
+button:hover {
+	border: 2px solid #9acfda;
+}
+
+input[type="button"]:active,
+button:active,
+.clickable {
+	transform: translateY(2px);
+	box-shadow: initial;
 }
 
 textarea {
@@ -753,17 +787,37 @@ textarea {
 	width: 100%;
 	box-sizing: border-box;
 }
+
+.shortcut {
+	color: rgb(214, 214, 214);
+	font-size: 0.8em;
+	margin-left: 0.4em;
+}
 </style>
 
 <style scoped>
+@font-face {
+	font-family: "Beleren Small Caps";
+	src: url("../assets/fonts/belerensmallcaps-bold.ttf") format("truetype");
+}
+
+#app {
+	margin: 0;
+	padding: 0;
+}
+
 .header {
 	display: flex;
+	align-items: center;
 	gap: 2em;
-	margin: 1em;
+	padding: 1em 2em;
+	background-image: linear-gradient(#6e939be0 80%, transparent);
 }
 
 .header h1 {
 	margin: 0;
+	color: white;
+	font-family: Beleren Small Caps;
 }
 
 .menu {
@@ -798,7 +852,7 @@ textarea {
 .content {
 	display: flex;
 	gap: 1em;
-	margin: 1em;
+	margin: 1em 2em;
 	justify-content: space-between;
 }
 

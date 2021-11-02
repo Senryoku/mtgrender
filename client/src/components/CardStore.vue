@@ -58,6 +58,7 @@ export default {
 				this.cards.push(this.currentCard);
 			}
 			this.store();
+			this.toast("Saved!");
 		},
 		load(card) {
 			this.$emit("load", JSON.parse(JSON.stringify(card)));

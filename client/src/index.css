@@ -3,7 +3,13 @@ html {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	margin: 0;
+	padding: 0;
 
 	background-color: #77a0a8;
 	background-image: url("https://www.transparenttextures.com/patterns/cardboard.png");
+}
+
+body {
+	margin: 0;
+	padding: 0;
 }
