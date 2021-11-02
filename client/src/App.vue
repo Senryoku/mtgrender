@@ -872,10 +872,11 @@ textarea {
 }
 
 .tab {
-	background-color: #ffffff60;
-	color: #000000a0;
+	background-color: #ffffff50;
+	box-shadow: inset 0 -4px 4px #00000018;
+	color: #596669;
 	border-radius: 0.5em 0.5em 0 0;
-	padding: 0.1em 0.4em 0 0.4em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
 	cursor: pointer;
 	font-weight: 900;
 }
@@ -888,12 +889,13 @@ textarea {
 .selected-tab {
 	background-color: #ffffff80;
 	color: #000000;
+	box-shadow: initial;
 }
 
 .inner-tab {
 	background-color: #ffffff80;
 	padding: 0.5em;
-	border-radius: 0 0 0.5em 0.5em;
+	border-radius: 0 0.5em 0.5em 0.5em;
 }
 </style>
 
