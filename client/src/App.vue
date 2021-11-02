@@ -169,7 +169,6 @@
 <script lang="ts">
 import { createApp, ref } from "vue";
 import domtoimage from "dom-to-image";
-import Upscaler from "upscaler";
 import { downloadZip } from "client-zip";
 
 import MTGCard from "./components/MTGCard.vue";
@@ -179,9 +178,17 @@ import RenderSettings from "./components/RenderSettings.vue";
 import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
 
-const upscaler = new Upscaler({
-	model: "div2k/rdn-C3-D10-G64-G064-x2",
-});
+let upscaler_instance = null;
+const upscaler = async () => {
+	if (!upscaler_instance) {
+		await import("upscaler").then((Upscaler) => {
+			upscaler_instance = new Upscaler.default({
+				model: "div2k/rdn-C3-D10-G64-G064-x2",
+			});
+		});
+	}
+	return upscaler_instance;
+};
 
 function download(filename, data) {
 	const link = document.createElement("a");
@@ -414,7 +421,7 @@ export default {
 			const default_progress = (arg) => {
 				console.log("Upscaling... ", arg);
 			};
-			return upscaler
+			return (await upscaler())
 				.upscale(imageObjectURL, {
 					patchSize: 64,
 					padding: 6,
