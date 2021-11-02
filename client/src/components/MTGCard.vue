@@ -336,25 +336,6 @@ export default {
 			dragging_illustration: null,
 		};
 	},
-	/*
-	updated() {
-		console.log("updated");
-		this.$nextTick(function () {
-			// TODO
-			// FIXME: Not called the first time a card is rendered?
-			// Update set icon style
-			if (this.$refs.set_icon) {
-				let svg = this.$refs.set_icon.getSVGDocument();
-				if (svg) {
-					let path = svg.querySelector("path");
-					console.log("path", path);
-					path?.setAttribute("fill", "green");
-					path?.setAttribute("stroke", "white");
-				}
-			}
-		});
-	},
-	*/
 	methods: {
 		set_face(idx) {
 			this.currentFace = idx;
