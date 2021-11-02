@@ -48,18 +48,9 @@
 				>
 					{{ card_face.type_line }}
 				</div>
-				<div class="set-icon-container">
+				<div class="set-icon-container" v-if="set_icon_uri">
 					<img class="set-icon" :src="set_icon_uri" />
 				</div>
-				<!--
-				<span class="set-icon">
-					<i
-						v-if="card.set"
-						class="ss ss-grad"
-						:class="`ss-${card.set} ss-${card.rarity}`"
-					></i>
-				</span>
-				-->
 			</div>
 			<template v-if="is_adventure">
 				<div class="adventure-part">
