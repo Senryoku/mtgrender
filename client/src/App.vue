@@ -798,7 +798,7 @@ textarea {
 <style scoped>
 @font-face {
 	font-family: "Beleren Small Caps";
-	src: url("../assets/fonts/belerensmallcaps-bold.ttf") format("truetype");
+	src: url("./assets/fonts/belerensmallcaps-bold.ttf") format("truetype");
 }
 
 #app {
