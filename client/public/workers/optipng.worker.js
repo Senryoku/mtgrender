@@ -19,7 +19,12 @@
 			});
 
 			print("Received command: " + JSON.stringify(args));
-			optipng(message.file.data, args, print);
+			optipng(message.file.data, (data) => {
+				postMessage({
+					type: "done",
+					data,
+				})
+			;}, args, print);
 		}
 	};
 	postMessage({ type: "ready" });
