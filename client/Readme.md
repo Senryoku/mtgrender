@@ -3,7 +3,7 @@
 ## TODO list
 
 -   ~~Support for Planeswalkers~~
--   -   Alternating background tint on abilities
+-   -   ~~Alternating background tint on abilities~~
 -   Support for Planeswalker MDFC
 -   -   Hybrid frame
 -   Support "watermark" property

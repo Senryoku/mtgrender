@@ -886,13 +886,6 @@ export default {
 	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
 }
 
-.planeswalker .inner-frame {
-	top: 2.36mm;
-	left: 3mm;
-	width: calc(58mm - 2px);
-	height: 80mm;
-}
-
 .legendary-crown {
 	position: absolute;
 	left: -2mm;
@@ -928,14 +921,6 @@ export default {
 
 .mid-line {
 	color: v-bind(mid_line_color);
-}
-
-.planeswalker .mid-line {
-	margin-top: 1.3mm;
-}
-
-.planeswalker-large .mid-line {
-	margin-top: -4.6mm;
 }
 
 .name {
@@ -974,35 +959,6 @@ export default {
 	cursor: grab;
 }
 
-.planeswalker .illustration {
-	position: absolute;
-	left: 4mm;
-	top: 8.2mm;
-	width: 55mm;
-	height: 39mm;
-	/*border-radius: 2mm/50%;*/
-}
-
-.planeswalker .illustration.behind-textbox {
-	background-color: white;
-	height: 72mm;
-}
-
-.planeswalker.extended-art .illustration.behind-textbox {
-	mask-image: linear-gradient(
-		rgba(0, 0, 0, 0) 0,
-		rgba(0, 0, 0, 1) 3%,
-		rgba(0, 0, 0, 1) 97%,
-		rgba(0, 0, 0, 0) 100%
-	);
-}
-
-.planeswalker:not(.full-art):not(.extended-art) .illustration.behind-textbox {
-	border-radius: 2mm / calc(39mm / 2);
-	border-bottom-left-radius: 2mm/2mm;
-	border-bottom-right-radius: 2mm;
-}
-
 .extended-art .illustration {
 	z-index: 1;
 	left: 0;
@@ -1023,36 +979,12 @@ export default {
 	z-index: 2;
 }
 
-.planeswalker.full-art .illustration,
-.full-art .illustration {
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	background-color: initial;
-	z-index: 1;
-}
-
 .mid-line {
 	position: absolute;
 	top: 45.6mm;
 	left: 0mm;
 	right: 0;
 	background-position: 0 bottom;
-}
-
-.planeswalker .top-line,
-.planeswalker .mid-line {
-	width: 53.75mm;
-}
-
-.planeswalker .mid-line {
-	position: absolute;
-	top: 45.8mm;
-	left: 0;
-	right: 0;
 }
 
 .type-line {
@@ -1183,49 +1115,6 @@ export default {
 	user-select: initial;
 }
 
-.planeswalker-oracle-bg {
-	position: absolute;
-	left: 4.4mm;
-	top: 53mm;
-	width: 51.2mm;
-	height: 25.45mm;
-	background-color: #ffffff80;
-	border-radius: 1.1mm;
-	border-bottom-left-radius: 8mm 2.1mm;
-	border-bottom-right-radius: 8mm 2.1mm;
-	box-shadow: inset -0.2mm -0.2mm 0.2mm #00000080,
-		inset 0.2mm 0.2mm 0.2mm #00000080;
-}
-
-.planeswalker-large .planeswalker-oracle-bg {
-	top: 47mm;
-	height: 31.45mm;
-}
-
-.planeswalker-oracle {
-	position: absolute;
-	left: 0;
-	top: 53mm;
-
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.8mm;
-
-	width: 49.5mm;
-	height: 24mm;
-
-	padding: 0.5mm;
-	padding-left: 5.5mm;
-	padding-bottom: 1mm;
-}
-
-.planeswalker-large .planeswalker-oracle {
-	top: 47.5mm;
-	height: 29mm;
-}
-
 /************** Saga *************/
 
 .saga .inner-frame {
@@ -1318,16 +1207,187 @@ export default {
 	width: 5mm;
 }
 
+/* Planeswalkers */
+
+.planeswalker .inner-frame {
+	top: 2.36mm;
+	left: 3mm;
+	width: calc(58mm - 2px);
+	height: 80mm;
+}
+
+.planeswalker .mid-line {
+	margin-top: 1.3mm;
+}
+
+.planeswalker-large .mid-line {
+	margin-top: -4.6mm;
+}
+
+.planeswalker .illustration {
+	position: absolute;
+	left: 4mm;
+	top: 8.2mm;
+	width: 55mm;
+	height: 39mm;
+	/*border-radius: 2mm/50%;*/
+}
+
+.planeswalker .illustration.behind-textbox {
+	background-color: white;
+	height: 72mm;
+}
+
+.planeswalker.extended-art .illustration.behind-textbox {
+	mask-image: linear-gradient(
+		rgba(0, 0, 0, 0) 0,
+		rgba(0, 0, 0, 1) 3%,
+		rgba(0, 0, 0, 1) 97%,
+		rgba(0, 0, 0, 0) 100%
+	);
+}
+
+.planeswalker:not(.full-art):not(.extended-art) .illustration.behind-textbox {
+	border-radius: 2mm / calc(39mm / 2);
+	border-bottom-left-radius: 2mm/2mm;
+	border-bottom-right-radius: 2mm;
+}
+
+.planeswalker.full-art .illustration,
+.full-art .illustration {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background-color: initial;
+	z-index: 1;
+}
+
+.planeswalker .top-line,
+.planeswalker .mid-line {
+	width: 53.75mm;
+}
+
+.planeswalker .mid-line {
+	position: absolute;
+	top: 45.8mm;
+	left: 0;
+	right: 0;
+}
+
+.planeswalker-oracle-bg {
+	position: absolute;
+	left: 4.75mm;
+	top: 53.2mm;
+	width: 50.85mm;
+	height: 25.35mm;
+	background-color: #ffffff90;
+	border-radius: 0.9mm;
+	border-bottom-left-radius: 8mm 2.1mm;
+	border-bottom-right-radius: 8mm 2.1mm;
+	box-shadow: inset -0.2mm -0.2mm 0.2mm #00000080,
+		inset 0.2mm 0.2mm 0.2mm #00000080;
+}
+
+.planeswalker-large .planeswalker-oracle-bg {
+	top: 47mm;
+	height: 31.45mm;
+}
+
+.planeswalker-oracle {
+	position: absolute;
+	left: 0;
+	top: 53mm;
+
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.4mm;
+
+	width: 49.5mm;
+	height: 24mm;
+
+	padding: 0.5mm;
+	padding-left: 5.5mm;
+	padding-bottom: 1mm;
+}
+
+.planeswalker-large .planeswalker-oracle {
+	top: 46.6mm;
+	height: 31.04mm;
+}
+
 .planeswalker-ability {
 	position: relative;
 	flex-shrink: 0;
+	padding: 0.4mm 0.4em;
+}
+
+.planeswalker-ability:nth-child(2n + 1):before {
+	content: "";
+	position: absolute;
+	left: -0.6mm;
+	right: -0.6mm;
+	top: -1.2mm;
+	bottom: -1.2mm;
+	background-color: #fff4;
+	mask-image: linear-gradient(
+			transparent,
+			transparent 1.2mm,
+			black 1.2mm,
+			black calc(100% - 1.2mm),
+			transparent calc(100% - 1.2mm),
+			transparent
+		),
+		url("../assets/img/planeswalker_ability_top.png"),
+		url("../assets/img/planeswalker_ability_bottom.png");
+	mask-size: 100%, 100%, 100%;
+	mask-position: 0 0, 0 0, 0 100%;
+	mask-repeat: repeat-x;
+	mask-composite: add;
+	z-index: -1;
+}
+
+.planeswalker-ability-with-cost:nth-child(2n + 1):before {
+	left: -3.1mm;
+	right: -0.6mm;
+}
+
+.planeswalker-ability:nth-child(1):before {
+	border-top-left-radius: 1mm;
+	border-top-right-radius: 1mm;
+	mask-image: linear-gradient(
+			black calc(100% - 1.2mm),
+			transparent calc(100% - 1.2mm),
+			transparent
+		),
+		url("../assets/img/planeswalker_ability_bottom.png");
+	mask-size: 100%, 100%;
+	mask-position: 0 0, 0 100%;
+	mask-composite: add;
+	top: -0.1mm;
+}
+
+.planeswalker:not(.planeswalker-large)
+	.planeswalker-ability:nth-child(3):before {
+	mask-image: linear-gradient(transparent, transparent 1.2mm, black 1.2mm),
+		url("../assets/img/planeswalker_ability_top.png");
+	mask-size: 100%, 100%;
+	mask-position: 0 0, 0 0;
+	bottom: -1mm;
+	border-bottom-left-radius: 10mm 2mm;
 }
 
 .planeswalker-ability-with-cost {
 	margin-left: 2.5mm;
-	min-height: 4mm;
+	min-height: 4.8mm;
+	flex-grow: 1;
 	display: flex;
 	align-items: center;
+	padding: 0.4mm 0;
 }
 
 .planeswalker-ability-cost {
@@ -1347,19 +1407,19 @@ export default {
 .planeswalker-ability-cost-plus {
 	background-image: url("../assets/img/planeswalker/LoyaltyPlus.png");
 	height: 4.7mm;
-	line-height: 5.2mm;
+	line-height: 5mm;
 }
 
 .planeswalker-ability-cost-zero {
 	background-image: url("../assets/img/planeswalker/LoyaltyZero.png");
 	height: 4.2mm;
-	line-height: 4.2mm;
+	line-height: 3.8mm;
 }
 
 .planeswalker-ability-cost-minus {
 	background-image: url("../assets/img/planeswalker/LoyaltyMinus.png");
 	height: 4.7mm;
-	line-height: 3.9mm;
+	line-height: 3.8mm;
 }
 
 .planeswalker-ability-cost::after {
@@ -1374,11 +1434,15 @@ export default {
 }
 
 .planeswalker-ability-cost-minus::after {
-	top: 1mm;
+	top: 1.7mm;
 }
 
 .planeswalker-ability-cost-zero::after {
 	top: 1.7mm;
+}
+
+.planeswalker .footer {
+	top: 82.2mm;
 }
 
 .oracle-inner,
@@ -1539,13 +1603,11 @@ export default {
 }
 
 .mdfc .planeswalker-oracle {
-	left: 1mm;
 	height: 22mm;
 }
 
 .mdfc.planeswalker-large .planeswalker-oracle {
-	left: 1mm;
-	height: 28mm;
+	height: 29mm;
 }
 
 .mdfc-icon {
