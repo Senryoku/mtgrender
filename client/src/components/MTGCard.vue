@@ -44,6 +44,11 @@
 			</div>
 			<div class="planeswalker-oracle-bg" v-if="is_planeswalker"></div>
 			<div class="mid-line">
+				<img
+					class="color-indicator"
+					v-if="card_face.color_indicator"
+					:src="color_indicator"
+				/>
 				<div
 					class="type-line"
 					@dblclick="edit_property('type_line')"
@@ -790,15 +795,27 @@ export default {
 				: "black";
 		},
 		top_line_color() {
-			return this.is_transform && this.currentFace === 1 ? "white" : "black";
+			return this.is_transform &&
+				this.currentFace === 1 &&
+				!this.is_planeswalker
+				? "white"
+				: "black";
 		},
 		mid_line_color() {
 			return (this.extended_art &&
 				!this.is_planeswalker &&
 				!this.is_transform) ||
-				(this.is_transform && this.currentFace === 1)
+				(this.is_transform && this.currentFace === 1 && !this.is_planeswalker)
 				? "white"
 				: "black";
+		},
+		color_indicator() {
+			return new URL(
+				`../assets/img/color_indicators/${[...this.card_face.color_indicator]
+					.sort((lhs, rhs) => "WUBRG".indexOf(lhs) - "WUBRG".indexOf(rhs))
+					.join("")}.png`,
+				import.meta.url
+			).href;
 		},
 		illustration() {
 			return `url(${
@@ -1038,12 +1055,20 @@ export default {
 	left: 0mm;
 	right: 0;
 	background-position: 0 bottom;
+	gap: 0.6mm;
+}
+
+.color-indicator {
+	width: 2.8mm;
+	margin-left: -0.5mm;
 }
 
 .type-line {
 	font-size: 8pt;
 	height: 5mm;
 	line-height: 5mm;
+	flex-grow: 1;
+	white-space: nowrap;
 }
 
 .set-icon-container {
