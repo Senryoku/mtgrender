@@ -25,8 +25,10 @@
 					class="name"
 					@dblclick.prevent="edit_property('name')"
 					@mousedown.prevent=""
-					>{{ card_face.name }}</span
+					ref="name_el"
 				>
+					{{ card_face.name }}
+				</span>
 				<div
 					class="mana-cost"
 					@dblclick.prevent="edit_property('mana_cost')"
@@ -316,10 +318,12 @@ export default {
 		renderMargin: Number,
 	},
 	data() {
+		const name_el = ref(null);
 		const oracle_el = ref(null);
 		const adventure_oracle_el = ref(null);
 		const type_line_el = ref(null);
 		return {
+			name_el,
 			oracle_el,
 			adventure_oracle_el,
 			type_line_el,
@@ -428,8 +432,8 @@ export default {
 				);
 			}
 		},
-		fit_font_size(el) {
-			let curr_font_size = 8;
+		fit_font_size(el, initial_size = 8) {
+			let curr_font_size = initial_size;
 			el.style.fontSize = curr_font_size + "pt";
 			while (check_overflow(el) && curr_font_size > 3) {
 				curr_font_size *= 0.9;
@@ -442,7 +446,11 @@ export default {
 			this.fit_oracle_text();
 		},
 		fit_name() {
-			// TODO
+			if (!this.$refs.name_el) return;
+			// Make sure oracle text fits in its box
+			nextTick(() => {
+				this.fit_font_size(this.$refs.name_el, 9.5);
+			});
 		},
 		fit_type_line() {
 			if (!this.$refs.type_line_el) return;
@@ -969,6 +977,7 @@ export default {
 
 .name {
 	font-size: 9.454pt;
+	white-space: nowrap;
 	/*margin-top: -0.4mm; //???*/
 }
 
@@ -1711,7 +1720,7 @@ export default {
 
 /* Transform */
 
-.transform:not(.back) .inner-frame {
+.transform:not(.back):not(.planeswalker) .inner-frame {
 	left: 3.2mm;
 	width: 57.6mm;
 }
@@ -1720,15 +1729,15 @@ export default {
 	padding-left: 5.2mm;
 }
 
-.transform:not(.back) .top-line {
+.transform:not(.back):not(.planeswalker) .top-line {
 	margin-left: 0.6mm;
 }
 
-.transform:not(.back) .mid-line {
+.transform:not(.back):not(.planeswalker) .mid-line {
 	left: -0.8mm;
 }
 
-.transform.back .inner-frame {
+.transform.back:not(.planeswalker) .inner-frame {
 	left: 3.2mm;
 	width: 56.7mm;
 }
@@ -1748,6 +1757,10 @@ export default {
 	background-position: center center;
 	background-repeat: no-repeat;
 	z-index: 3;
+}
+
+.planeswalker .transform-icon {
+	top: 3mm;
 }
 
 .transform-hint {
