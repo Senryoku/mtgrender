@@ -179,13 +179,15 @@ import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
 
 let upscaler_instance = null;
-const upscaler = async () => {
-	if (!upscaler_instance) {
+let upscaler_loaded_model = null;
+const upscaler = async (model) => {
+	if (!upscaler_instance || model !== upscaler_loaded_model) {
 		await import("upscaler").then((Upscaler) => {
 			upscaler_instance = new Upscaler.default({
-				model: "div2k/rdn-C3-D10-G64-G064-x2",
+				model: model,
 			});
 		});
+		upscaler_loaded_model = model;
 	}
 	return upscaler_instance;
 };
@@ -236,7 +238,11 @@ export default {
 		const savedRenderOptions = localStorage.getItem("renderOptions");
 		const renderOptions = savedRenderOptions
 			? JSON.parse(savedRenderOptions)
-			: { margin: 3, upscale: false };
+			: {
+					margin: 3,
+					upscale: false,
+					upscalerModel: "div2k/rdn-C3-D10-G64-G064-x2",
+			  };
 		const defaultCardProperties = JSON.parse(
 			localStorage.getItem("defaultCardProperties") ?? "{}"
 		);
@@ -421,7 +427,7 @@ export default {
 			const default_progress = (arg) => {
 				console.log("Upscaling... ", arg);
 			};
-			return (await upscaler())
+			return (await upscaler(this.renderOptions.upscalerModel))
 				.upscale(imageObjectURL, {
 					patchSize: 64,
 					padding: 6,
