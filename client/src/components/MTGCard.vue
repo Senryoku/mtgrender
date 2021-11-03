@@ -3,6 +3,8 @@
 		class="mtg-card"
 		:class="{
 			mdfc: is_mdfc,
+			transform: is_transform,
+			back: currentFace === 1,
 			legendary: is_legendary,
 			planeswalker: is_planeswalker,
 			'planeswalker-large': is_large_planeswalker,
@@ -262,6 +264,13 @@
 					:src="uri"
 				/>
 			</div>
+		</div>
+		<div v-if="is_transform" class="transform-icon"></div>
+		<div
+			v-if="is_transform && currentFace === 0 && back_face.power"
+			class="transform-hint"
+		>
+			{{ back_face.power }}/{{ back_face.toughness }}
 		</div>
 		<div v-if="is_dualfaced" class="flip-icon" @click="flip">⭯</div>
 	</div>
@@ -537,6 +546,9 @@ export default {
 		is_mdfc() {
 			return this.card.layout === "modal_dfc";
 		},
+		is_transform() {
+			return this.card.layout === "transform";
+		},
 		mana_cost() {
 			if (!this.card_face?.mana_cost) return [];
 			return [...this.card_face.mana_cost.matchAll(mana_regex)].map(
@@ -667,6 +679,10 @@ export default {
 					: "planeswalker_frames"
 				: this.is_mdfc
 				? "mdfc_frames"
+				: this.is_transform
+				? this.currentFace === 0
+					? "transform_frames"
+					: "transform_back_frames"
 				: "frames";
 			if (this.extended_art && !this.is_saga) folder = "extended_" + folder;
 			return `url(${
@@ -677,7 +693,7 @@ export default {
 		boxes() {
 			const folder = this.is_planeswalker
 				? "planeswalker_boxes"
-				: this.is_mdfc
+				: this.is_mdfc || this.is_transform
 				? this.currentFace === 0
 					? "mdfc_boxes"
 					: "mdfc_back_boxes"
@@ -703,9 +719,11 @@ export default {
 		pt_box() {
 			return `url(${
 				new URL(
-					`../assets/img/pt_boxes/${
-						this.is_vehicle ? "Vehicle" : this.boxes_colors
-					}.png`,
+					`../assets/img/${
+						(this.is_mdfc || this.is_transform) && this.currentFace === 1
+							? "transform_back_pt_boxes"
+							: "pt_boxes"
+					}/${this.is_vehicle ? "Vehicle" : this.boxes_colors}.png`,
 					import.meta.url
 				).href
 			})`;
@@ -746,11 +764,33 @@ export default {
 		mdfc_hint_color() {
 			return this.currentFace === 0 ? "white" : "black";
 		},
+		transform_icon() {
+			return `url(${
+				new URL(
+					`../assets/img/transform${
+						this.currentFace === 0 ? "" : "_back"
+					}_icons/${
+						this.card.frame_effects?.[0] ?? "sunmoondfc"
+					}.png` /* FIXME: Pretty sure this will break at some point */,
+					import.meta.url
+				).href
+			})`;
+		},
 		pt_box_color() {
-			return this.is_vehicle ? "white" : "black";
+			return this.is_vehicle || (this.is_transform && this.currentFace === 1)
+				? "white"
+				: "black";
+		},
+		top_line_color() {
+			return this.is_transform && this.currentFace === 1 ? "white" : "black";
 		},
 		mid_line_color() {
-			return this.extended_art && !this.is_planeswalker ? "white" : "black";
+			return (this.extended_art &&
+				!this.is_planeswalker &&
+				!this.is_transform) ||
+				(this.is_transform && this.currentFace === 1)
+				? "white"
+				: "black";
 		},
 		illustration() {
 			return `url(${
@@ -919,13 +959,17 @@ export default {
 	user-select: initial;
 }
 
+.top-line {
+	color: v-bind(top_line_color);
+}
+
 .mid-line {
 	color: v-bind(mid_line_color);
 }
 
 .name {
 	font-size: 9.454pt;
-	margin-top: -0.4mm;
+	/*margin-top: -0.4mm; //???*/
 }
 
 .mana-cost {
@@ -1612,7 +1656,7 @@ export default {
 
 .mdfc-icon {
 	position: absolute;
-	top: 3.9mm;
+	top: 4mm;
 	left: 3mm;
 	width: 6mm;
 	aspect-ratio: calc(294 / 238);
@@ -1663,6 +1707,57 @@ export default {
 
 .mdfc-hint .mana-cost {
 	font-size: 4pt;
+}
+
+/* Transform */
+
+.transform:not(.back) .inner-frame {
+	left: 3.2mm;
+	width: 57.6mm;
+}
+
+.transform .top-line .name {
+	padding-left: 5.2mm;
+}
+
+.transform:not(.back) .top-line {
+	margin-left: 0.6mm;
+}
+
+.transform:not(.back) .mid-line {
+	left: -0.8mm;
+}
+
+.transform.back .inner-frame {
+	left: 3.2mm;
+	width: 56.7mm;
+}
+
+.transform-icon {
+	position: absolute;
+	top: 3.9mm;
+	left: 3.7mm;
+	width: 5.2mm;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	border: 0.02mm black solid; /* Fixme: Border is too thick on renders */
+	box-sizing: border-box;
+	background-color: white;
+	background-image: v-bind(transform_icon);
+	background-size: 4.6mm;
+	background-position: center center;
+	background-repeat: no-repeat;
+	z-index: 3;
+}
+
+.transform-hint {
+	position: absolute;
+	bottom: 12.5mm;
+	right: 5.2mm;
+	z-index: 3;
+	font-family: Beleren;
+	font-size: 6.5pt;
+	color: #666;
 }
 
 /* Extend art as much as possible when adding a bordering while rendering */
