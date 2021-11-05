@@ -282,7 +282,8 @@
 		<div
 			v-if="debug && display_debug && card_face?.image_uris?.png"
 			class="debug-overlay"
-			@mousemove="debugOverlay"
+			@mousemove="update_debug_overlay"
+			@mouseleave="update_debug_overlay"
 		>
 			<div>
 				<img :src="card_face.image_uris.png" />
@@ -347,7 +348,7 @@ export default {
 			currentFace: 0,
 			dragging_illustration: null,
 			debug: import.meta.env.MODE === "development",
-			display_debug: false,
+			display_debug: true,
 			debug_opacity: 0,
 		};
 	},
@@ -523,13 +524,15 @@ export default {
 				? "Gold"
 				: sorted_colors;
 		},
-		debugOverlay(event) {
-			console.log(event);
-			if (event.target.firstElementChild)
+		update_debug_overlay(event) {
+			if (event.type === "mousemove") {
 				event.target.firstElementChild.style.width =
 					(event.clientX - event.target.parentNode.getBoundingClientRect().x) /
 						this.scale +
 					"px";
+			} else {
+				event.target.firstElementChild.style.width = "";
+			}
 		},
 	},
 	computed: {
@@ -1230,7 +1233,7 @@ export default {
 /************** Saga *************/
 
 .saga .inner-frame {
-	top: 3.9mm;
+	top: 3.66mm;
 	margin: 0;
 	width: 57.7mm;
 	margin-left: -1mm;
@@ -1274,9 +1277,10 @@ export default {
 	left: 2.8mm;
 	top: 6.35mm;
 	width: 26.3mm;
-	height: 63.2mm;
-	background-size: 100%;
+	height: 63.3mm;
+	background-size: cover;
 	background-image: v-bind(saga_text_box);
+	background-repeat: no-repeat;
 }
 
 .saga-reminder {
@@ -1607,16 +1611,16 @@ export default {
 .loyalty {
 	position: absolute;
 	right: 3mm;
-	bottom: 4.5mm;
-	width: 10mm;
-	height: 7mm;
+	bottom: 5mm;
+	width: 9.8mm;
+	height: 5.8mm;
 	background-image: url("../assets/img/planeswalker/Loyalty.png");
-	background-size: 100%;
+	background-size: 100% 100%;
 	background-repeat: no-repeat;
 
 	text-align: center;
 	line-height: 6.6mm;
-	font-size: 10pt;
+	font-size: 9.5pt;
 	color: white;
 
 	pointer-events: initial;
