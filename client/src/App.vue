@@ -123,6 +123,60 @@
 						</select>
 						<a @click="card.rarity = undefined">↺</a>
 					</div>
+					<div style="display: flex; align-items: center">
+						<label for="card-frame-effects">Frame Effects</label>
+						<div id="card-frame-effects" style="display: inline-block">
+							<form @submit.prevent="addFrameEffect">
+								<input
+									type="text"
+									id="add-frame-effect"
+									name="add-frame-effect"
+									list="frame-effects"
+								/>
+								<datalist id="frame-effects">
+									<option
+										v-for="e in [
+											'legendary',
+											'miracle',
+											'nyxtouched',
+											'draft',
+											'devoid',
+											'tombstone',
+											'colorshifted',
+											'inverted',
+											'sunmoondfc',
+											'compasslanddfc',
+											'originpwdfc',
+											'mooneldrazidfc',
+											'waxingandwaningmoondfc',
+											'showcase',
+											'extendedart',
+											'companion',
+											'etched',
+											'snow',
+										]"
+										:key="e"
+										:value="e"
+									></option>
+								</datalist>
+								<button type="submit">Add</button>
+							</form>
+							<ul style="margin: 0 1em; padding: 0">
+								<li
+									v-for="(r, idx) in this.card.frame_effects"
+									:key="r"
+									:value="r"
+								>
+									<input type="text" v-model="this.card.frame_effects[idx]" />
+									<span
+										@click="this.card.frame_effects.splice(idx, 1)"
+										class="clickable"
+										>🗑</span
+									>
+								</li>
+							</ul>
+						</div>
+					</div>
 					<template v-if="card.card_faces && card.card_faces.length > 1">
 						<div>
 							<label for="card-full-name">Full Name</label>
@@ -408,6 +462,13 @@ export default {
 				for (let idx = 0; idx < key.length - 1; ++idx) obj = obj[key[idx]];
 				obj[key[key.length - 1]] = value;
 			} else this.card[key] = value;
+		},
+		addFrameEffect(event) {
+			console.log(event);
+			if (!this.card.frame_effects) this.card.frame_effects = [];
+			this.card.frame_effects.push(
+				event.target.querySelector("#add-frame-effect").value
+			);
 		},
 		async dropHandler(event) {
 			console.log("File(s) dropped");
@@ -863,7 +924,7 @@ button {
 	border: 2px solid #80b6c2;
 	box-shadow: 1px 1px 1px #000000;
 	transition: border 0.1s ease;
-	padding: 0.2em 0.6em 0.4em 0.6em;
+	padding: 0.2em 0.6em 0.2em 0.6em;
 }
 
 input[type="button"]:hover,
