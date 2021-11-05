@@ -866,7 +866,7 @@ export default {
 		mid_line_color() {
 			return (this.extended_art &&
 				!this.is_planeswalker &&
-				!this.is_transform) ||
+				(!this.is_transform || this.currentFace === 0)) ||
 				((this.is_transform || this.is_mdfc) &&
 					this.currentFace === 1 &&
 					!this.is_planeswalker)
@@ -1128,7 +1128,7 @@ export default {
 	line-height: 5mm;
 	flex-grow: 1;
 	white-space: nowrap;
-	margin-top: -0.3mm;
+	margin-top: -0.2mm;
 }
 
 .set-icon-container {
@@ -1138,7 +1138,7 @@ export default {
 	display: flex;
 	justify-content: right;
 	align-items: center;
-	margin-top: -0.3mm;
+	margin-top: -0.2mm;
 }
 
 .set-icon {
