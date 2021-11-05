@@ -1750,6 +1750,10 @@ export default {
 	width: 57.6mm;
 }
 
+.transform .legendary-crown {
+	left: -1.8mm;
+}
+
 .transform .top-line .name {
 	padding-left: 5.2mm;
 }
