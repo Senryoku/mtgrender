@@ -8,25 +8,35 @@
 					Save<span class="shortcut">[Ctrl+S]</span>
 				</button>
 				<form @submit.prevent="loadCard">
-					<input
-						type="text"
-						placeholder="Card Name..."
-						v-model="searchCardName"
-						@input="autocompleteCardName"
-					/>
-					<div class="card-name-autocomplete" v-if="autocompleteStatus">
-						<div v-if="autocompleteStatus === 'updating'">Searching...</div>
-						<div v-if="autocompleteStatus === 'error'">An error occured.</div>
-						<div v-if="Array.isArray(autocompleteStatus)">
-							<ul>
-								<li
-									v-for="r in autocompleteStatus"
-									:key="r"
-									@click="selectCard(r)"
-								>
-									{{ r }}
-								</li>
-							</ul>
+					<div style="position: relative; display: inline-block">
+						<input
+							id="card-seach-input"
+							type="text"
+							placeholder="Card Name..."
+							v-model="searchCardName"
+							@input="autocompleteCardName"
+							@keydown="autocompleteKeydown"
+						/>
+						<div
+							class="card-name-autocomplete"
+							v-if="autocompleteStatus"
+							@keydown="autocompleteKeydown"
+						>
+							<div v-if="autocompleteStatus === 'updating'">Searching...</div>
+							<div v-if="autocompleteStatus === 'error'">An error occured.</div>
+							<div v-if="Array.isArray(autocompleteStatus)">
+								<ul>
+									<li
+										v-for="(r, idx) in autocompleteStatus"
+										:key="r"
+										:tabindex="idx"
+										@click="selectCard(r)"
+										@keydown="autocompleteCycle"
+									>
+										{{ r }}
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 					<button type="submit">Load from Scryfall</button>
@@ -332,6 +342,38 @@ export default {
 				const data = await response.json();
 				if (data.total_values > 0) this.autocompleteStatus = data.data;
 				else this.autocompleteStatus = null;
+			}
+		},
+		autocompleteKeydown(event) {
+			const el = document.querySelector(".card-name-autocomplete");
+			if (!el) return;
+			switch (event.key) {
+				case "ArrowDown":
+					el.querySelector("li").focus();
+					break;
+			}
+		},
+		autocompleteCycle(event) {
+			switch (event.key) {
+				case "Enter":
+					event.target.click();
+					break;
+				case "ArrowUp":
+					if (event.target.previousElementSibling)
+						event.target.previousElementSibling?.focus();
+					else event.target.parentNode.lastElementChild.focus();
+					event.stopPropagation();
+					break;
+				case "ArrowDown":
+					if (event.target.nextElementSibling)
+						event.target.nextElementSibling.focus();
+					else event.target.parentNode.firstElementChild.focus();
+					event.stopPropagation();
+					break;
+				default:
+					event.target.blur();
+					document.querySelector("#card-seach-input")?.focus();
+					break;
 			}
 		},
 		closeAutocomplete() {
@@ -889,22 +931,35 @@ textarea {
 
 .card-name-autocomplete {
 	position: absolute;
-	top: 100%;
+	top: calc(100% + 0.2em);
+	left: 0;
+	min-width: 100%;
 	z-index: 1;
 	background-color: white;
+	border-radius: 0.5em;
+	padding: 0;
 }
 
 .card-name-autocomplete ul {
 	list-style: none;
-	margin: 0.2em;
+	margin: 0;
 	padding: 0;
 }
 
 .card-name-autocomplete li {
-	padding: 0.2em;
+	padding: 0.2em 0.4em;
 	cursor: pointer;
 }
 
+.card-name-autocomplete li:first-child {
+	border-radius: 0.5em 0.5em 0 0;
+}
+
+.card-name-autocomplete li:last-child {
+	border-radius: 0 0 0.5em 0.5em;
+}
+
+.card-name-autocomplete li:focus-visible,
 .card-name-autocomplete li:hover {
 	background-color: lightblue;
 }
