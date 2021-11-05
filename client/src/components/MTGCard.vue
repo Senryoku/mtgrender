@@ -761,6 +761,16 @@ export default {
 				).href
 			})`;
 		},
+		mid_boxes() {
+			return this.extended_art && !this.is_planeswalker
+				? `url(${
+						new URL(
+							`../assets/img/extended_boxes/${this.boxes_colors}.png`,
+							import.meta.url
+						).href
+				  })`
+				: this.boxes;
+		},
 		legendary_crown() {
 			const folder = this.extended_art
 				? "extended_legendary_crowns"
@@ -812,9 +822,6 @@ export default {
 				).href
 			})`;
 		},
-		mdfc_text_color() {
-			return this.currentFace === 0 ? "black" : "white";
-		},
 		mdfc_hint_color() {
 			return this.currentFace === 0 ? "white" : "black";
 		},
@@ -836,9 +843,11 @@ export default {
 				: "black";
 		},
 		top_line_color() {
-			return this.is_transform &&
-				this.currentFace === 1 &&
-				!this.is_planeswalker
+			return this.is_mdfc
+				? this.currentFace === 0
+					? "black"
+					: "white"
+				: this.is_transform && this.currentFace === 1 && !this.is_planeswalker
 				? "white"
 				: "black";
 		},
@@ -846,7 +855,9 @@ export default {
 			return (this.extended_art &&
 				!this.is_planeswalker &&
 				!this.is_transform) ||
-				(this.is_transform && this.currentFace === 1 && !this.is_planeswalker)
+				((this.is_transform || this.is_mdfc) &&
+					this.currentFace === 1 &&
+					!this.is_planeswalker)
 				? "white"
 				: "black";
 		},
@@ -1031,6 +1042,7 @@ export default {
 
 .mid-line {
 	color: v-bind(mid_line_color);
+	background-image: v-bind(mid_boxes);
 }
 
 .name {
@@ -1705,7 +1717,6 @@ export default {
 .mdfc:not(.planeswalker) .mid-line {
 	/* FIXME: This should apply to planeswalker, but MDFC-PL frames and boxes aren't done yet */
 	margin-left: 1.8mm;
-	color: v-bind(mdfc_text_color);
 }
 
 .mdfc .top-line .name {
