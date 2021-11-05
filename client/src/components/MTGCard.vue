@@ -953,9 +953,9 @@ export default {
 
 .legendary-crown {
 	position: absolute;
-	left: -2mm;
+	left: -1.92mm;
 	top: -2mm;
-	width: 60.2mm;
+	width: 60.06mm;
 	height: 100%;
 	background-image: v-bind(legendary_crown);
 	background-size: 100%;
@@ -1651,7 +1651,7 @@ export default {
 }
 
 .mdfc:not(.planeswalker) .inner-frame {
-	width: 57.9mm;
+	width: 57.8mm;
 	left: 2.2mm;
 }
 
@@ -1746,12 +1746,12 @@ export default {
 /* Transform */
 
 .transform:not(.back):not(.planeswalker) .inner-frame {
-	left: 3.2mm;
+	left: 3.24mm;
 	width: 57.6mm;
 }
 
 .transform .legendary-crown {
-	left: -1.8mm;
+	left: -1.74mm;
 }
 
 .transform .top-line .name {
@@ -1763,12 +1763,20 @@ export default {
 }
 
 .transform:not(.back):not(.planeswalker) .mid-line {
-	left: -0.8mm;
+	left: -0.7mm;
+}
+
+.transform.back:not(.planeswalker) .top-line {
+	margin-left: 0.7mm;
+}
+
+.transform.back:not(.planeswalker) .mid-line {
+	left: 0.3mm;
 }
 
 .transform.back:not(.planeswalker) .inner-frame {
 	left: 3.2mm;
-	width: 56.7mm;
+	width: 56.72mm;
 }
 
 .transform-icon {
