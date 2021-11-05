@@ -2,6 +2,7 @@
 
 ## TODO list
 
+-   Remove everything from under .inner-frame: the filter applied on this element messed a lot of things (for example the drop shadow will be visible behind the transparent oracle box of planeswalkers, darkening the illustration)
 -   ~~Support for Planeswalkers~~
 -   -   ~~Alternating background tint on abilities~~
 -   Support for Planeswalker MDFC

@@ -696,7 +696,7 @@ export default {
 		boxes_colors() {
 			return this.colors === "Vehicle"
 				? "Artifact"
-				: this.is_land && this.card.color_identity?.length === 0 // FIXME: Fixes colors for cards like 'Agadeem, the Undercrypt', but may cause problem elsewhere?
+				: this.is_land // FIXME: Fixes colors for cards like 'Agadeem, the Undercrypt', but may cause problem elsewhere?
 				? "Land"
 				: this.colors.length > 1 && this.colors.length < 5
 				? "Gold"
@@ -794,7 +794,7 @@ export default {
 			return `url(${
 				new URL(
 					`../assets/img/mdfc${this.currentFace === 0 ? "" : "_back"}_icons/${
-						this.boxes_colors
+						this.boxes_colors === "Land" ? this.colors : this.boxes_colors
 					}.png`,
 					import.meta.url
 				).href
@@ -1403,7 +1403,7 @@ export default {
 	top: 53.2mm;
 	width: 50.85mm;
 	height: 25.35mm;
-	background-color: #ffffff90;
+	background-color: #ffffff80;
 	border-radius: 0.9mm;
 	border-bottom-left-radius: 8mm 2.1mm;
 	border-bottom-right-radius: 8mm 2.1mm;
