@@ -473,12 +473,19 @@ export default {
 			if (!this.$refs.name_el) return;
 			// Make sure oracle text fits in its box
 			nextTick(() => {
+				const initial_font_size = 9.454;
 				let curr_letter_spacing = 0.034; //initial_spacing;
+				this.$refs.name_el.style.fontSize = initial_font_size + "pt";
 				this.$refs.name_el.style.letterSpacing = curr_letter_spacing + "mm";
-				while (check_overflow(this.$refs.name_el) && curr_letter_spacing > 0) {
+				while (
+					check_overflow(this.$refs.name_el) &&
+					curr_letter_spacing > -0.09
+				) {
 					curr_letter_spacing -= 0.001;
 					this.$refs.name_el.style.letterSpacing = curr_letter_spacing + "mm";
 				}
+				if (check_overflow(this.$refs.name_el))
+					this.fit_font_size(this.$refs.name_el, initial_font_size);
 			});
 		},
 		fit_type_line() {
@@ -1042,7 +1049,7 @@ export default {
 	left: 0;
 	right: 0;
 	color: v-bind(top_line_color);
-	gap: 2mm;
+	gap: 1.5mm;
 }
 
 .name {
