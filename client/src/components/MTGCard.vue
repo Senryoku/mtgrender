@@ -1317,7 +1317,7 @@ export default {
 
 .planeswalker .illustration.behind-textbox {
 	background-color: white;
-	height: 72mm;
+	height: 73mm;
 }
 
 .planeswalker.extended-art .illustration.behind-textbox {
@@ -1331,7 +1331,7 @@ export default {
 
 .planeswalker:not(.full-art):not(.extended-art) .illustration.behind-textbox {
 	border-radius: 2mm / calc(39mm / 2);
-	border-bottom-left-radius: 2mm/2mm;
+	border-bottom-left-radius: 4mm 3mm;
 	border-bottom-right-radius: 2mm;
 }
 
@@ -1816,22 +1816,22 @@ export default {
 
 /* Ixalan maps */
 
-.transform.compasslanddfc.back .legendary-crown {
+.compasslanddfc.back .legendary-crown {
 	display: none;
 }
 
-.transform.compasslanddfc.back .inner-frame {
+.compasslanddfc.back .inner-frame {
 	background-image: none;
 	filter: none;
 }
 
-.transform.compasslanddfc.back .name {
+.compasslanddfc.back .name {
 	font-family: Beleren Small Caps;
 	padding: 0;
 	margin: 0;
 }
 
-.transform.compasslanddfc.back .illustration {
+.compasslanddfc.back .illustration {
 	top: 9.2mm;
 	left: 3mm;
 	right: 3mm;
@@ -1839,8 +1839,8 @@ export default {
 	height: 40mm;
 }
 
-.transform.compasslanddfc.back .top-line,
-.transform.compasslanddfc.back .mid-line {
+.compasslanddfc.back .top-line,
+.compasslanddfc.back .mid-line {
 	background-image: none;
 	justify-content: center;
 	margin: 0;
@@ -1851,11 +1851,11 @@ export default {
 	width: 100%;
 }
 
-.transform.compasslanddfc.back .type-line {
+.compasslanddfc.back .type-line {
 	text-align: center;
 }
 
-.transform.compasslanddfc.back .oracle {
+.compasslanddfc.back .oracle {
 	top: 52.4mm;
 	left: 4.2mm;
 	right: 4.2mm;
@@ -1864,7 +1864,7 @@ export default {
 	height: auto;
 }
 
-.transform.compasslanddfc.back .set-icon-container {
+.compasslanddfc.back .set-icon-container {
 	position: absolute;
 	top: -40.8mm;
 	left: 50%;
@@ -1872,7 +1872,7 @@ export default {
 	justify-content: center;
 }
 
-.transform.compasslanddfc.back .transform-icon {
+.compasslanddfc.back .transform-icon {
 	display: none; /* Embeded in the background */
 }
 
