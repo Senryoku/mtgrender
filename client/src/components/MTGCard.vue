@@ -6,6 +6,7 @@
 			transform: is_transform,
 			back: currentFace === 1,
 			legendary: is_legendary,
+			'has-legendary-crown': has_legendary_crown,
 			planeswalker: is_planeswalker,
 			'planeswalker-large': is_large_planeswalker,
 			saga: is_saga,
@@ -17,10 +18,7 @@
 	>
 		<div class="inner-background"></div>
 		<div class="inner-frame">
-			<div
-				class="legendary-crown"
-				v-show="is_legendary && !is_planeswalker"
-			></div>
+			<div class="legendary-crown" v-show="has_legendary_crown"></div>
 			<div class="top-line">
 				<span
 					class="name"
@@ -530,10 +528,18 @@ export default {
 				: false;
 		},
 		is_legendary() {
-			return this.card_face?.type_line?.startsWith("Legendary") ||
+			return this.card.frame_effects?.includes("legendary") ||
+				this.card_face?.type_line?.startsWith("Legendary") ||
 				this.card_face?.type_line?.includes("légendaire")
 				? true
 				: false;
+		},
+		has_legendary_crown() {
+			return (
+				this.is_legendary &&
+				!this.is_planeswalker &&
+				!this.card.frame_effects?.includes("compasslanddfc")
+			);
 		},
 		is_adventure() {
 			return this.card.layout === "adventure";
@@ -924,15 +930,6 @@ export default {
 	user-select: none;
 }
 
-.legendary .inner-background {
-	padding-top: 0;
-}
-
-.legendary:not(.planeswalker) .inner-background {
-	background-position: 0 -1.1mm;
-	margin-top: 1.1mm;
-}
-
 .inner-frame {
 	position: absolute;
 	margin: auto;
@@ -951,7 +948,16 @@ export default {
 	user-select: none;
 }
 
-.legendary .inner-frame {
+.has-legendary-crown .inner-background {
+	padding-top: 0;
+}
+
+.has-legendary-crown .inner-background {
+	background-position: 0 -1.1mm;
+	margin-top: 1.1mm;
+}
+
+.has-legendary-crown .inner-frame {
 	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
 }
 
