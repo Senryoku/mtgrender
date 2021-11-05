@@ -473,7 +473,12 @@ export default {
 			if (!this.$refs.name_el) return;
 			// Make sure oracle text fits in its box
 			nextTick(() => {
-				this.fit_font_size(this.$refs.name_el, 9.5);
+				let curr_letter_spacing = 0.034; //initial_spacing;
+				this.$refs.name_el.style.letterSpacing = curr_letter_spacing + "mm";
+				while (check_overflow(this.$refs.name_el) && curr_letter_spacing > 0) {
+					curr_letter_spacing -= 0.001;
+					this.$refs.name_el.style.letterSpacing = curr_letter_spacing + "mm";
+				}
 			});
 		},
 		fit_type_line() {
@@ -543,7 +548,8 @@ export default {
 			return 63.5 / this.$el.clientWidth;
 		},
 		card_face() {
-			if (this.card.card_faces) return this.card.card_faces[this.currentFace];
+			if (this.card.card_faces)
+				return this.card.card_faces[this.is_adventure ? 0 : this.currentFace];
 			return this.card;
 		},
 		back_face() {
@@ -956,8 +962,8 @@ export default {
 
 .inner-background {
 	position: absolute;
-	left: calc((63.5mm - 58mm) / 2);
-	width: 58mm;
+	left: calc((63.5mm - 58.5mm) / 2);
+	width: 58.5mm;
 	height: 78mm;
 	margin: auto;
 	border-radius: 0.75mm 0.75mm 4mm 4mm;
@@ -974,10 +980,10 @@ export default {
 .inner-frame {
 	position: absolute;
 	margin: auto;
-	width: calc(58mm * 0.97482);
+	width: calc(58.5mm * 0.98);
 	top: 3.5mm;
-	left: calc((63.5mm - 58mm * 0.97482) / 2);
-	height: 78mm;
+	left: calc((63.5mm - 58.5mm * 0.98) / 2);
+	height: 79mm;
 	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black)
 		drop-shadow(0.1mm -0.2mm 0.1mm #ffffffa0);
 	background-image: v-bind(frame);
@@ -1000,9 +1006,9 @@ export default {
 
 .legendary-crown {
 	position: absolute;
-	left: 1.5mm;
+	left: 1mm;
 	top: 1.5mm;
-	width: 60.1mm;
+	width: 61.1mm;
 	height: 14mm;
 	background-image: v-bind(legendary_crown);
 	background-size: 100%;
@@ -1020,7 +1026,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	height: 5.1mm;
-	width: 53mm;
+	width: 53.8mm;
 	margin: auto;
 	padding: 0 1mm 0 1.5mm;
 	background-image: v-bind(boxes);
@@ -1036,17 +1042,19 @@ export default {
 	left: 0;
 	right: 0;
 	color: v-bind(top_line_color);
+	gap: 2mm;
 }
 
 .name {
 	font-size: 9.454pt;
 	white-space: nowrap;
+	letter-spacing: 0.034mm;
 }
 
 .mana-cost {
-	font-size: 6.5pt;
+	font-size: 6.4pt;
 	display: flex;
-	gap: 0.3mm;
+	gap: 0.24mm;
 	margin-top: -0.4mm;
 }
 
@@ -1059,10 +1067,10 @@ export default {
 
 .illustration {
 	position: absolute;
-	top: 9.5mm;
-	left: 5mm;
-	width: 53.5mm;
-	height: 39mm;
+	top: 9.8mm;
+	left: 4.4mm;
+	width: 54.7mm;
+	height: 39.9mm;
 	margin: auto;
 	background-image: v-bind(illustration);
 	background-color: yellow;
@@ -1071,6 +1079,10 @@ export default {
 		v-bind(illustration_position.y);
 	background-repeat: no-repeat;
 	cursor: grab;
+}
+
+.illustration:not(.full-art):not(.extended-art) {
+	box-shadow: inset 0.2mm -0.2mm 0.2mm black;
 }
 
 .extended-art .illustration {
@@ -1087,13 +1099,9 @@ export default {
 	);
 }
 
-.extended-art .inner-frame,
-.full-art .inner-frame {
-}
-
 .mid-line {
 	position: absolute;
-	top: 49.1mm;
+	top: 49.9mm;
 	left: 0;
 	right: 0;
 	background-position: 0 bottom;
@@ -1113,15 +1121,17 @@ export default {
 	line-height: 5mm;
 	flex-grow: 1;
 	white-space: nowrap;
+	margin-top: -0.3mm;
 }
 
 .set-icon-container {
-	height: 3.6mm;
+	height: 3.9mm;
 	width: 7mm;
-	margin-right: 0.2mm;
+	margin-right: 0.3mm;
 	display: flex;
 	justify-content: right;
 	align-items: center;
+	margin-top: -0.3mm;
 }
 
 .set-icon {
@@ -1146,8 +1156,8 @@ export default {
 
 .normal-oracle {
 	position: absolute;
-	top: 55.3mm;
-	left: 0mm;
+	top: 55.6mm;
+	left: 0;
 	right: 0;
 
 	display: flex;
@@ -1156,15 +1166,19 @@ export default {
 	flex-direction: column;
 	gap: 0.8mm;
 
-	width: 53mm;
-	height: 25mm;
+	width: 53.8mm;
+	height: 26mm;
 	margin: auto;
 }
 
 /* Workaround the fact that adventure frames have a sligthly larger ratio */
 .adventure .inner-frame {
-	width: calc(58mm * 0.98);
-	margin-left: -0.4mm;
+	width: 57.4mm;
+	left: 2.9mm;
+}
+
+.adventure .mid-line {
+	top: 49.7mm;
 }
 
 .adventure-main-oracle {
@@ -1183,7 +1197,7 @@ export default {
 
 .adventure-part {
 	position: absolute;
-	top: 54.9mm;
+	top: 55.3mm;
 	left: 5mm;
 	width: 26mm;
 	height: 25.2mm;
@@ -1234,10 +1248,14 @@ export default {
 
 /************** Saga *************/
 
+.saga .inner-background {
+	top: 2.5mm;
+}
+
 .saga .inner-frame {
 	top: 3.66mm;
 	margin: 0;
-	width: 57.7mm;
+	width: 58.5mm;
 	margin-left: -1mm;
 }
 
@@ -1248,7 +1266,7 @@ export default {
 	width: 10mm;
 	height: 100%;
 	background-image: v-bind(frame);
-	background-size: 58mm;
+	background-size: 58.5mm;
 	background-position: 0 -6.3mm;
 	background-repeat: no-repeat;
 	pointer-events: none;
@@ -1261,12 +1279,12 @@ export default {
 }
 
 .saga .mid-line {
-	top: 74.16mm;
+	top: 75.2mm;
 }
 
 .saga .illustration {
-	width: 26.8mm;
-	height: 63.6mm;
+	width: 27.3mm;
+	height: 64.3mm;
 	top: 10mm;
 	left: 31.8mm;
 	outline-offset: 0;
@@ -1274,10 +1292,10 @@ export default {
 
 .saga-oracle {
 	position: absolute;
-	left: 5.3mm;
+	left: 4.9mm;
 	top: 9.95mm;
-	width: 26.3mm;
-	height: 63.3mm;
+	width: 26.6mm;
+	height: 64.3mm;
 	background-size: cover;
 	background-image: v-bind(saga_text_box);
 	background-repeat: no-repeat;
@@ -1599,9 +1617,9 @@ export default {
 .pt-box {
 	position: absolute;
 	right: 3mm;
-	bottom: 5.2mm;
+	bottom: 2.6mm;
 	width: 11.58mm;
-	height: 6.176mm;
+	height: 7.4mm;
 	background-image: v-bind(pt_box);
 	background-size: 100%;
 	background-repeat: no-repeat;
@@ -1639,7 +1657,7 @@ export default {
 
 .footer {
 	position: absolute;
-	top: 81.5mm;
+	top: 82.8mm;
 	left: 50%;
 	transform: translateX(-50%);
 
@@ -1650,8 +1668,8 @@ export default {
 	justify-content: space-between;
 	color: white;
 	font-family: Relay Medium;
-	font-size: 1.5mm;
-	font-size: 4.5pt;
+	font-size: 4.2pt;
+	line-height: 1.1mm;
 
 	z-index: 3;
 }
@@ -1667,7 +1685,8 @@ export default {
 
 .copyright {
 	font-family: MPlantin;
-	margin-top: 0.3mm; /* FIXME: Workaround a weird upshift using this font */
+	margin-top: 0.2mm; /* FIXME: Workaround a weird upshift using this font */
+	font-size: 4pt;
 }
 
 .copyright div {
@@ -1685,6 +1704,7 @@ export default {
 
 .artist-name {
 	font-family: Beleren Small Caps;
+	font-size: 4.5pt;
 }
 
 .flip-icon {
@@ -1698,8 +1718,8 @@ export default {
 }
 
 .mdfc:not(.planeswalker) .inner-frame {
-	width: 57.8mm;
-	left: 2.2mm;
+	width: 58.8mm;
+	left: 1.6mm;
 }
 
 .mdfc .top-line .name {
@@ -1712,8 +1732,8 @@ export default {
 }
 
 .mdfc .normal-oracle {
-	height: 22mm;
-	left: 1mm;
+	height: 22.6mm;
+	left: 0;
 }
 
 .mdfc .planeswalker-oracle {
@@ -1726,9 +1746,9 @@ export default {
 
 .mdfc-icon {
 	position: absolute;
-	top: 4mm;
-	left: 3mm;
-	width: 6mm;
+	top: 4.1mm;
+	left: 2.5mm;
+	width: 5.8mm;
 	aspect-ratio: calc(294 / 238);
 	background-image: v-bind(mdfc_icon);
 	background-size: 100%;
@@ -1741,10 +1761,10 @@ export default {
 
 .mdfc-hint {
 	position: absolute;
-	bottom: 7.5mm;
-	left: 2.2mm;
+	bottom: 6.2mm;
+	left: 1.6mm;
 	width: 28mm;
-	height: 3.8mm;
+	height: 3.9mm;
 
 	display: flex;
 	justify-content: space-between;
@@ -1782,13 +1802,20 @@ export default {
 /* Transform */
 
 .transform:not(.back):not(.planeswalker) .inner-frame {
-	left: 3.32mm;
-	width: 57.66mm;
+	left: 2.9mm;
+	width: 58.5mm;
 }
 
-.transform.back:not(.planeswalker) .inner-frame {
-	left: 3.32mm;
-	width: 56.7mm;
+.transform:not(.planeswalker) .inner-frame {
+	top: 3.7mm;
+	left: 2.9mm;
+	width: 57.4mm;
+	height: 78.1mm;
+	background-size: 100% 100%;
+}
+
+.transform:not(.planeswalker) .top-line {
+	top: 4.2mm;
 }
 
 .transform .top-line .name {
@@ -1798,15 +1825,15 @@ export default {
 .transform-icon {
 	position: absolute;
 	top: 3.9mm;
-	left: 3.7mm;
-	width: 5.2mm;
+	left: 3.5mm;
+	width: 5.4mm;
 	aspect-ratio: 1;
 	border-radius: 50%;
 	border: 0.02mm black solid; /* Fixme: Border is too thick on renders */
 	box-sizing: border-box;
 	background-color: white;
 	background-image: v-bind(transform_icon);
-	background-size: 4.6mm;
+	background-size: 4.8mm;
 	background-position: center center;
 	background-repeat: no-repeat;
 	z-index: 3;
@@ -1818,11 +1845,11 @@ export default {
 
 .transform-hint {
 	position: absolute;
-	bottom: 12.5mm;
+	bottom: 11.2mm;
 	right: 5.2mm;
 	z-index: 3;
 	font-family: Beleren;
-	font-size: 6.5pt;
+	font-size: 6.8pt;
 	color: #666;
 }
 
