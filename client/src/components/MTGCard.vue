@@ -1746,8 +1746,13 @@ export default {
 /* Transform */
 
 .transform:not(.back):not(.planeswalker) .inner-frame {
-	left: 3.24mm;
-	width: 57.6mm;
+	left: 3.34mm;
+	width: 57.66mm;
+}
+
+.transform.back:not(.planeswalker) .inner-frame {
+	left: 3.32mm;
+	width: 56.7mm;
 }
 
 .transform .legendary-crown {
@@ -1772,11 +1777,6 @@ export default {
 
 .transform.back:not(.planeswalker) .mid-line {
 	left: 0.3mm;
-}
-
-.transform.back:not(.planeswalker) .inner-frame {
-	left: 3.2mm;
-	width: 56.72mm;
 }
 
 .transform-icon {
