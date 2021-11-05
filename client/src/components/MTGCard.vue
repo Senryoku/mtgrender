@@ -1088,7 +1088,7 @@ export default {
 	cursor: grab;
 }
 
-.illustration:not(.full-art):not(.extended-art) {
+.mtg-card:not(.full-art):not(.extended-art) .illustration {
 	box-shadow: inset 0.2mm -0.2mm 0.2mm black;
 }
 
