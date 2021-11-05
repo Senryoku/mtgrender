@@ -12,6 +12,7 @@
 			adventure: is_adventure,
 			'extended-art': card_face.art_variant === 'extended',
 			'full-art': card_face.art_variant === 'full',
+			compasslanddfc: this.card.frame_effects?.includes('compasslanddfc'),
 		}"
 	>
 		<div class="inner-background"></div>
@@ -671,6 +672,9 @@ export default {
 					: "planeswalker_bg"
 				: this.is_saga
 				? "saga_bg"
+				: this.card.frame_effects?.includes("compasslanddfc") &&
+				  this.currentFace === 1
+				? "ixalan_bg"
 				: "bg";
 			return `url(${
 				new URL(
@@ -1808,6 +1812,68 @@ export default {
 	font-family: Beleren;
 	font-size: 6.5pt;
 	color: #666;
+}
+
+/* Ixalan maps */
+
+.transform.compasslanddfc.back .legendary-crown {
+	display: none;
+}
+
+.transform.compasslanddfc.back .inner-frame {
+	background-image: none;
+	filter: none;
+}
+
+.transform.compasslanddfc.back .name {
+	font-family: Beleren Small Caps;
+	padding: 0;
+	margin: 0;
+}
+
+.transform.compasslanddfc.back .illustration {
+	top: 9.2mm;
+	left: 3mm;
+	right: 3mm;
+	width: auto;
+	height: 40mm;
+}
+
+.transform.compasslanddfc.back .top-line,
+.transform.compasslanddfc.back .mid-line {
+	background-image: none;
+	justify-content: center;
+	margin: 0;
+	padding: 0;
+	color: black;
+	left: 0;
+	right: 0;
+	width: 100%;
+}
+
+.transform.compasslanddfc.back .type-line {
+	text-align: center;
+}
+
+.transform.compasslanddfc.back .oracle {
+	top: 52.4mm;
+	left: 4.2mm;
+	right: 4.2mm;
+	bottom: 3mm;
+	width: auto;
+	height: auto;
+}
+
+.transform.compasslanddfc.back .set-icon-container {
+	position: absolute;
+	top: -40.8mm;
+	left: 50%;
+	transform: translate(-50%);
+	justify-content: center;
+}
+
+.transform.compasslanddfc.back .transform-icon {
+	display: none; /* Embeded in the background */
 }
 
 /* Extend art as much as possible when adding a bordering while rendering */
