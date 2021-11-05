@@ -280,13 +280,17 @@
 		</div>
 		<div v-if="is_dualfaced" class="flip-icon" @click="flip">⭯</div>
 		<div
-			v-if="debug && display_debug && card_face?.image_uris?.png"
+			v-if="
+				debug &&
+				display_debug &&
+				(card?.image_uris?.png || card_face?.image_uris?.png)
+			"
 			class="debug-overlay"
 			@mousemove="update_debug_overlay"
 			@mouseleave="update_debug_overlay"
 		>
 			<div>
-				<img :src="card_face.image_uris.png" />
+				<img :src="card?.image_uris?.png || card_face?.image_uris?.png" />
 			</div>
 		</div>
 		<div class="debug-controls" v-if="debug">
