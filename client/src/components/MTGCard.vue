@@ -17,185 +17,197 @@
 		}"
 	>
 		<div class="inner-background"></div>
-		<div class="inner-frame">
-			<div class="legendary-crown" v-show="has_legendary_crown"></div>
-			<div class="top-line">
-				<span
-					class="name"
-					@dblclick.prevent="edit_property('name')"
-					@mousedown.prevent=""
-					ref="name_el"
-				>
-					{{ card_face.name }}
-				</span>
-				<div
-					class="mana-cost"
-					@dblclick.prevent="edit_property('mana_cost')"
-					@mousedown.prevent=""
-				>
-					<img
-						v-for="(uri, idx) in mana_cost"
-						class="ms ms-shadow"
-						:key="idx"
-						:src="uri"
-					/>
-				</div>
-			</div>
-			<div class="planeswalker-oracle-bg" v-if="is_planeswalker"></div>
-			<div class="mid-line">
+		<div
+			class="illustration"
+			:class="{
+				'behind-textbox':
+					card.illustration_textbox ||
+					(is_planeswalker && card.illustration_textbox !== false),
+			}"
+			@wheel.prevent="scale_illustration"
+			@mousedown.prevent="start_drag_illustration"
+			@mouseup.prevent="end_drag_illustration"
+			@mousemove="drag_illustration"
+			@mouseleave="cancel_drag_illustration"
+		></div>
+		<div class="planeswalker-oracle-bg" v-if="is_planeswalker"></div>
+		<div class="inner-frame"></div>
+		<div class="legendary-crown" v-show="has_legendary_crown"></div>
+		<div class="top-line">
+			<span
+				class="name"
+				@dblclick.prevent="edit_property('name')"
+				@mousedown.prevent=""
+				ref="name_el"
+			>
+				{{ card_face.name }}
+			</span>
+			<div
+				class="mana-cost"
+				@dblclick.prevent="edit_property('mana_cost')"
+				@mousedown.prevent=""
+			>
 				<img
-					class="color-indicator"
-					v-if="card_face.color_indicator"
-					:src="color_indicator"
+					v-for="(uri, idx) in mana_cost"
+					class="ms ms-shadow"
+					:key="idx"
+					:src="uri"
 				/>
-				<div
-					class="type-line"
-					@dblclick="edit_property('type_line')"
-					@mousedown.prevent=""
-					ref="type_line_el"
-				>
-					{{ card_face.type_line }}
-				</div>
-				<div class="set-icon-container" v-if="set_icon_uri">
-					<img class="set-icon" :src="set_icon_uri" />
-				</div>
 			</div>
-			<template v-if="is_adventure">
-				<div class="adventure-part">
-					<div class="adventure-top-line">
-						<span
-							class="adventure-name"
-							@dblclick.prevent="edit_property(['card_faces', 1, 'name'])"
-							@mousedown.prevent=""
-							>{{ card.card_faces[1].name }}</span
-						>
-						<div
-							class="adventure-mana-cost"
-							@dblclick.prevent="edit_property(['card_faces', 1, 'mana_cost'])"
-							@mousedown.prevent=""
-						>
-							<img
-								v-for="(uri, idx) in adventure_mana_cost"
-								class="ms ms-shadow"
-								:key="idx"
-								:src="uri"
-							/>
-						</div>
-					</div>
-					<div class="adventure-type">{{ card.card_faces[1].type_line }}</div>
-					<div class="oracle adventure-oracle" ref="adventure_oracle_el">
-						<div
-							class="oracle-inner"
-							v-for="(line, idx) in adventure_oracle_lines"
+		</div>
+		<div class="mid-line">
+			<img
+				class="color-indicator"
+				v-if="card_face.color_indicator"
+				:src="color_indicator"
+			/>
+			<div
+				class="type-line"
+				@dblclick="edit_property('type_line')"
+				@mousedown.prevent=""
+				ref="type_line_el"
+			>
+				{{ card_face.type_line }}
+			</div>
+			<div class="set-icon-container" v-if="set_icon_uri">
+				<img class="set-icon" :src="set_icon_uri" />
+			</div>
+		</div>
+		<template v-if="is_adventure">
+			<div class="adventure-part">
+				<div class="adventure-top-line">
+					<span
+						class="adventure-name"
+						@dblclick.prevent="edit_property(['card_faces', 1, 'name'])"
+						@mousedown.prevent=""
+						>{{ card.card_faces[1].name }}</span
+					>
+					<div
+						class="adventure-mana-cost"
+						@dblclick.prevent="edit_property(['card_faces', 1, 'mana_cost'])"
+						@mousedown.prevent=""
+					>
+						<img
+							v-for="(uri, idx) in adventure_mana_cost"
+							class="ms ms-shadow"
 							:key="idx"
-							v-html="line"
-							@dblclick="edit_property(['card_faces', 1, 'oracle_text'])"
-							@mousedown.prevent=""
-						></div>
-						<div
-							class="oracle-flavor"
-							v-if="card.card_faces[1].flavor_text"
-							@dblclick="edit_property(['card_faces', 1, 'flavor_text'])"
-							@mousedown.prevent=""
-						>
-							<hr />
-							{{ card.card_faces[1].flavor_text }}
-						</div>
+							:src="uri"
+						/>
 					</div>
 				</div>
-				<div class="oracle adventure-main-oracle" ref="oracle_el">
+				<div class="adventure-type">{{ card.card_faces[1].type_line }}</div>
+				<div class="oracle adventure-oracle" ref="adventure_oracle_el">
 					<div
 						class="oracle-inner"
-						v-for="(line, idx) in oracle_lines"
+						v-for="(line, idx) in adventure_oracle_lines"
 						:key="idx"
 						v-html="line"
-						@dblclick="edit_property(['card_faces', 0, 'oracle_text'])"
+						@dblclick="edit_property(['card_faces', 1, 'oracle_text'])"
 						@mousedown.prevent=""
 					></div>
 					<div
 						class="oracle-flavor"
-						v-if="card.card_faces[0].flavor_text"
-						@dblclick="edit_property(['card_faces', 0, 'flavor_text'])"
+						v-if="card.card_faces[1].flavor_text"
+						@dblclick="edit_property(['card_faces', 1, 'flavor_text'])"
 						@mousedown.prevent=""
 					>
 						<hr />
-						{{ card.card_faces[0].flavor_text }}
+						{{ card.card_faces[1].flavor_text }}
 					</div>
 				</div>
-			</template>
-			<template v-else-if="is_saga">
+			</div>
+			<div class="oracle adventure-main-oracle" ref="oracle_el">
 				<div
-					class="oracle saga-oracle"
-					@dblclick="edit_property('oracle_text')"
+					class="oracle-inner"
+					v-for="(line, idx) in oracle_lines"
+					:key="idx"
+					v-html="line"
+					@dblclick="edit_property(['card_faces', 0, 'oracle_text'])"
+					@mousedown.prevent=""
+				></div>
+				<div
+					class="oracle-flavor"
+					v-if="card.card_faces[0].flavor_text"
+					@dblclick="edit_property(['card_faces', 0, 'flavor_text'])"
 					@mousedown.prevent=""
 				>
-					<div
-						class="saga-reminder"
-						v-if="saga_reminder"
-						v-html="saga_reminder"
-					></div>
-					<div class="saga-frame"></div>
-					<div class="saga-steps" ref="oracle_el">
-						<div class="saga-step" v-for="(step, idx) in saga_steps" :key="idx">
-							<div class="saga-step-number">
-								<img v-for="step in step.steps" :key="step" :src="step" />
-							</div>
-							<div v-html="step.html"></div>
+					<hr />
+					{{ card.card_faces[0].flavor_text }}
+				</div>
+			</div>
+		</template>
+		<template v-else-if="is_saga">
+			<div
+				class="oracle saga-oracle"
+				@dblclick="edit_property('oracle_text')"
+				@mousedown.prevent=""
+			>
+				<div
+					class="saga-reminder"
+					v-if="saga_reminder"
+					v-html="saga_reminder"
+				></div>
+				<div class="saga-frame"></div>
+				<div class="saga-steps" ref="oracle_el">
+					<div class="saga-step" v-for="(step, idx) in saga_steps" :key="idx">
+						<div class="saga-step-number">
+							<img v-for="step in step.steps" :key="step" :src="step" />
 						</div>
+						<div v-html="step.html"></div>
 					</div>
 				</div>
-			</template>
-			<template v-else-if="planeswalker_abilities">
+			</div>
+		</template>
+		<template v-else-if="planeswalker_abilities">
+			<div
+				class="oracle planeswalker-oracle"
+				ref="oracle_el"
+				@dblclick="edit_property('oracle_text')"
+			>
 				<div
-					class="oracle planeswalker-oracle"
-					ref="oracle_el"
-					@dblclick="edit_property('oracle_text')"
+					class="planeswalker-ability"
+					v-for="(ability, idx) in planeswalker_abilities"
+					:key="idx"
+					:class="{
+						'planeswalker-ability-with-cost': ability.cost !== null,
+					}"
 				>
 					<div
-						class="planeswalker-ability"
-						v-for="(ability, idx) in planeswalker_abilities"
-						:key="idx"
+						class="planeswalker-ability-cost"
+						v-if="ability.cost !== null"
 						:class="{
-							'planeswalker-ability-with-cost': ability.cost !== null,
+							'planeswalker-ability-cost-minus': ability.cost < 0,
+							'planeswalker-ability-cost-zero': ability.cost === 0,
+							'planeswalker-ability-cost-plus': ability.cost > 0,
 						}"
 					>
-						<div
-							class="planeswalker-ability-cost"
-							v-if="ability.cost !== null"
-							:class="{
-								'planeswalker-ability-cost-minus': ability.cost < 0,
-								'planeswalker-ability-cost-zero': ability.cost === 0,
-								'planeswalker-ability-cost-plus': ability.cost > 0,
-							}"
-						>
-							{{ ability.cost > 0 ? "+" : "" }}{{ ability.cost }}
-						</div>
-						<div v-html="ability.html"></div>
+						{{ ability.cost > 0 ? "+" : "" }}{{ ability.cost }}
 					</div>
+					<div v-html="ability.html"></div>
 				</div>
-			</template>
-			<template v-else>
-				<div class="oracle normal-oracle" ref="oracle_el">
-					<div
-						class="oracle-inner"
-						v-for="(line, idx) in oracle_lines"
-						:key="idx"
-						v-html="line"
-						@dblclick="edit_property('oracle_text')"
-						@mousedown.prevent=""
-					></div>
-					<div
-						class="oracle-flavor"
-						v-if="card_face.flavor_text"
-						@dblclick="edit_property('flavor_text')"
-						@mousedown.prevent=""
-					>
-						<hr />
-						{{ card_face.flavor_text }}
-					</div>
+			</div>
+		</template>
+		<template v-else>
+			<div class="oracle normal-oracle" ref="oracle_el">
+				<div
+					class="oracle-inner"
+					v-for="(line, idx) in oracle_lines"
+					:key="idx"
+					v-html="line"
+					@dblclick="edit_property('oracle_text')"
+					@mousedown.prevent=""
+				></div>
+				<div
+					class="oracle-flavor"
+					v-if="card_face.flavor_text"
+					@dblclick="edit_property('flavor_text')"
+					@mousedown.prevent=""
+				>
+					<hr />
+					{{ card_face.flavor_text }}
 				</div>
-			</template>
-		</div>
+			</div>
+		</template>
 		<div class="pt-box" v-show="card_face.power || card_face.toughness">
 			<span @dblclick="edit_property('power')" @mousedown.prevent="">{{
 				card_face.power
@@ -246,19 +258,6 @@
 				</div>
 			</div>
 		</div>
-		<div
-			class="illustration"
-			:class="{
-				'behind-textbox':
-					card.illustration_textbox ||
-					(is_planeswalker && card.illustration_textbox !== false),
-			}"
-			@wheel.prevent="scale_illustration"
-			@mousedown.prevent="start_drag_illustration"
-			@mouseup.prevent="end_drag_illustration"
-			@mousemove="drag_illustration"
-			@mouseleave="cancel_drag_illustration"
-		></div>
 		<div v-if="is_mdfc" class="mdfc-icon"></div>
 		<div v-if="is_mdfc" class="mdfc-hint">
 			<span>{{ mdfc_hint_text }}</span>
@@ -991,12 +990,8 @@ export default {
 }
 
 .has-legendary-crown .inner-background {
-	padding-top: 0;
-}
-
-.has-legendary-crown .inner-background {
-	background-position: 0 -1.1mm;
-	margin-top: 1.1mm;
+	background-position: 0 -1.3mm;
+	margin-top: 1.3mm;
 }
 
 .has-legendary-crown .inner-frame {
@@ -1005,19 +1000,18 @@ export default {
 
 .legendary-crown {
 	position: absolute;
-	left: -1.92mm;
-	top: -2mm;
-	width: 60.06mm;
-	height: 100%;
+	left: 1.5mm;
+	top: 1.5mm;
+	width: 60.1mm;
+	height: 14mm;
 	background-image: v-bind(legendary_crown);
 	background-size: 100%;
 	background-repeat: no-repeat;
-	z-index: -1;
 }
 
 .extended-art .legendary-crown,
 .full-art .legendary-crown {
-	top: -2.3mm;
+	top: 1.2mm;
 }
 
 .top-line,
@@ -1037,18 +1031,16 @@ export default {
 }
 
 .top-line {
+	position: absolute;
+	top: 4mm;
+	left: 0;
+	right: 0;
 	color: v-bind(top_line_color);
-}
-
-.mid-line {
-	color: v-bind(mid_line_color);
-	background-image: v-bind(mid_boxes);
 }
 
 .name {
 	font-size: 9.454pt;
 	white-space: nowrap;
-	/*margin-top: -0.4mm; //???*/
 }
 
 .mana-cost {
@@ -1067,7 +1059,6 @@ export default {
 
 .illustration {
 	position: absolute;
-	z-index: -1;
 	top: 9.5mm;
 	left: 5mm;
 	width: 53.5mm;
@@ -1083,7 +1074,6 @@ export default {
 }
 
 .extended-art .illustration {
-	z-index: 1;
 	left: 0;
 	top: 7mm;
 	width: 100%;
@@ -1099,16 +1089,17 @@ export default {
 
 .extended-art .inner-frame,
 .full-art .inner-frame {
-	z-index: 2;
 }
 
 .mid-line {
 	position: absolute;
-	top: 45.6mm;
-	left: 0mm;
+	top: 49.1mm;
+	left: 0;
 	right: 0;
 	background-position: 0 bottom;
 	gap: 0.6mm;
+	color: v-bind(mid_line_color);
+	background-image: v-bind(mid_boxes);
 }
 
 .color-indicator {
@@ -1155,7 +1146,7 @@ export default {
 
 .normal-oracle {
 	position: absolute;
-	top: 51.8mm;
+	top: 55.3mm;
 	left: 0mm;
 	right: 0;
 
@@ -1173,18 +1164,13 @@ export default {
 /* Workaround the fact that adventure frames have a sligthly larger ratio */
 .adventure .inner-frame {
 	width: calc(58mm * 0.98);
-	margin-left: -0.1mm;
-}
-
-.adventure .top-line,
-.adventure .mid-line {
-	margin-left: 0.84mm;
+	margin-left: -0.4mm;
 }
 
 .adventure-main-oracle {
 	position: absolute;
-	top: 51.4mm;
-	left: 29.8mm;
+	top: 54.9mm;
+	left: 33mm;
 	width: 25.5mm;
 	height: 25mm;
 
@@ -1197,8 +1183,8 @@ export default {
 
 .adventure-part {
 	position: absolute;
-	top: 51.4mm;
-	left: 2mm;
+	top: 54.9mm;
+	left: 5mm;
 	width: 26mm;
 	height: 25.2mm;
 
@@ -1268,16 +1254,14 @@ export default {
 	pointer-events: none;
 }
 
-.saga .top-line,
-.saga .mid-line {
-	margin-left: 1.6mm;
+.saga .mid-line,
+.saga .top-line {
+	top: 4.2mm;
+	left: 0.1mm;
 }
 
 .saga .mid-line {
-	position: absolute;
-	top: 70.6mm;
-	left: 0mm;
-	right: 0;
+	top: 74.16mm;
 }
 
 .saga .illustration {
@@ -1290,8 +1274,8 @@ export default {
 
 .saga-oracle {
 	position: absolute;
-	left: 2.8mm;
-	top: 6.35mm;
+	left: 5.3mm;
+	top: 9.95mm;
 	width: 26.3mm;
 	height: 63.3mm;
 	background-size: cover;
@@ -1324,6 +1308,7 @@ export default {
 	box-shadow: 0 -0.35mm 0.5mm #00000020;
 	padding: 1mm;
 	flex-grow: 1;
+	line-height: 1em;
 }
 
 .saga-step-number {
@@ -1348,12 +1333,21 @@ export default {
 	height: 80mm;
 }
 
+.planeswalker .top-line,
 .planeswalker .mid-line {
-	margin-top: 1.3mm;
+	width: 53.75mm;
+}
+
+.planeswalker .top-line {
+	top: 3mm;
+}
+
+.planeswalker .mid-line {
+	top: 49.6mm;
 }
 
 .planeswalker-large .mid-line {
-	margin-top: -4.6mm;
+	top: 43.6mm;
 }
 
 .planeswalker .illustration {
@@ -1368,21 +1362,32 @@ export default {
 .planeswalker .illustration.behind-textbox {
 	background-color: white;
 	height: 73mm;
+	z-index: -1;
 }
 
 .planeswalker.extended-art .illustration.behind-textbox {
+	top: 6mm;
+	height: 75mm;
 	mask-image: linear-gradient(
 		rgba(0, 0, 0, 0) 0,
 		rgba(0, 0, 0, 1) 3%,
 		rgba(0, 0, 0, 1) 97%,
 		rgba(0, 0, 0, 0) 100%
 	);
+	left: 0;
+	right: 0;
+	width: 100%;
 }
 
 .planeswalker:not(.full-art):not(.extended-art) .illustration.behind-textbox {
 	border-radius: 2mm / calc(39mm / 2);
 	border-bottom-left-radius: 4mm 3mm;
 	border-bottom-right-radius: 2mm;
+}
+
+.planeswalker.extended-art .illustration,
+.planeswalker.full-art .illustration {
+	z-index: auto;
 }
 
 .planeswalker.full-art .illustration,
@@ -1394,28 +1399,15 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: initial;
-	z-index: 1;
-}
-
-.planeswalker .top-line,
-.planeswalker .mid-line {
-	width: 53.75mm;
-}
-
-.planeswalker .mid-line {
-	position: absolute;
-	top: 45.8mm;
-	left: 0;
-	right: 0;
 }
 
 .planeswalker-oracle-bg {
 	position: absolute;
-	left: 4.75mm;
-	top: 53.2mm;
+	left: 7.75mm;
+	top: 55.6mm;
 	width: 50.85mm;
 	height: 25.35mm;
-	background-color: #ffffff80;
+	background-color: #ffffff90;
 	border-radius: 0.9mm;
 	border-bottom-left-radius: 8mm 2.1mm;
 	border-bottom-right-radius: 8mm 2.1mm;
@@ -1424,14 +1416,14 @@ export default {
 }
 
 .planeswalker-large .planeswalker-oracle-bg {
-	top: 47mm;
+	top: 49.5mm;
 	height: 31.45mm;
 }
 
 .planeswalker-oracle {
 	position: absolute;
-	left: 0;
-	top: 53mm;
+	left: 2.8mm;
+	top: 55.7mm;
 
 	display: flex;
 	align-items: stretch;
@@ -1448,7 +1440,7 @@ export default {
 }
 
 .planeswalker-large .planeswalker-oracle {
-	top: 46.6mm;
+	top: 49mm;
 	height: 31.04mm;
 }
 
@@ -1456,6 +1448,7 @@ export default {
 	position: relative;
 	flex-shrink: 0;
 	padding: 0.4mm 0.4em;
+	z-index: 0;
 }
 
 .planeswalker-ability:nth-child(2n + 1):before {
@@ -1465,7 +1458,7 @@ export default {
 	right: -0.6mm;
 	top: -1.2mm;
 	bottom: -1.2mm;
-	background-color: #fff4;
+	background-color: #fff6;
 	mask-image: linear-gradient(
 			transparent,
 			transparent 1.2mm,
@@ -1635,7 +1628,7 @@ export default {
 	background-repeat: no-repeat;
 
 	text-align: center;
-	line-height: 6.6mm;
+	line-height: 6.4mm;
 	font-size: 9.5pt;
 	color: white;
 
@@ -1707,16 +1700,6 @@ export default {
 .mdfc:not(.planeswalker) .inner-frame {
 	width: 57.8mm;
 	left: 2.2mm;
-}
-
-.mdfc:not(.planeswalker) .legendary-crown {
-	left: -0.6mm;
-}
-
-.mdfc:not(.planeswalker) .top-line,
-.mdfc:not(.planeswalker) .mid-line {
-	/* FIXME: This should apply to planeswalker, but MDFC-PL frames and boxes aren't done yet */
-	margin-left: 1.8mm;
 }
 
 .mdfc .top-line .name {
@@ -1799,7 +1782,7 @@ export default {
 /* Transform */
 
 .transform:not(.back):not(.planeswalker) .inner-frame {
-	left: 3.34mm;
+	left: 3.32mm;
 	width: 57.66mm;
 }
 
@@ -1808,28 +1791,8 @@ export default {
 	width: 56.7mm;
 }
 
-.transform .legendary-crown {
-	left: -1.74mm;
-}
-
 .transform .top-line .name {
 	padding-left: 5.2mm;
-}
-
-.transform:not(.back):not(.planeswalker) .top-line {
-	margin-left: 0.6mm;
-}
-
-.transform:not(.back):not(.planeswalker) .mid-line {
-	left: -0.7mm;
-}
-
-.transform.back:not(.planeswalker) .top-line {
-	margin-left: 0.7mm;
-}
-
-.transform.back:not(.planeswalker) .mid-line {
-	left: 0.3mm;
 }
 
 .transform-icon {
@@ -1865,10 +1828,6 @@ export default {
 
 /* Ixalan maps */
 
-.compasslanddfc.back .legendary-crown {
-	display: none;
-}
-
 .compasslanddfc.back .inner-frame {
 	background-image: none;
 	filter: none;
@@ -1886,6 +1845,7 @@ export default {
 	right: 3mm;
 	width: auto;
 	height: 40mm;
+	z-index: -1;
 }
 
 .compasslanddfc.back .top-line,
@@ -1905,10 +1865,10 @@ export default {
 }
 
 .compasslanddfc.back .oracle {
-	top: 52.4mm;
-	left: 4.2mm;
-	right: 4.2mm;
-	bottom: 3mm;
+	top: 55.9mm;
+	left: 7mm;
+	right: 7.6mm;
+	bottom: 10mm;
 	width: auto;
 	height: auto;
 }
