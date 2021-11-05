@@ -279,6 +279,19 @@
 			{{ back_face.power }}/{{ back_face.toughness }}
 		</div>
 		<div v-if="is_dualfaced" class="flip-icon" @click="flip">⭯</div>
+		<div
+			v-if="debug && display_debug && card_face?.image_uris?.png"
+			class="debug-overlay"
+			@mousemove="debugOverlay"
+		>
+			<div>
+				<img :src="card_face.image_uris.png" />
+			</div>
+		</div>
+		<div class="debug-controls" v-if="debug">
+			<input type="number" step="0.1" v-model="debug_opacity" />
+			<input type="checkbox" v-model="display_debug" />
+		</div>
 	</div>
 </template>
 
@@ -333,6 +346,9 @@ export default {
 			type_line_el,
 			currentFace: 0,
 			dragging_illustration: null,
+			debug: import.meta.env.MODE === "development",
+			display_debug: false,
+			debug_opacity: 0,
 		};
 	},
 	updated() {
@@ -506,6 +522,14 @@ export default {
 				: sorted_colors.length > 2
 				? "Gold"
 				: sorted_colors;
+		},
+		debugOverlay(event) {
+			console.log(event);
+			if (event.target.firstElementChild)
+				event.target.firstElementChild.style.width =
+					(event.clientX - event.target.parentNode.getBoundingClientRect().x) /
+						this.scale +
+					"px";
 		},
 	},
 	computed: {
@@ -1918,5 +1942,44 @@ export default {
 	bottom: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
 	left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
 	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+}
+
+.debug-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 4;
+	width: 63.5mm;
+	height: 100%;
+	opacity: v-bind(debug_opacity);
+}
+
+.debug-overlay:hover {
+	opacity: 1;
+}
+
+.debug-overlay > div {
+	overflow: hidden;
+	position: relative;
+	pointer-events: none;
+}
+
+.debug-overlay > div:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 0.5px;
+	height: 100%;
+	background-color: #0008;
+}
+
+.debug-overlay > div > img {
+	width: 63.5mm;
+}
+
+.debug-controls {
+	position: absolute;
+	bottom: -4em;
 }
 </style>
