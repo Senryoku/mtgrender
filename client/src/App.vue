@@ -79,6 +79,7 @@
 							v-model="card.layout"
 							type="text"
 							list="card-layouts"
+							@change="layoutChange"
 						/>
 						<datalist id="card-layouts">
 							<option value="normal"></option>
@@ -462,6 +463,16 @@ export default {
 				for (let idx = 0; idx < key.length - 1; ++idx) obj = obj[key[idx]];
 				obj[key[key.length - 1]] = value;
 			} else this.card[key] = value;
+		},
+		layoutChange() {
+			console.log("kuku");
+			// Make sure we have valid card_faces if necessary
+			if (
+				["modal_dfc", "transform", "adventure"].includes(this.card.layout) &&
+				!this.card.card_faces
+			) {
+				this.card.card_faces = [{ image_uris: {} }, { image_uris: {} }];
+			}
 		},
 		addFrameEffect(event) {
 			console.log(event);
@@ -855,7 +866,6 @@ export default {
 				const matches = this.overrideCardProperties[key].matchAll(/{([^}]*)}/g);
 				let str = this.overrideCardProperties[key];
 				for (let m of matches) {
-					console.log(m);
 					let k = m[1];
 					if (k === "") k = key;
 					str = str.replace(m[0], this.card[k] ?? "");

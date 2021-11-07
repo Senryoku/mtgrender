@@ -73,7 +73,9 @@
 				<img class="set-icon" :src="set_icon_uri" />
 			</div>
 		</div>
-		<template v-if="is_adventure">
+		<template
+			v-if="is_adventure && card.card_faces && card.card_faces.length > 1"
+		>
 			<div class="adventure-part">
 				<div class="adventure-top-line">
 					<span
