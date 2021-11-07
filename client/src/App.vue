@@ -851,7 +851,17 @@ export default {
 		finalCard() {
 			let r = Object.assign({}, this.defaultCardProperties);
 			Object.assign(r, this.card);
-			Object.assign(r, this.overrideCardProperties);
+			for (let key in this.overrideCardProperties) {
+				const matches = this.overrideCardProperties[key].matchAll(/{([^}]*)}/g);
+				let str = this.overrideCardProperties[key];
+				for (let m of matches) {
+					console.log(m);
+					let k = m[1];
+					if (k === "") k = key;
+					str = str.replace(m[0], this.card[k] ?? "");
+				}
+				r[key] = str;
+			}
 			return r;
 		},
 	},

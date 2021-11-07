@@ -230,17 +230,20 @@
 					@dblclick="edit_property('collector_number')"
 					@mousedown.prevent=""
 				>
-					{{ (is_adventure ? card : card_face).collector_number }}
+					{{
+						(is_adventure || !card_face?.collector_number ? card : card_face)
+							.collector_number
+					}}
 				</div>
 				<div>
-					<span v-if="card.set" class="set"
-						>{{ card.set.toUpperCase() }}&nbsp;</span
+					<span v-if="card.set" class="set">{{ card.set.toUpperCase() }}</span>
+					<span v-if="card.set && card.lang" style="margin-right: 0.2mm"
+						>&nbsp;•&nbsp;</span
 					>
-					<span v-if="card.set && card.lang" class="set">•&nbsp;</span>
 					<span v-if="card.lang" class="language"
 						>{{ card.lang.toUpperCase() }}&nbsp;</span
 					>
-					<span class="artist-icon" v-if="card.artist">a </span>
+					<span class="artist-icon" v-if="card.artist"> a </span>
 					<span
 						class="artist-name"
 						@dblclick="edit_property('artist')"
@@ -952,6 +955,11 @@ export default {
 	src: url("../assets/fonts/relay-medium.ttf") format("truetype");
 }
 
+@font-face {
+	font-family: "Relay Wide Medium";
+	src: url("../assets/fonts/relaywide-medium.ttf") format("truetype");
+}
+
 .mtg-card {
 	position: relative;
 	width: 63.5mm;
@@ -1592,7 +1600,7 @@ export default {
 }
 
 .planeswalker .footer {
-	top: 82.2mm;
+	top: 83mm;
 }
 
 .oracle-inner,
@@ -1664,7 +1672,7 @@ export default {
 
 .footer {
 	position: absolute;
-	top: 82.8mm;
+	top: 82.91mm;
 	left: 50%;
 	transform: translateX(-50%);
 
@@ -1674,16 +1682,15 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	color: white;
-	font-family: Relay Medium;
-	font-size: 4.2pt;
-	line-height: 1.1mm;
+	font-family: Relay Wide Medium;
+	font-size: 3.9pt;
 
 	z-index: 3;
 }
 
 .footer-left > div,
 .footer-right > div {
-	height: 1.8mm;
+	height: 1.35mm;
 }
 
 .collector-number {
@@ -1700,7 +1707,10 @@ export default {
 	min-height: 2mm;
 }
 
-.set,
+.set {
+	letter-spacing: 0.23mm;
+}
+
 .language {
 	letter-spacing: 0.15mm;
 }
