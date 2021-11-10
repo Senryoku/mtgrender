@@ -1151,6 +1151,7 @@ textarea {
 </style>
 
 <style>
+/* Disabled for now
 .mtg-card:not(.rendering) * {
 	transition: outline-offset 0.2s, outline-color 0.2s;
 	outline-color: transparent;
@@ -1162,4 +1163,5 @@ textarea {
 	outline: red 1px dashed;
 	outline-offset: 0;
 }
+*/
 </style>

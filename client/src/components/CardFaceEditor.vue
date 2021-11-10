@@ -95,7 +95,9 @@
 					<option :value="undefined"></option>
 					<option value="normal">Normal</option>
 					<option value="extended">Extended</option>
+					<option value="full-footer">Full with footer</option>
 					<option value="full">Full</option>
+					<option value="japanese-archive">Japanese Archive</option>
 				</select>
 			</div>
 			<div v-if="modelValue.image_uris">

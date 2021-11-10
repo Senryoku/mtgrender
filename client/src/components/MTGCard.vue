@@ -12,7 +12,13 @@
 			saga: is_saga,
 			adventure: is_adventure,
 			'extended-art': card_face.art_variant === 'extended',
-			'full-art': card_face.art_variant === 'full',
+			'full-art': ['full', 'full-footer', 'japanese-archive'].includes(
+				card_face.art_variant
+			),
+			'full-footer': ['full-footer', 'japanese-archive'].includes(
+				card_face.art_variant
+			),
+			'japanese-archive': card_face.art_variant === 'japanese-archive',
 			compasslanddfc: this.card.frame_effects?.includes('compasslanddfc'),
 		}"
 	>
@@ -301,6 +307,13 @@
 			<input type="number" step="0.1" v-model="debug_opacity" />
 			<input type="checkbox" v-model="display_debug" />
 		</div>
+		<svg class="svg">
+			<clipPath id="full-art-clip-path" clipPathUnits="objectBoundingBox">
+				<path
+					d="M0,0 H1 V0.745 C1,0.745,0.993,0.829,0.935,0.884 V0.925 H0.065 V0.884 C0.03,0.842,0.015,0.832,0,0.745 Z"
+				></path>
+			</clipPath>
+		</svg>
 	</div>
 </template>
 
@@ -647,7 +660,9 @@ export default {
 			);
 		},
 		extended_art() {
-			return ["extended", "full"].includes(this.card_face.art_variant);
+			return ["extended", "full", "full-footer"].includes(
+				this.card_face.art_variant
+			);
 		},
 		oracle_lines() {
 			if (!this.card_face?.oracle_text) return [];
@@ -912,6 +927,17 @@ export default {
 					import.meta.url
 				).href;
 			return null;
+		},
+		japanese_color() {
+			return this.card_face?.colors?.length === 1
+				? {
+						W: "#878167",
+						U: "#1c477b",
+						B: "#161417",
+						R: "#69201a",
+						G: "#2d4429",
+				  }[this.card_face.colors[0]]
+				: "#927c43";
 		},
 	},
 	watch: {
@@ -1931,6 +1957,76 @@ export default {
 	display: none; /* Embeded in the background */
 }
 
+/* Japanse Mystical Archive */
+
+.japanese-archive .inner-frame,
+.japanese-archive .top-line,
+.japanese-archive .mid-line {
+	background-image: none;
+}
+
+.japanese-archive .legendary-crown {
+	display: none;
+}
+
+.japanese-archive .name {
+	background-color: v-bind(
+		japanese_color
+	); /* FIXME: Should be a gradient when multicolored */
+	color: #fff;
+	padding: 1mm 2mm;
+	border-radius: 1.5mm;
+	outline-style: solid;
+	outline-color: v-bind(japanese_color);
+	outline-width: 0.6mm;
+	outline-offset: 0.4mm;
+}
+
+.japanese-archive .mana-cost .ms {
+	width: 3.6mm;
+	border: 0.4mm solid #000;
+}
+
+.japanese-archive .mana-cost .ms-shadow {
+	box-shadow: initial;
+}
+
+.japanese-archive .type-line,
+.japanese-archive .oracle {
+	background-color: #ffffffa0;
+	border: 0.22mm solid v-bind(japanese_color); /* FIXME: Should be a gradient when multicolored */
+}
+
+.japanese-archive .oracle {
+	outline: #0005;
+	outline-width: 0.1mm;
+	outline-offset: -0.6mm;
+	outline-style: solid;
+	padding: 0.4mm 0.8mm;
+	box-sizing: border-box;
+}
+
+.japanese-archive .type-line {
+	border-radius: 1mm/50%;
+	position: absolute;
+	left: 0.4mm;
+	padding: 0 3mm;
+	height: 4mm;
+	line-height: 4mm;
+	max-width: 40mm;
+}
+
+.japanese-archive .set-icon-container {
+	position: absolute;
+	right: 0;
+}
+
+.full-footer .illustration,
+.japanese-archive .illustration {
+	background-color: #ffffff;
+	clip-path: url(#full-art-clip-path);
+}
+
 /* Extend art as much as possible when adding a bordering while rendering */
 
 .rendering.extended-art .illustration {
@@ -1968,6 +2064,8 @@ export default {
 	left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
 	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
 }
+
+/* Debug */
 
 .debug-overlay {
 	position: absolute;
