@@ -776,9 +776,12 @@ export default {
 					: "transform_back_frames"
 				: "frames";
 			if (this.extended_art && !this.is_saga) folder = "extended_" + folder;
+			const colors =
+				this.colors === "Artifact" && this.card_face?.colors?.length === 1
+					? this.card_face.colors[0]
+					: this.colors;
 			return `url(${
-				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
-					.href
+				new URL(`../assets/img/${folder}/${colors}.png`, import.meta.url).href
 			})`;
 		},
 		boxes() {
@@ -809,12 +812,15 @@ export default {
 				: this.boxes;
 		},
 		legendary_crown() {
+			const colors =
+				this.colors === "Artifact" && this.card_face?.colors?.length === 1
+					? this.card_face.colors[0]
+					: this.colors;
 			const folder = this.extended_art
 				? "extended_legendary_crowns"
 				: "legendary_crowns";
 			return `url(${
-				new URL(`../assets/img/${folder}/${this.colors}.png`, import.meta.url)
-					.href
+				new URL(`../assets/img/${folder}/${colors}.png`, import.meta.url).href
 			})`;
 		},
 		pt_box() {
@@ -1899,7 +1905,7 @@ export default {
 
 .transform-icon {
 	position: absolute;
-	top: 3.9mm;
+	top: 4mm;
 	left: 3.5mm;
 	width: 5.4mm;
 	aspect-ratio: 1;
@@ -1908,7 +1914,7 @@ export default {
 	box-sizing: border-box;
 	background-color: white;
 	background-image: v-bind(transform_icon);
-	background-size: 4.8mm;
+	background-size: 4.7mm;
 	background-position: center center;
 	background-repeat: no-repeat;
 	z-index: 3;
