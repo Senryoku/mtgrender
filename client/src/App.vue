@@ -183,16 +183,23 @@
 							<label for="card-full-name">Full Name</label>
 							<input id="card-full-name" v-model="card.name" type="text" />
 						</div>
+						<IllustrationEditor
+							v-if="card.layout === 'adventure'"
+							v-model="card"
+							@outline="outlineElement"
+						/>
 						<div class="dual-face-editor">
 							<div>
-								<h2>Front</h2>
+								<h2>{{ card.layout === "adventure" ? "Main" : "Front" }}</h2>
 								<CardFaceEditor
 									v-model="card.card_faces[0]"
 									@outline="outlineElement"
 								/>
 							</div>
 							<div>
-								<h2>Back</h2>
+								<h2>
+									{{ card.layout === "adventure" ? "Adventure" : "Back" }}
+								</h2>
 								<CardFaceEditor
 									v-model="card.card_faces[1]"
 									@outline="outlineElement"
@@ -271,6 +278,7 @@ import CardStore from "./components/CardStore.vue";
 import RenderSettings from "./components/RenderSettings.vue";
 import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
+import IllustrationEditor from "./components/IllustrationEditor.vue";
 
 let upscaler_instance = null;
 let upscaler_loaded_model = null;
@@ -324,6 +332,7 @@ export default {
 		CardFaceEditor,
 		CardStore,
 		RenderSettings,
+		IllustrationEditor,
 	},
 	data() {
 		const cardComponent = ref(null);

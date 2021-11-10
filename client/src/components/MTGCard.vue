@@ -11,14 +11,16 @@
 			'planeswalker-large': is_large_planeswalker,
 			saga: is_saga,
 			adventure: is_adventure,
-			'extended-art': card_face.art_variant === 'extended',
+			'extended-art':
+				(is_adventure ? card : card_face).art_variant === 'extended',
 			'full-art': ['full', 'full-footer', 'japanese-archive'].includes(
-				card_face.art_variant
+				(is_adventure ? card : card_face).art_variant
 			),
 			'full-footer': ['full-footer', 'japanese-archive'].includes(
-				card_face.art_variant
+				(is_adventure ? card : card_face).art_variant
 			),
-			'japanese-archive': card_face.art_variant === 'japanese-archive',
+			'japanese-archive':
+				(is_adventure ? card : card_face).art_variant === 'japanese-archive',
 			compasslanddfc: this.card.frame_effects?.includes('compasslanddfc'),
 		}"
 	>
@@ -416,37 +418,38 @@ export default {
 		},
 		scale_illustration(event) {
 			let s = 1;
-			if (this.card_face.illustration_scale)
-				s = this.card_face.illustration_scale;
+			const card = this.is_adventure ? this.card : this.card_face;
+			if (card.illustration_scale) s = card.illustration_scale;
 			s += event.deltaY > 0 ? -0.1 : 0.1;
 			s = Math.min(Math.max(1, s), 50);
 			this.$emit(
 				"edit",
-				this.card.card_faces
+				this.card.card_faces && !this.is_adventure
 					? ["card_faces", this.currentFace, "illustration_scale"]
 					: "illustration_scale",
 				s
 			);
 		},
 		start_drag_illustration(event) {
-			if (!this.card_face.illustration_position)
+			const card = this.is_adventure ? this.card : this.card_face;
+			if (!card.illustration_position)
 				this.$emit(
 					"edit",
-					this.card.card_faces
+					this.card.card_faces && !this.is_adventure
 						? ["card_faces", this.currentFace, "illustration_position"]
 						: "illustration_position",
 					{ x: 0, y: 0 }
 				);
 			this.dragging_illustration = {
-				x: this.card_face.illustration_position.x,
-				y: this.card_face.illustration_position.y,
+				x: card.illustration_position.x,
+				y: card.illustration_position.y,
 			};
 		},
 		cancel_drag_illustration(event) {
 			if (this.dragging_illustration) {
 				this.$emit(
 					"edit",
-					this.card.card_faces
+					this.card.card_faces && !this.is_adventure
 						? ["card_faces", this.currentFace, "illustration_position"]
 						: "illustration_position",
 					this.dragging_illustration
@@ -458,18 +461,19 @@ export default {
 			this.dragging_illustration = null;
 		},
 		drag_illustration(event) {
+			const card = this.is_adventure ? this.card : this.card_face;
 			if (this.dragging_illustration) {
 				this.$emit(
 					"edit",
-					this.card.card_faces
+					this.card.card_faces && !this.is_adventure
 						? ["card_faces", this.currentFace, "illustration_position"]
 						: "illustration_position",
 					{
 						x:
-							this.card_face.illustration_position.x +
+							card.illustration_position.x +
 							(this.mmperpixel * event.movementX) / this.scale,
 						y:
-							this.card_face.illustration_position.y +
+							card.illustration_position.y +
 							(this.mmperpixel * event.movementY) / this.scale,
 					}
 				);
@@ -662,7 +666,7 @@ export default {
 		},
 		extended_art() {
 			return ["extended", "full", "full-footer"].includes(
-				this.card_face.art_variant
+				(this.is_adventure ? this.card : this.card_face).art_variant
 			);
 		},
 		oracle_lines() {
@@ -908,13 +912,17 @@ export default {
 			})`;
 		},
 		illustration_scale() {
-			return this.card_face?.illustration_scale ?? 1;
+			return (
+				(this.is_adventure ? this.card : this.card_face)?.illustration_scale ??
+				1
+			);
 		},
 		illustration_position() {
-			return this.card_face?.illustration_position
+			const card = this.is_adventure ? this.card : this.card_face;
+			return card?.illustration_position
 				? {
-						x: this.card_face?.illustration_position.x + "mm",
-						y: this.card_face?.illustration_position.y + "mm",
+						x: card?.illustration_position.x + "mm",
+						y: card?.illustration_position.y + "mm",
 				  }
 				: { x: "0mm", y: "0mm" };
 		},
