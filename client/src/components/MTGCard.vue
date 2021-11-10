@@ -948,6 +948,27 @@ export default {
 				  }[this.card_face.colors[0]]
 				: "#927c43";
 		},
+		japanese_name_color() {
+			if (this.card_face?.colors?.length === 2)
+				return `linear-gradient(to right, ${
+					{
+						W: "#878167",
+						U: "#1c477b",
+						B: "#161417",
+						R: "#69201a",
+						G: "#2d4429",
+					}[this.card_face.colors[0]]
+				}, ${
+					{
+						W: "#878167",
+						U: "#1c477b",
+						B: "#161417",
+						R: "#69201a",
+						G: "#2d4429",
+					}[this.card_face.colors[1]]
+				})`;
+			return this.japanese_color;
+		},
 	},
 	watch: {
 		"card.oracle_text": function () {
@@ -1979,9 +2000,8 @@ export default {
 }
 
 .japanese-archive .name {
-	background-color: v-bind(
-		japanese_color
-	); /* FIXME: Should be a gradient when multicolored */
+	background-color: v-bind(japanese_color);
+	background-image: v-bind(japanese_name_color);
 	color: #fff;
 	padding: 1mm 2mm;
 	border-radius: 1.5mm;
@@ -1991,12 +2011,13 @@ export default {
 	outline-offset: 0.4mm;
 }
 
-.japanese-archive .mana-cost .ms {
+.japanese-archive .top-line .mana-cost .ms {
 	width: 3.6mm;
 	border: 0.4mm solid #000;
+	/* TODO: The colors of mana symbols are modified */
 }
 
-.japanese-archive .mana-cost .ms-shadow {
+.japanese-archive .top-line .mana-cost .ms-shadow {
 	box-shadow: initial;
 }
 
