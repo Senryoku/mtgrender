@@ -1393,7 +1393,7 @@ export default {
 	justify-content: stretch;
 	flex-direction: column;
 	gap: 0.8mm;
-	padding-left: 2.5mm;
+	padding-left: 2.15mm;
 	height: 47.5mm;
 }
 
@@ -1403,7 +1403,7 @@ export default {
 	justify-content: center;
 	flex-direction: column;
 	box-shadow: 0 -0.35mm 0.5mm #00000020;
-	padding: 1mm;
+	padding: 1.35mm;
 	flex-grow: 1;
 	line-height: 1em;
 }
@@ -1413,7 +1413,7 @@ export default {
 	width: 5mm;
 	top: 50%;
 	transform: translateY(-50%);
-	left: -5mm;
+	left: -4.65mm;
 	z-index: 4;
 }
 
@@ -2080,7 +2080,7 @@ export default {
 	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
 }
 
-.rendering.full-art .illustration {
+.rendering.full-art:not(.full-footer):not(.japanese-archive) .illustration {
 	width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
 	height: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
 	background-size: calc(
