@@ -320,8 +320,9 @@
 <script lang="ts">
 import { ref, nextTick } from "vue";
 
+// Disabled for now: This should be made optional, or even explicitly specified (like "{Flash}" instead of "Flash")
 const keywords = {
-	Flash: "You may cast this spell any time you could cast an instant.",
+	//Flash: "You may cast this spell any time you could cast an instant.",
 };
 const mana_regex = /{([^}]+)}/g;
 
