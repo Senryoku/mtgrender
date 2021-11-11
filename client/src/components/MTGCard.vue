@@ -640,9 +640,7 @@ export default {
 			return [...this.card_face.mana_cost.matchAll(mana_regex)].map((m) =>
 				this.card_face?.art_variant === "japanese-archive"
 					? new URL(
-							`../assets/img/archives_symbols/${mana_symbols[
-								m[0]
-							].svg_uri.substr(mana_symbols[m[0]].svg_uri.lastIndexOf("/"))}`,
+							`../assets/img/archives_symbols/${m[1]}.svg`,
 							import.meta.url
 					  ).href
 					: mana_symbols[m[0]].svg_uri
