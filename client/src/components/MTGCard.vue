@@ -330,7 +330,7 @@ const mana_regex = /{([^}]+)}/g;
 
 const mana_symbols = {};
 import mana_symbols_list from "../assets/data/symbology.json";
-for (let symbol of mana_symbols_list) mana_symbols[symbol.symbol] = symbol;
+for (let symbol of mana_symbols_list.data) mana_symbols[symbol.symbol] = symbol;
 import sets_with_icons from "../assets/data/sets_with_icons.json";
 
 function check_overflow(el) {
@@ -637,8 +637,15 @@ export default {
 		},
 		mana_cost() {
 			if (!this.card_face?.mana_cost) return [];
-			return [...this.card_face.mana_cost.matchAll(mana_regex)].map(
-				(m) => mana_symbols[m[0]].svg_uri
+			return [...this.card_face.mana_cost.matchAll(mana_regex)].map((m) =>
+				this.card_face?.art_variant === "japanese-archive"
+					? new URL(
+							`../assets/img/archives_symbols/${mana_symbols[
+								m[0]
+							].svg_uri.substr(mana_symbols[m[0]].svg_uri.lastIndexOf("/"))}`,
+							import.meta.url
+					  ).href
+					: mana_symbols[m[0]].svg_uri
 			);
 		},
 		adventure_mana_cost() {
