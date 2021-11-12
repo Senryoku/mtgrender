@@ -328,6 +328,15 @@ const keywords = {
 };
 const mana_regex = /{([^}]+)}/g;
 
+const ArchiveColors = {
+	W: "#878167",
+	U: "#1c477b",
+	B: "#161417",
+	R: "#69201a",
+	G: "#2d4429",
+	Gold: "#927c43",
+};
+
 const mana_symbols = {};
 import mana_symbols_list from "../assets/data/symbology.json";
 for (let symbol of mana_symbols_list.data) mana_symbols[symbol.symbol] = symbol;
@@ -950,35 +959,44 @@ export default {
 		},
 		japanese_color() {
 			return this.card_face?.colors?.length === 1
-				? {
-						W: "#878167",
-						U: "#1c477b",
-						B: "#161417",
-						R: "#69201a",
-						G: "#2d4429",
-				  }[this.card_face.colors[0]]
+				? ArchiveColors[this.card_face.colors[0]]
 				: "#927c43";
 		},
 		japanese_name_color() {
 			if (this.card_face?.colors?.length === 2)
 				return `linear-gradient(to right, ${
-					{
-						W: "#878167",
-						U: "#1c477b",
-						B: "#161417",
-						R: "#69201a",
-						G: "#2d4429",
-					}[this.card_face.colors[0]]
-				}, ${
-					{
-						W: "#878167",
-						U: "#1c477b",
-						B: "#161417",
-						R: "#69201a",
-						G: "#2d4429",
-					}[this.card_face.colors[1]]
-				})`;
+					ArchiveColors[this.card_face.colors[0]]
+				}, ${ArchiveColors[this.card_face.colors[1]]})`;
 			return this.japanese_color;
+		},
+		/* These don't appear in the render, great \o/ */
+		japanese_type_line_border() {
+			const c0 =
+				this.card_face?.colors?.length === 2
+					? ArchiveColors[this.card_face.colors[0]]
+					: this.japanese_color;
+			const c1 =
+				this.card_face?.colors?.length === 2
+					? ArchiveColors[this.card_face.colors[1]]
+					: c0;
+			return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-0.05 -0.05 1.1 1.1'><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='0%25'><stop offset='0%25' stop-color='${c0}' /><stop offset='100%25' stop-color='${c1}' /></linearGradient></defs><path d='M 0.2 0 c -0.1 0.125 -0.2 0.25 -0.2 0.5 c 0 0.25 0.1 0.375 0.2 0.5 l 0.6 0 c 0.1 -0.125 0.2 -0.25 0.2 -0.5 c 0 -0.25 -0.1 -0.375 -0.2 -0.5 Z' stroke='url(%23gradient)' stroke-width='0.1' fill='none'/></svg>")`.replaceAll(
+				"#",
+				"%23"
+			);
+		},
+		japanese_oracle_border() {
+			const c0 =
+				this.card_face?.colors?.length === 2
+					? ArchiveColors[this.card_face.colors[0]]
+					: this.japanese_color;
+			const c1 =
+				this.card_face?.colors?.length === 2
+					? ArchiveColors[this.card_face.colors[1]]
+					: c0;
+			return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='0%25'><stop offset='0%25' stop-color='${c0}' /><stop offset='100%25' stop-color='${c1}' /></linearGradient></defs><rect x='0' y='0' width='100' height='100' fill='url(%23gradient)' /></svg>")`.replaceAll(
+				"#",
+				"%23"
+			);
 		},
 	},
 	watch: {
@@ -2043,6 +2061,11 @@ export default {
 	outline-style: solid;
 	padding: 0.4mm 0.8mm;
 	box-sizing: border-box;
+
+	border-image-source: v-bind(japanese_oracle_border);
+	border-image-slice: 10%;
+	border-image-width: 0.22mm;
+	border-image-repeat: round;
 }
 
 .japanese-archive .type-line {
@@ -2053,6 +2076,10 @@ export default {
 	height: 4mm;
 	line-height: 4mm;
 	max-width: 40mm;
+
+	border-image-source: v-bind(japanese_type_line_border);
+	border-image-slice: 50% 50%;
+	border-image-width: 50% 1.5mm;
 }
 
 .japanese-archive .set-icon-container {
