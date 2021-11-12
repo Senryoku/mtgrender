@@ -2023,9 +2023,7 @@ export default {
 }
 
 .japanese-archive .top-line .mana-cost .ms {
-	width: 3.6mm;
-	border: 0.4mm solid #000;
-	/* TODO: The colors of mana symbols are modified */
+	width: 4.2mm;
 }
 
 .japanese-archive .top-line .mana-cost .ms-shadow {
