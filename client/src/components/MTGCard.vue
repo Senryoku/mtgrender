@@ -1183,7 +1183,8 @@ export default {
 	cursor: grab;
 }
 
-.mtg-card:not(.full-art):not(.extended-art) .illustration {
+.mtg-card:not(.full-art):not(.extended-art):not(.compasslanddfc.back)
+	.illustration {
 	box-shadow: inset 0.2mm -0.2mm 0.2mm black;
 }
 
