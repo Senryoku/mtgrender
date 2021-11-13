@@ -309,7 +309,7 @@
 			<input type="number" step="0.1" v-model="debug_opacity" />
 			<input type="checkbox" v-model="display_debug" />
 		</div>
-		<svg class="svg">
+		<svg class="svg" height="0" width="0">
 			<clipPath id="full-art-clip-path" clipPathUnits="objectBoundingBox">
 				<path
 					d="M0,0 H1 V0.745 C1,0.745,0.993,0.829,0.935,0.884 V0.925 H0.065 V0.884 C0.03,0.842,0.015,0.832,0,0.745 Z"
