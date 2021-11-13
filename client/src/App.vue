@@ -41,7 +41,6 @@
 					</div>
 					<button type="submit">Load from Scryfall</button>
 				</form>
-				<button @click="fetchArtFromMtgpics">Fetch Art from MTGpics</button>
 				<button @click="render" :disabled="rendering">Render to PNG</button>
 			</div>
 		</div>
@@ -847,6 +846,7 @@ export default {
 			this.rendering = false;
 		},
 		async fetchArtFromMtgpics() {
+			// MtgPics.com isn't setup for CORS, so we'd have to use a proxy for rendering. Not bothering with that for now.
 			if (!this.card?.set || !this.card?.collector_number) {
 				this.toast(
 					"Enter a valid set and collector number before fetching the art."
@@ -856,33 +856,36 @@ export default {
 			const url = `https://mtgpics.com/pics/art/${this.card.set.toLowerCase()}/${
 				this.card.collector_number
 			}.jpg`;
-			const modal = openModal({
-				disposable: true,
-				confirmable: true,
-				confirmText: "Use this Art",
-				onConfirm: () => {
-					if (this.$refs.cardComponent.is_dualfaced) {
-						this.card.card_faces[
-							this.$refs.cardComponent.currentFace
-						].image_uris.art_crop = url;
-					} else this.card.image_uris.art_crop = url;
-				},
-			});
 			const image = new Image();
 			image.addEventListener("error", () => {
 				this.toast({
 					type: "error",
-					text: "Failed to fetch art from mtgpics.com",
+					text: `${this.card.name} (${this.card.set.toLowerCase()} - ${
+						this.card.collector_number
+					}) not found on mtgpics.com`,
 				});
-				modal.close();
+			});
+			image.addEventListener("load", () => {
+				const modal = openModal({
+					disposable: true,
+					confirmable: true,
+					confirmText: "Use this Art",
+					onConfirm: () => {
+						if (this.$refs.cardComponent.is_dualfaced) {
+							this.card.card_faces[
+								this.$refs.cardComponent.currentFace
+							].image_uris.art_crop = url;
+						} else this.card.image_uris.art_crop = url;
+					},
+				});
+				const div = document.createElement("div");
+				div.textContent = `${
+					this.card.name
+				} (${this.card.set.toLowerCase()} - ${this.card.collector_number})`;
+				modal.$refs.defaultSlot.appendChild(div);
+				modal.$refs.defaultSlot.appendChild(image);
 			});
 			image.src = url;
-			const div = document.createElement("div");
-			div.textContent = `${this.card.set.toLowerCase()} - ${
-				this.card.collector_number
-			}`;
-			modal.$refs.defaultSlot.appendChild(div);
-			modal.$refs.defaultSlot.appendChild(image);
 		},
 		updateCard(event) {
 			try {
