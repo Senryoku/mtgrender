@@ -5,7 +5,10 @@
 				<slot><div ref="defaultSlot"></div></slot>
 			</div>
 			<div class="controls">
-				<button v-show="is_disposable" @click="close">Ok</button>
+				<button v-show="is_disposable" @click="close">Close</button>
+				<button v-show="is_confirmable" @click="confirm">
+					{{ confirmText }}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -17,12 +20,15 @@ import { defineComponent, ref, render } from "vue";
 export default defineComponent({
 	props: {
 		disposable: { type: Boolean, default: true },
+		confirmable: { type: Boolean, default: false },
+		confirmText: { type: String, default: "Confirm" },
 	},
 	setup(inst) {
 		const defaultSlot = ref(null);
 		return {
 			defaultSlot,
 			is_disposable: ref(inst.disposable ?? true),
+			is_confirmable: ref(inst.confirmable ?? true),
 			closing: false,
 		};
 	},
@@ -42,6 +48,10 @@ export default defineComponent({
 					this.mounted = false;
 				}, 250);
 			}
+		},
+		confirm() {
+			this.$emit("confirm");
+			this.close();
 		},
 		outside_click() {
 			if (this.is_disposable) this.close();

@@ -8,13 +8,15 @@ import Spinner from "./components/Spinner.vue";
 const Toast = {
 	toastContainer: null,
 	install(app, options) {
-		app.config.globalProperties.toast = (text) => {
+		app.config.globalProperties.toast = (data) => {
 			if (!this.toastContainer) {
 				const div = document.createElement("div");
 				document.body.appendChild(div);
 				this.toastContainer = createApp(ToastContainer).mount(div);
 			}
-			this.toastContainer.push({ text });
+			this.toastContainer.push(
+				typeof data === "string" ? { text: data } : data
+			);
 		};
 	},
 };

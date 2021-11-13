@@ -1,10 +1,8 @@
 <template>
-	<div class="toast">{{ toast.text }}</div>
+	<div class="toast" :class="toast.type">{{ toast.text }}</div>
 </template>
 
 <script lang="ts">
-import { render } from "vue";
-
 export default {
 	props: { toast: Object },
 	mounted() {
@@ -34,6 +32,11 @@ export default {
 	transition: opacity 0.5s;
 	opacity: 1;
 	animation: pulse 1s 1;
+}
+
+.error {
+	background: #f44336;
+	color: white;
 }
 
 @keyframes pulse {
