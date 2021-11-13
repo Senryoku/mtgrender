@@ -1524,9 +1524,9 @@ export default {
 
 .planeswalker-oracle-bg {
 	position: absolute;
-	left: 7.75mm;
+	left: 7.4mm;
 	top: 55.6mm;
-	width: 50.85mm;
+	width: 51.2mm;
 	height: 25.35mm;
 	background-color: #ffffff90;
 	border-radius: 0.9mm;
