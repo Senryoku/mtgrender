@@ -315,6 +315,14 @@
 					d="M0,0 H1 V0.745 C1,0.745,0.993,0.829,0.935,0.884 V0.925 H0.065 V0.884 C0.03,0.842,0.015,0.832,0,0.745 Z"
 				></path>
 			</clipPath>
+			<clipPath
+				id="full-art-planeswalker-clip-path"
+				clipPathUnits="objectBoundingBox"
+			>
+				<path
+					d="M 0 0 H 1 V 0.745 C 1 0.745 0.993 0.829 0.935 0.884 L 0.912 0.911 H 0.09 L 0.065 0.884 C 0.03 0.842 0.015 0.832 0 0.745 Z"
+				></path>
+			</clipPath>
 		</svg>
 	</div>
 </template>
@@ -2092,6 +2100,10 @@ export default {
 .japanese-archive .illustration {
 	background-color: #ffffff;
 	clip-path: url(#full-art-clip-path);
+}
+
+.full-footer.planeswalker .illustration {
+	clip-path: url(#full-art-planeswalker-clip-path);
 }
 
 /* Extend art as much as possible when adding a bordering while rendering */
