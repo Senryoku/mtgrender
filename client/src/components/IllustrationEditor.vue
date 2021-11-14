@@ -30,6 +30,7 @@
 				<option value="extended">Extended</option>
 				<option value="full-footer">Full with footer</option>
 				<option value="full">Full</option>
+				<option value="archive">Mystical Archive</option>
 				<option value="japanese-archive">Japanese Archive</option>
 			</select>
 		</div>

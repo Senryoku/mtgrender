@@ -13,12 +13,16 @@
 			adventure: is_adventure,
 			'extended-art':
 				(is_adventure ? card : card_face).art_variant === 'extended',
-			'full-art': ['full', 'full-footer', 'japanese-archive'].includes(
-				(is_adventure ? card : card_face).art_variant
-			),
+			'full-art': [
+				'full',
+				'full-footer',
+				'archive',
+				'japanese-archive',
+			].includes((is_adventure ? card : card_face).art_variant),
 			'full-footer': ['full-footer', 'japanese-archive'].includes(
 				(is_adventure ? card : card_face).art_variant
 			),
+			archive: (is_adventure ? card : card_face).art_variant === 'archive',
 			'japanese-archive':
 				(is_adventure ? card : card_face).art_variant === 'japanese-archive',
 			compasslanddfc: this.card.frame_effects?.includes('compasslanddfc'),
@@ -263,7 +267,14 @@
 				</div>
 			</div>
 			<div class="footer-right">
-				<div v-if="card_face.power || card_face.toughness || card_face.loyalty">
+				<div
+					v-if="
+						card_face.power ||
+						card_face.toughness ||
+						card_face.loyalty ||
+						card_face.art_variant === 'archive'
+					"
+				>
 					&nbsp;
 				</div>
 				<div class="copyright" @dblclick="edit_property('copyright')">
@@ -655,7 +666,7 @@ export default {
 		mana_cost() {
 			if (!this.card_face?.mana_cost) return [];
 			return [...this.card_face.mana_cost.matchAll(mana_regex)].map((m) =>
-				this.card_face?.art_variant === "japanese-archive"
+				["archive", "japanese-archive"].includes(this.card_face?.art_variant)
 					? new URL(
 							`../assets/img/archives_symbols/${m[1]}.svg`,
 							import.meta.url
@@ -2023,6 +2034,35 @@ export default {
 
 .compasslanddfc.back .transform-icon {
 	display: none; /* Embeded in the background */
+}
+
+.archive .inner-frame {
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	filter: none;
+	background-image: url("../assets/img/archives_frame.svg");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.archive .top-line,
+.archive .mid-line {
+	background-image: none;
+}
+
+.archive .top-line .mana-cost .ms {
+	width: 3.6mm;
+}
+
+.archive .top-line .mana-cost .ms-shadow {
+	box-shadow: initial;
 }
 
 /* Japanse Mystical Archive */
