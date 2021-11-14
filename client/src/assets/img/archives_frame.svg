@@ -29,9 +29,12 @@
 		]]>
 	</style>
 	<filter id="noise" x="0%" y="0%" width="100%" height="100%">
-        <feTurbulence baseFrequency="0.2" numOctaves="16" result="noisy" />
-		<feColorMatrix type="luminanceToAlpha" in="noisy" result="alphaNoise" />
+        <feTurbulence baseFrequency="0.16" numOctaves="16" result="noisy" seed="2" />
+        <feTurbulence baseFrequency="8" numOctaves="16" type="fractalNoise" result="noisy2" seed="157" />
+		<feColorMatrix type="luminanceToAlpha" in="noisy" result="alphaNoise1" />
+		<feColorMatrix type="luminanceToAlpha" in="noisy2" result="alphaNoise2" />
 		<feFlood x="0" y="0" width="100%" height="100%" flood-color="#d5b057" flood-opacity="1" result="flood" />
+		<feComposite operator="out" in="alphaNoise1" in2="alphaNoise2" result="alphaNoise"/>
 		<feComposite operator="in" in="flood" in2="alphaNoise" result="coloredNoise"/>
 		<feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="finalNoise"/>
         <feBlend in="SourceGraphic" in2="finalNoise" mode="multiply" />
@@ -44,7 +47,7 @@
 			<path d="M 1.026 0.84 H 13.37 c 0.206 0.329 0.186 0.876 -0.026 1.198 H 1 c -0.213 -0.417 -0.151 -0.965 0.02 -1.177 Z" />
 		</clipPath>
 	</defs>
-	<g transform="scale(10)" stroke="black" stroke-width="0.07">
+	<g transform="scale(10)" stroke="black" stroke-width="0.06">
 		<g clip-path="url(#illustration-clip)">
 			<rect class="background-color" x="0" y="0" width="100%" height="100%" stroke-width="0" />
 			<circle	class="background-feature" cx="8.5" cy="1.2" r="5"/>
@@ -90,8 +93,8 @@
 		<path class="secondary-color" d="M 9.356 12.555 H 13.267 V 15.17 H 13.399 C 13.557 15.2 13.654 15.317 13.648 15.476 C 13.651 15.62 13.54 15.779 13.401 15.787 H 13.263 V 18.655 H 13.52 V 16.023 C 14.087 15.748 13.998 15.115 13.516 14.949 V 12.552 C 13.904 12.268 13.987 11.434 13.428 10.82 L 12.75 11.242 L 9.356 12.555 Z" />
 		
 		<path class="background-color" d="M 1 11.22 h 12.37 c 0.231 0.263 0.236 0.879 -0.027 1.126 h -12.313 c -0.231 -0.324 -0.248 -0.748 -0.033 -1.122 z" />
-		<circle class="gold" cx="1" cy="15.476" r="0.14"/>
-		<circle class="gold" cx="13.356" cy="15.476" r="0.14"/>
+		<circle class="gold" cx="1" cy="15.476" r="0.14" stroke-width="0.04" />
+		<circle class="gold" cx="13.356" cy="15.476" r="0.14" stroke-width="0.04" />
 	
 		<path class="primary-color" d="M 0.611 11.258 C 0.53 11.231 0.454 11.24 0.428 11.338 C 0.412 11.477 0.464 11.517 0.531 11.553 C 0.603 11.577 0.686 11.561 0.742 11.489 C 0.83 11.386 0.855 11.319 0.842 11.184 C 0.834 11.036 0.738 10.952 0.639 10.885 C 0.544 10.83 0.48 10.817 0.329 10.815 C 0.157 10.833 0.049 10.884 -0.036 10.952 C -0.19 11.118 -0.229 11.324 -0.232 11.538 C -0.211 11.672 -0.211 11.648 -0.158 11.804 C -0.084 11.965 0.209 12.357 0.332 12.52 L 0.512 12.812 L 0.743 12.552 C 0.593 12.396 0.396 12.151 0.158 11.775 C 0.094 11.634 0.09 11.498 0.109 11.339 C 0.137 11.252 0.205 11.155 0.316 11.147 C 0.38 11.14 0.429 11.141 0.489 11.152 C 0.519 11.162 0.551 11.184 0.583 11.213 Z" />
 		
