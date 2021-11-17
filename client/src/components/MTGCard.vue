@@ -1275,7 +1275,8 @@ export default {
 			return null;
 		},
 		archive_frame_colors() {
-			if (!this.card_face?.colors)
+			const colors = this.card_face?.color_identity ?? this.card_face?.colors;
+			if (!colors)
 				return Object.assign(
 					{
 						left: ArchiveFrameColors["Gold"],
@@ -1283,21 +1284,17 @@ export default {
 					},
 					ArchiveFrameColors["Gold"]
 				);
-			return this.card_face?.colors?.length === 1
-				? Object.assign(
-						{
-							left: ArchiveFrameColors[this.card_face.colors[0]],
-							right: ArchiveFrameColors[this.card_face.colors[0]],
-						},
-						ArchiveFrameColors[this.card_face.colors[0]]
-				  )
-				: Object.assign(
-						{
-							left: ArchiveFrameColors[this.card_face.colors[0]],
-							right: ArchiveFrameColors[this.card_face.colors[1]],
-						},
-						ArchiveFrameColors["Gold"]
-				  );
+			return Object.assign(
+				{
+					left: ArchiveFrameColors[colors[0]] ?? ArchiveFrameColors["Gold"],
+					right:
+						ArchiveFrameColors[colors[colors.length === 1 ? 0 : 1]] ??
+						ArchiveFrameColors["Gold"],
+				},
+				colors.length > 1 || ArchiveFrameColors[colors[0]]
+					? ArchiveFrameColors["Gold"]
+					: ArchiveFrameColors[colors[0]]
+			);
 		},
 		japanese_color() {
 			return this.card_face?.colors?.length === 1
