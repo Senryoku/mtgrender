@@ -698,7 +698,7 @@ export default {
 			currentFace: 0,
 			dragging_illustration: null,
 			debug: import.meta.env.MODE === "development",
-			display_debug: true,
+			display_debug: false,
 			debug_opacity: 0,
 		};
 	},
@@ -767,8 +767,8 @@ export default {
 					{ x: 0, y: 0 }
 				);
 			this.dragging_illustration = {
-				x: card.illustration_position.x,
-				y: card.illustration_position.y,
+				x: card.illustration_position?.x ?? 0,
+				y: card.illustration_position?.y ?? 0,
 			};
 		},
 		cancel_drag_illustration(event) {
