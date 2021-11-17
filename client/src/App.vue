@@ -92,110 +92,128 @@
 					</div>
 				</div>
 				<div v-show="currentTab === 0" class="inner-tab card-info">
-					<div>
-						<label for="card-layout">Layout</label>
-						<input
-							id="card-layout"
-							v-model="card.layout"
-							type="text"
-							list="card-layouts"
-							@change="layoutChange"
-						/>
-						<datalist id="card-layouts">
-							<option value="normal"></option>
-							<option value="adventure"></option>
-							<option value="modal_dfc"></option>
-							<option value="transform"></option>
-						</datalist>
-					</div>
-					<div>
-						<label for="card-set">Set</label>
-						<input
-							id="card-set"
-							v-model="card.set"
-							list="card-sets"
-							type="text"
-						/>
-						<datalist id="card-sets">
-							<option v-for="s in setsWithIcons" :key="s" :value="s"></option>
-						</datalist>
-						<a @click="card.set = undefined">↺</a>
-					</div>
-					<div>
-						<label for="card-set-icon">Set Icon</label>
-						<input
-							id="card-set-icon"
-							v-model="card.set_icon"
-							type="text"
-							placeholder="Leave Blank to use the official set icon"
-						/>
-						<a @click="card.set_icon = undefined">↺</a>
-					</div>
-					<div>
-						<label for="card-rarity">Rarity</label>
-						<select id="card-rarity" v-model="card.rarity">
-							<option
-								v-for="r in ['common', 'uncommon', 'rare', 'mythic', 'special']"
-								:key="r"
-								:value="r"
-							>
-								{{ r }}
-							</option>
-						</select>
-						<a @click="card.rarity = undefined">↺</a>
-					</div>
-					<div style="display: flex; align-items: center">
-						<label for="card-frame-effects">Frame Effects</label>
-						<div id="card-frame-effects" style="display: inline-block">
-							<form @submit.prevent="addFrameEffect">
+					<div style="display: flex; justify-content: space-between">
+						<div>
+							<div>
+								<label for="card-layout">Layout</label>
 								<input
+									id="card-layout"
+									v-model="card.layout"
 									type="text"
-									id="add-frame-effect"
-									name="add-frame-effect"
-									list="frame-effects"
+									list="card-layouts"
+									@change="layoutChange"
 								/>
-								<datalist id="frame-effects">
+								<datalist id="card-layouts">
+									<option value="normal"></option>
+									<option value="adventure"></option>
+									<option value="modal_dfc"></option>
+									<option value="transform"></option>
+								</datalist>
+							</div>
+							<div>
+								<label for="card-set">Set</label>
+								<input
+									id="card-set"
+									v-model="card.set"
+									list="card-sets"
+									type="text"
+									style="width: 4em"
+								/>
+								<datalist id="card-sets">
 									<option
-										v-for="e in [
-											'legendary',
-											'miracle',
-											'nyxtouched',
-											'draft',
-											'devoid',
-											'tombstone',
-											'colorshifted',
-											'inverted',
-											'sunmoondfc',
-											'compasslanddfc',
-											'originpwdfc',
-											'mooneldrazidfc',
-											'waxingandwaningmoondfc',
-											'showcase',
-											'extendedart',
-											'companion',
-											'etched',
-											'snow',
-										]"
-										:key="e"
-										:value="e"
+										v-for="s in setsWithIcons"
+										:key="s"
+										:value="s"
 									></option>
 								</datalist>
-								<button type="submit">Add</button>
-							</form>
-							<ul style="margin: 0 1em; padding: 0">
-								<li
-									v-for="(r, idx) in this.card.frame_effects"
-									:key="r"
-									:value="r"
-								>
-									<input type="text" v-model="this.card.frame_effects[idx]" />
-									<span
-										@click="this.card.frame_effects.splice(idx, 1)"
-										class="clickable"
-										>🗑</span
+								<a @click="card.set = undefined">↺</a>
+								<input
+									id="card-set-icon"
+									v-model="card.set_icon"
+									type="text"
+									placeholder="Custom Icon URL"
+									style="width: 13em"
+								/>
+								<a @click="card.set_icon = undefined">↺</a>
+							</div>
+							<div>
+								<label for="card-rarity">Rarity</label>
+								<select id="card-rarity" v-model="card.rarity">
+									<option
+										v-for="r in [
+											'common',
+											'uncommon',
+											'rare',
+											'mythic',
+											'special',
+										]"
+										:key="r"
+										:value="r"
 									>
-								</li>
-							</ul>
+										{{ r }}
+									</option>
+								</select>
+								<a @click="card.rarity = undefined">↺</a>
+							</div>
+						</div>
+						<div>
+							<div style="display: flex; align-items: center">
+								<label for="card-frame-effects">Frame Effects</label>
+								<div id="card-frame-effects" style="display: inline-block">
+									<form @submit.prevent="addFrameEffect">
+										<input
+											type="text"
+											id="add-frame-effect"
+											name="add-frame-effect"
+											list="frame-effects"
+										/>
+										<datalist id="frame-effects">
+											<option
+												v-for="e in [
+													'legendary',
+													'miracle',
+													'nyxtouched',
+													'draft',
+													'devoid',
+													'tombstone',
+													'colorshifted',
+													'inverted',
+													'sunmoondfc',
+													'compasslanddfc',
+													'originpwdfc',
+													'mooneldrazidfc',
+													'waxingandwaningmoondfc',
+													'showcase',
+													'extendedart',
+													'companion',
+													'etched',
+													'snow',
+												]"
+												:key="e"
+												:value="e"
+											></option>
+										</datalist>
+										<button type="submit">Add</button>
+									</form>
+									<ul style="margin: 0 1em; padding: 0">
+										<li
+											v-for="(r, idx) in this.card.frame_effects"
+											:key="r"
+											:value="r"
+										>
+											<input
+												type="text"
+												v-model="this.card.frame_effects[idx]"
+											/>
+											<span
+												@click="this.card.frame_effects.splice(idx, 1)"
+												class="clickable"
+												>🗑</span
+											>
+										</li>
+									</ul>
+								</div>
+							</div>
 						</div>
 					</div>
 					<template v-if="card.card_faces && card.card_faces.length > 1">
@@ -214,6 +232,7 @@
 								<CardFaceEditor
 									v-model="card.card_faces[0]"
 									@outline="outlineElement"
+									:illustrationEditor="card.layout !== 'adventure'"
 								/>
 							</div>
 							<div>
@@ -223,6 +242,7 @@
 								<CardFaceEditor
 									v-model="card.card_faces[1]"
 									@outline="outlineElement"
+									:illustrationEditor="card.layout !== 'adventure'"
 								/>
 							</div>
 						</div>
@@ -488,7 +508,6 @@ export default {
 			} else this.card[key] = value;
 		},
 		layoutChange() {
-			console.log("kuku");
 			// Make sure we have valid card_faces if necessary
 			if (
 				["modal_dfc", "transform", "adventure"].includes(this.card.layout) &&
@@ -498,7 +517,6 @@ export default {
 			}
 		},
 		addFrameEffect(event) {
-			console.log(event);
 			if (!this.card.frame_effects) this.card.frame_effects = [];
 			this.card.frame_effects.push(
 				event.target.querySelector("#add-frame-effect").value
@@ -990,12 +1008,12 @@ button,
 
 a,
 a:visited {
-	color: #ace4f1;
+	color: #334850;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #d0f6ff;
+	color: #7398a0;
 }
 
 input,
@@ -1071,6 +1089,16 @@ textarea {
 	color: white;
 }
 
+.header a,
+.header a:visited {
+	color: #ace4f1;
+	text-decoration: none;
+}
+
+.header a:hover {
+	color: #d0f6ff;
+}
+
 .header h1 {
 	margin: 0;
 	font-family: Beleren Small Caps;
@@ -1128,7 +1156,8 @@ textarea {
 }
 
 .card-display {
-	width: calc(2 * 63mm);
+	width: calc(v-bind(displayScale) * 63.5mm);
+	flex-shrink: 0;
 }
 
 .card-display .mtg-card {
@@ -1184,7 +1213,7 @@ textarea {
 
 .card-info label {
 	display: inline-block;
-	width: 6em;
+	width: 8em;
 }
 
 .card-info input[type="text"] {

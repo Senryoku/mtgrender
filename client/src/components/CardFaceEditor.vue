@@ -34,6 +34,18 @@
 			/>
 		</div>
 		<div
+			@mouseenter="outlineElement($event, 'flavor')"
+			@focus.capture="outlineElement($event, 'flavor')"
+		>
+			<label for="card-flavor">Flavor Text</label><br />
+			<textarea
+				id="card-flavor"
+				v-model="modelValue.flavor_text"
+				cols="40"
+				rows="2"
+			/>
+		</div>
+		<div
 			@mouseenter="outlineElement($event, 'pt-box')"
 			@focus.capture="outlineElement($event, 'pt-box')"
 		>
@@ -66,7 +78,7 @@
 			/>
 			<a @click="modelValue.loyalty = undefined">↺</a>
 		</div>
-		<IllustrationEditor v-model="modelValue" />
+		<IllustrationEditor v-model="modelValue" v-if="illustrationEditor" />
 		<div class="subsection">
 			<h3>Footer</h3>
 			<div
@@ -105,6 +117,7 @@ export default {
 	components: { IllustrationEditor },
 	props: {
 		modelValue: { type: Object, required: true },
+		illustrationEditor: { type: Boolean, default: true },
 	},
 	methods: {
 		outlineElement(ev, el) {
