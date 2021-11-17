@@ -1,43 +1,84 @@
 <template>
 	<div>
-		<button @click="render_all">Render All</button>
-		{{ used_local_storage }}KB used
-		<div class="card-list-container">
-			<ol class="card-list">
-				<li
-					v-for="(card, idx) in cards"
-					:key="idx"
-					@click="load(card)"
-					:class="{ 'selected-card': card.name === currentCard.name }"
-				>
-					<div class="name">{{ card.name }}</div>
-					<span class="card-controls"><span @click="remove(idx)">🗑</span></span>
-				</li>
-			</ol>
+		<div
+			style="
+				display: flex;
+				flex-direction: column;
+				gap: 0.2em;
+				max-height: 100%;
+			"
+		>
+			<div style="display: flex; justify-content: space-around">
+				<button @click="render_all">Render All</button>
+				<button @click="download_all">⤓ Download All</button>
+				<button @click="remove_all">🗑 Delete All</button>
+			</div>
+			<div class="card-list-container">
+				<table class="card-list">
+					<tr
+						v-for="(card, idx) in cards"
+						:key="idx"
+						@click="load(card)"
+						:class="{ 'selected-card': card.name === currentCard.name }"
+					>
+						<td class="name">{{ card.name }}</td>
+						<td>
+							<Mana
+								:cost="card.mana_cost ?? card.card_faces?.[0].mana_cost"
+								:archive="
+									['archive', 'japanese-archive'].includes(card.art_variant)
+								"
+							/>
+						</td>
+						<td class="card-controls">
+							<div @click="download(idx)">⤓</div>
+							<div @click="remove(idx)">🗑</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div
+				style="display: flex; justify-content: space-around"
+				:title="
+					used_local_storage.properties
+						.map((p) => `${(p.size / 1024).toFixed(2)}KB\t${p.name}`)
+						.join('\n')
+				"
+			>
+				{{ (used_local_storage.total / 1024).toFixed(2) }}KB used
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import { downloadZip } from "client-zip";
+import { download } from "../utils";
+import Mana from "./Mana.vue";
+
 // Returns used storage space in KB
 function used_local_storage() {
 	let _lsTotal = 0,
 		_xLen,
 		_x;
+	let properties = [];
 	for (_x in localStorage) {
 		if (!localStorage.hasOwnProperty(_x)) {
 			continue;
 		}
 		_xLen = (localStorage[_x].length + _x.length) * 2;
 		_lsTotal += _xLen;
-		//console.log(_x.substr(0, 50) + " = " + (_xLen / 1024).toFixed(2) + " KB");
+		properties.push({ name: _x, size: _xLen }); //console.log(_x.substr(0, 50) + " = " + (_xLen / 1024).toFixed(2) + " KB");
 	}
-	return (_lsTotal / 1024).toFixed(2);
+	return { total: _lsTotal, properties };
 }
 
 export default {
 	props: {
 		currentCard: Object,
+	},
+	components: {
+		Mana,
 	},
 	data() {
 		const cards = JSON.parse(localStorage.getItem("cards") ?? "[]");
@@ -58,7 +99,6 @@ export default {
 				this.cards.push(this.currentCard);
 			}
 			this.store();
-			this.toast("Saved!");
 		},
 		load(card) {
 			this.$emit("load", JSON.parse(JSON.stringify(card)));
@@ -71,13 +111,52 @@ export default {
 				this.store();
 			}
 		},
+		remove_all() {
+			if (
+				confirm(
+					`Are you sure you want to delete all ${this.cards.length} cards?`
+				)
+			) {
+				this.cards = [];
+				this.store();
+			}
+		},
 		store() {
 			try {
 				localStorage.setItem("cards", JSON.stringify(this.cards));
+				this.toast("Saved!");
 			} catch (err) {
-				alert("Error saving in localStorage:", err);
+				this.toast({
+					type: "error",
+					text: `Error saving in localStorage: ${err}`,
+				});
+				console.error(err);
 			}
-			// TODO: Notify user
+		},
+		download(idx) {
+			const blob = new Blob([JSON.stringify(this.cards[idx])], {
+				type: "application/json",
+			});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = card.name + ".json";
+			document.body.appendChild(a);
+			a.click();
+		},
+		async download_all() {
+			let files = [];
+			for (let card of this.cards) {
+				files.push({
+					name: card.name.replace(/[^a-zA-Z0-9]+/g, "_") + ".json",
+					lastModified: new Date(),
+					input: new Blob([JSON.stringify(card)], {
+						type: "application/json",
+					}),
+				});
+			}
+			const blob = await downloadZip(files).blob();
+			download("Cards.zip", URL.createObjectURL(blob));
 		},
 		keydown(e) {
 			if (e.ctrlKey && e.key === "s") {
@@ -113,14 +192,11 @@ export default {
 
 .card-list {
 	padding: 0 0.5em;
-	margin: 0.5em;
+	margin: 0 0.7em 0 0.35em;
 }
 
-.card-list li {
+.card-list tr {
 	position: relative;
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
 	cursor: pointer;
 	padding: 0.3em 0.5em;
 	background-color: #ffffff60;
@@ -128,22 +204,51 @@ export default {
 	list-style: none;
 }
 
-.card-list li .name {
+.card-list tr .name {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 10em;
 }
 
-.card-list li:nth-child(odd) {
+.card-list tr:nth-child(odd) {
 	background-color: #ffffff80;
 }
 
-.selected-card::before {
+.card-list td {
+	padding: 0.2em 0.4em;
+}
+
+.card-list tr.selected-card {
+	background-color: #b8e5f0;
+}
+
+.card-list tr:hover {
+	background-color: #d4f3fa;
+}
+
+.card-list tr.selected-card::after {
 	content: "▶";
 	position: absolute;
 	left: -0.5em;
-	width: 1em;
-	height: 1em;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.card-controls {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.card-controls div {
+	cursor: pointer;
+	font-size: 1.2em;
+	padding: 0 0.2em;
+	transition: all 0.1s ease-in-out;
+}
+
+.card-controls div:hover {
+	color: #274853;
 }
 </style>

@@ -43,6 +43,26 @@
 				</form>
 				<button @click="render" :disabled="rendering">Render to PNG</button>
 			</div>
+			<div>
+				<div style="display: inline-flex; align-items: center; gap: 1em">
+					<div>
+						Contact:
+						<a href="https://senryoku.github.io" target="_blank">Senryoku</a>
+					</div>
+					<a
+						href="mailto:maretverdant@gmail.com"
+						target="_blank"
+						style="font-size: 1.6em"
+						>✉</a
+					>
+					<a href="https://github.com/Senryoku" target="_blank">
+						<img
+							style="width: 1.5em"
+							src="./assets/img/GitHub-Mark-Light-32px.png"
+						/>
+					</a>
+				</div>
+			</div>
 		</div>
 		<div class="content">
 			<div class="card-display">
@@ -280,6 +300,8 @@ import Modal from "./components/Modal.vue";
 import Progress from "./components/Progress.vue";
 import IllustrationEditor from "./components/IllustrationEditor.vue";
 
+import { download } from "./utils";
+
 let upscaler_instance = null;
 let upscaler_loaded_model = null;
 const upscaler = async (model) => {
@@ -293,14 +315,6 @@ const upscaler = async (model) => {
 	}
 	return upscaler_instance;
 };
-
-function download(filename, data) {
-	const link = document.createElement("a");
-	link.download = filename;
-	link.href = data;
-	link.click();
-	link.remove();
-}
 
 function openModal(props = {}) {
 	const div = document.createElement("div");
@@ -968,13 +982,20 @@ export default {
 }
 
 a,
+a:visited,
 button,
 .clickable {
 	cursor: pointer;
 }
 
+a,
+a:visited {
+	color: #ace4f1;
+	text-decoration: none;
+}
+
 a:hover {
-	color: #666;
+	color: #d0f6ff;
 }
 
 input,
@@ -1043,14 +1064,15 @@ textarea {
 .header {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	gap: 2em;
 	padding: 1em 2em;
 	background-image: linear-gradient(#6e939be0 80%, transparent);
+	color: white;
 }
 
 .header h1 {
 	margin: 0;
-	color: white;
 	font-family: Beleren Small Caps;
 }
 
@@ -1059,6 +1081,7 @@ textarea {
 	gap: 1em;
 	margin: 0.5em;
 	position: relative;
+	flex-grow: 1;
 }
 
 .card-name-autocomplete {

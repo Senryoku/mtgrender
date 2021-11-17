@@ -2395,7 +2395,8 @@ export default {
 	opacity: 0.8;
 }
 
-.archive .top-line .mana-cost .ms-shadow {
+.archive .top-line .mana-cost .ms-shadow,
+.japanese-archive .top-line .mana-cost .ms-shadow {
 	box-shadow: initial;
 }
 
@@ -2425,10 +2426,6 @@ export default {
 
 .japanese-archive .top-line .mana-cost .ms {
 	width: 4.2mm;
-}
-
-.japanese-archive .top-line .mana-cost .ms-shadow {
-	box-shadow: initial;
 }
 
 .japanese-archive .type-line,
