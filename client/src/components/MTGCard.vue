@@ -365,7 +365,7 @@
 					xmlns="http://www.w3.org/2000/svg"
 					preserveAspectRatio="none"
 					width="54mm"
-					viewBox="0.28 0.908 8.43 1.5"
+					viewBox="0.28 0.93 8.43 1.5"
 					class="original-name-bg"
 					v-if="
 						card_face.printed_name && card_face.printed_name !== card_face.name
@@ -1563,7 +1563,7 @@ export default {
 
 .original-name-container {
 	position: absolute;
-	top: 100%;
+	bottom: -0.05mm;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 54mm;
@@ -1591,11 +1591,11 @@ export default {
 	position: absolute;
 	width: 100%;
 	color: #fff;
-	font-size: 2.2mm;
-	letter-spacing: 0.08mm;
+	font-size: 2.1mm;
+	letter-spacing: 0.1mm;
 	font-family: MPlatin-Italtic;
 	font-style: italic;
-	line-height: 3.2mm;
+	line-height: 3.1mm;
 	text-align: center;
 }
 
@@ -1615,7 +1615,7 @@ export default {
 
 .illustration {
 	position: absolute;
-	top: 9.8mm;
+	top: 9.55mm;
 	left: 4.4mm;
 	width: 54.7mm;
 	height: 39.9mm;

@@ -17,6 +17,7 @@
 				v-model="modelValue.printed_name"
 				type="text"
 			/>
+			<a @click="modelValue.printed_name = undefined">↺</a>
 		</div>
 		<div
 			@mouseenter="outlineElement($event, 'mana-cost')"
