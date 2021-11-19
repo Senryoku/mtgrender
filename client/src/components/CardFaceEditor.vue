@@ -8,6 +8,17 @@
 			<input id="card-name" v-model="modelValue.name" type="text" />
 		</div>
 		<div
+			@mouseenter="outlineElement($event, 'printed_name')"
+			@focus.capture="outlineElement($event, 'printed_name')"
+		>
+			<label for="card-printed-name">Printed Name</label>
+			<input
+				id="card-printed-name"
+				v-model="modelValue.printed_name"
+				type="text"
+			/>
+		</div>
+		<div
 			@mouseenter="outlineElement($event, 'mana-cost')"
 			@focus.capture="outlineElement($event, 'mana-cost')"
 		>

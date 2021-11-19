@@ -341,7 +341,7 @@
 				@mousedown.prevent=""
 				ref="name_el"
 			>
-				{{ card_face.name }}
+				{{ card_face.printed_name ?? card_face.name }}
 			</span>
 			<div
 				class="mana-cost"
@@ -354,6 +354,43 @@
 					:key="idx"
 					:src="uri"
 				/>
+			</div>
+			<div
+				v-if="
+					card_face.printed_name && card_face.printed_name !== card_face.name
+				"
+				class="original-name-container"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					preserveAspectRatio="none"
+					width="54mm"
+					viewBox="0.28 0.908 8.43 1.5"
+					class="original-name-bg"
+					v-if="
+						card_face.printed_name && card_face.printed_name !== card_face.name
+					"
+				>
+					<defs>
+						<linearGradient id="gradient">
+							<stop offset="42%" stop-color="#F60" class="original-name-left" />
+							<stop
+								offset="58%"
+								stop-color="#FF6"
+								class="original-name-right"
+							/>
+						</linearGradient>
+					</defs>
+					<path
+						d="M 0.2 0.02 C -0.03 0.3 -0.03 0.7 0.2 0.98 H 0.451 C 0.794 1.069 0.856 1.294 0.892 1.44 H 8.138 C 8.195 1.123 8.412 1.035 8.551 0.981 H 8.83 C 9.07 0.7 9.07 0.3 8.83 0.02 Z M 8.326 0.992 C 8.17 1.1 8.101 1.194 8.063 1.344 H 0.971 C 0.936 1.24 0.905 1.128 0.717 0.992 Z"
+						class="original-name-bg-path"
+					/>
+					<path
+						d="M 8.326 0.992 C 8.17 1.1 8.101 1.194 8.063 1.344 H 0.971 C 0.936 1.24 0.905 1.128 0.717 0.992 Z"
+						fill="#0004"
+					/>
+				</svg>
+				<div class="original-name">{{ card_face.name }}</div>
 			</div>
 		</div>
 		<div class="mid-line">
@@ -635,6 +672,16 @@ const keywords = {
 	//Flash: "You may cast this spell any time you could cast an instant.",
 };
 const mana_regex = /{([^}]+)}/g;
+
+const FrameColors = {
+	W: "#f9f4f0",
+	U: "#0070b3",
+	B: "#37302d",
+	R: "#f20106",
+	G: "#00713d",
+	Gold: "#f5d15e",
+	Colorless: "#e7e8ea",
+};
 
 const ArchiveColors = {
 	W: "#878167",
@@ -1337,6 +1384,29 @@ export default {
 				"%23"
 			);
 		},
+		frame_colors() {
+			if (this.colors.length === 0 || this.colors === "Artifact")
+				return {
+					left: FrameColors["Colorless"],
+					right: FrameColors["Colorless"],
+				};
+			if (this.colors.length == 1) {
+				return {
+					left: FrameColors[this.colors[0]],
+					right: FrameColors[this.colors[0]],
+				};
+			}
+			if (this.colors.length == 2) {
+				return {
+					left: FrameColors[this.colors[0]],
+					right: FrameColors[this.colors[1]],
+				};
+			}
+			return {
+				left: FrameColors["Gold"],
+				right: FrameColors["Gold"],
+			};
+		},
 	},
 	watch: {
 		"card.oracle_text": function () {
@@ -1430,7 +1500,6 @@ export default {
 	background-image: v-bind(frame);
 	background-size: 100%;
 	background-repeat: no-repeat;
-	padding-top: 0.508mm;
 
 	pointer-events: none;
 	user-select: none;
@@ -1490,6 +1559,44 @@ export default {
 	font-size: 9.454pt;
 	white-space: nowrap;
 	letter-spacing: 0.034mm;
+}
+
+.original-name-container {
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 54mm;
+}
+
+.original-name-bg {
+	position: absolute;
+}
+
+.original-name-bg-path {
+	stroke: #000000;
+	stroke-width: 0.01;
+	fill: url(#gradient);
+}
+
+.original-name-left {
+	stop-color: v-bind(frame_colors.left);
+}
+
+.original-name-right {
+	stop-color: v-bind(frame_colors.right);
+}
+
+.original-name {
+	position: absolute;
+	width: 100%;
+	color: #fff;
+	font-size: 2.2mm;
+	letter-spacing: 0.08mm;
+	font-family: MPlatin-Italtic;
+	font-style: italic;
+	line-height: 3.2mm;
+	text-align: center;
 }
 
 .mana-cost {
