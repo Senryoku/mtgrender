@@ -1132,6 +1132,7 @@ textarea {
 .card-name-autocomplete li {
 	padding: 0.2em 0.4em;
 	cursor: pointer;
+	color:#425155
 }
 
 .card-name-autocomplete li:first-child {
