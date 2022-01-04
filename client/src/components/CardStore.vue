@@ -15,26 +15,29 @@
 			</div>
 			<div class="card-list-container">
 				<table class="card-list">
-					<tr
-						v-for="(card, idx) in cards"
-						:key="idx"
-						@click="load(card)"
-						:class="{ 'selected-card': card.name === currentCard.name }"
-					>
-						<td class="name">{{ card.name }}</td>
-						<td>
-							<Mana
-								:cost="card.mana_cost ?? card.card_faces?.[0].mana_cost"
-								:archive="
-									['archive', 'japanese-archive'].includes(card.art_variant)
-								"
-							/>
-						</td>
-						<td class="card-controls">
-							<div @click="download(idx)">⤓</div>
-							<div @click="remove(idx)">🗑</div>
-						</td>
-					</tr>
+					<draggable v-model="cards" item-key="name" @end="save">
+						<template #item="{element, index}">
+							<tr
+								:key="index"
+								@click="load(element)"
+								:class="{ 'selected-card': element.name === currentCard.name }"
+							>
+								<td class="name">{{ element.name }}</td>
+								<td>
+									<Mana
+										:cost="element.mana_cost ?? element.card_faces?.[0].mana_cost"
+										:archive="
+											['archive', 'japanese-archive'].includes(element.art_variant)
+										"
+									/>
+								</td>
+								<td class="card-controls">
+									<div @click="download(index)">⤓</div>
+									<div @click="remove(index)">🗑</div>
+								</td>
+							</tr>
+						</template>
+					</draggable>
 				</table>
 			</div>
 			<div
@@ -51,10 +54,12 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import { downloadZip } from "client-zip";
 import { download } from "../utils";
 import Mana from "./Mana.vue";
+import draggable from 'vuedraggable';
+import { defineComponent } from "vue";
 
 // Returns used storage space in KB
 function used_local_storage() {
@@ -73,12 +78,13 @@ function used_local_storage() {
 	return { total: _lsTotal, properties };
 }
 
-export default {
+export default defineComponent({
 	props: {
 		currentCard: Object,
 	},
 	components: {
 		Mana,
+		draggable
 	},
 	data() {
 		const cards = JSON.parse(localStorage.getItem("cards") ?? "[]");
@@ -180,7 +186,7 @@ export default {
 			return used_local_storage();
 		},
 	},
-};
+});
 </script>
 
 <style>
