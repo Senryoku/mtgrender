@@ -25,7 +25,7 @@
 			archive: (is_adventure ? card : card_face).art_variant === 'archive',
 			'japanese-archive':
 				(is_adventure ? card : card_face).art_variant === 'japanese-archive',
-			compasslanddfc: this.card.frame_effects?.includes('compasslanddfc'),
+			compasslanddfc: card.frame_effects?.includes('compasslanddfc'),
 		}"
 	>
 		<div class="inner-background"></div>
@@ -763,6 +763,7 @@ export default {
 				el.className = "ms";
 				return el;
 			}
+			return null;
 		},
 		parse_oracle(str) {
 			if (str in keywords) {
@@ -770,7 +771,7 @@ export default {
 			}
 			str = str.replace(
 				mana_regex,
-				(match, group) => this.gen_mana_symbol(group).outerHTML // FIXME: This is horrible
+				(match, group) => this.gen_mana_symbol(group)?.outerHTML ?? match // FIXME: This is horrible
 			);
 			// Included reminder text
 			str = str.replace(
