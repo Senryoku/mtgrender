@@ -146,7 +146,7 @@ export default defineComponent({
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
 			a.href = url;
-			a.download = card.name + ".json";
+			a.download = this.card.name + ".json";
 			document.body.appendChild(a);
 			a.click();
 		},

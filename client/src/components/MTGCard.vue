@@ -527,6 +527,61 @@
 				</div>
 			</div>
 		</template>
+		<template v-else-if="is_levelup">
+			<div class="oracle normal-oracle levelup-oracle" ref="oracle_el">
+				<div
+					class="oracle-levelup-inner"
+					v-for="(level, idx) in levels"
+					:key="idx"
+					:style="'background-color: ' + level.color +';'"
+					@dblclick="edit_property('oracle_text')"
+					@mousedown.prevent=""
+				>
+					<div class="level-box" v-if="level.level">
+						<svg style="position:absolute; top: 0.7mm; left:0; z-index: -1; width: 9mm; height: 6mm;" viewBox="-3 0 34 22" version="1.1" xmlns="http://www.w3.org/2000/svg" id="level-box-bg" preserveAspectRatio="none">
+							<defs>
+								<filter id="inset-shadow">
+									<feOffset dx="1" dy="-1"/>                                                         <!-- Shadow Offset -->
+									<feGaussianBlur stdDeviation="1"  result="offset-blur"/>                           <!-- Shadow Blur -->
+									<feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/> <!-- Invert the drop shadow to create an inner shadow -->
+									<feFlood flood-color="black" flood-opacity="1" result="color"/>                     <!-- Color & Opacity -->
+									<feComposite operator="in" in="color" in2="inverse" result="shadow"/>               <!-- Clip color inside shadow -->
+									<feComponentTransfer in="shadow" result="shadow">                                   <!-- Shadow Opacity -->
+										<feFuncA type="linear" slope="1"/>
+									</feComponentTransfer>
+									<feComposite operator="over" in="shadow" in2="SourceGraphic"/>                       <!-- Put shadow over original object -->
+								</filter>
+								<filter id="drop-shadow">
+									<feComponentTransfer>
+									<feFuncR type="linear" slope="1.2" />
+									<feFuncG type="linear" slope="1.2" />
+									<feFuncB type="linear" slope="1.2" />
+									</feComponentTransfer>
+									<feDropShadow dx="-1" dy="0.6" stdDeviation="1"/>
+								</filter>
+							</defs>
+							<path d="M 0 0 H 20 L 30 10 L 20 20 H 0 Z"  :fill="level.box_color" filter="url(#drop-shadow)" />
+							<path d="M 0 0 H 20 L 30 10 L 20 20 H 0 Z M 2 2 V 18 H 18.8 L 27.2 10.000 L 18.8 2 Z"  :fill="level.box_color" filter="url(#inset-shadow)" />
+						</svg>
+						<div>{{level.level_text}}</div>
+						<div>{{level.level}}</div>
+					</div>
+					<div class="oracle-text" :class="{'has-level': level.level, 'has-pt': level.power}">
+						<div class="oracle-inner" v-for="line in level.oracle_lines" v-html="line"></div>
+					</div>
+					<div v-if="level.power" class="pt-box">{{level.power}}/{{level.toughness}}</div>
+				</div>
+				<div
+					class="oracle-flavor"
+					v-if="card_face.flavor_text"
+					@dblclick="edit_property('flavor_text')"
+					@mousedown.prevent=""
+				>
+					<hr />
+					{{ card_face.flavor_text }}
+				</div>
+			</div>
+		</template>
 		<template v-else>
 			<div class="oracle normal-oracle" ref="oracle_el">
 				<div
@@ -548,7 +603,7 @@
 				</div>
 			</div>
 		</template>
-		<div class="pt-box" v-show="card_face.power || card_face.toughness">
+		<div class="pt-box" v-show="(card_face.power || card_face.toughness) && !is_levelup">
 			<span @dblclick="edit_property('power')" @mousedown.prevent="">{{
 				card_face.power
 			}}</span
@@ -666,6 +721,7 @@
 
 <script lang="ts">
 import { ref, nextTick } from "vue";
+import { defineComponent } from "vue";
 
 // Disabled for now: This should be made optional, or even explicitly specified (like "{Flash}" instead of "Flash")
 const keywords = {
@@ -725,7 +781,7 @@ function contains(str, search) {
 	return str.toLowerCase().includes(search.toLowerCase());
 }
 
-export default {
+export default defineComponent({
 	name: "MTGCard",
 	props: {
 		card: Object,
@@ -854,12 +910,14 @@ export default {
 			}
 		},
 		fit_font_size(el, initial_size = 8) {
+			el.classList.add("fitting");
 			let curr_font_size = initial_size;
 			el.style.fontSize = curr_font_size + "pt";
 			while (check_overflow(el) && curr_font_size > 3) {
 				curr_font_size *= 0.9;
 				el.style.fontSize = curr_font_size + "pt";
 			}
+			el.classList.remove("fitting");
 		},
 		fit() {
 			this.fit_name();
@@ -1009,6 +1067,9 @@ export default {
 		is_transform() {
 			return this.card.layout === "transform";
 		},
+		is_levelup() {
+			return this.card_face?.oracle_text?.includes("Level up") || this.card_face?.oracle_text?.includes("Montée de niveau");
+		},
 		mana_cost() {
 			if (!this.card_face?.mana_cost) return [];
 			return [...this.card_face.mana_cost.matchAll(mana_regex)].map((m) =>
@@ -1099,6 +1160,27 @@ export default {
 					}
 					return r;
 				});
+		},
+		levels() {
+			if(!this.is_levelup) return null;
+			const levelstext = this.card_face.oracle_text.split(/(LEVEL|NIVEAU) ([^\n]+)\n/);
+			const box_color = {"W": "#dcc8af", "U": "#b9c0da", "B": "#af9aa5", "R": "#d7a67c", "G": "#b2c0b0"}[this.colors?.[0] ?? "W"];
+			const levels = [{level_text: "", level : 0, power: this.card_face.power, toughness: this.card_face.toughness, oracle_lines : levelstext[0].split("\n").map(this.parse_oracle), color: "#00000000", box_color}];
+			for(let i = 1; i < levelstext.length; i += 3) {
+				const pt = this.card_face.power ? levelstext[i + 2].split("\n")[0].split("/") : null;
+				const oracle = pt ? levelstext[i + 2].substr(levelstext[i + 2].indexOf("\n") + 1) : levelstext[i + 2];
+				levels.push({
+					level_text: levelstext[i + 0],
+					level: levelstext[i + 1],
+					power: pt?.[0],
+					toughness: pt?.[1],
+					oracle_lines: oracle.split("\n").map(this.parse_oracle),
+					color: this.frame_colors.left + ((1+(i / 3)) * 25).toFixed(0).toString(16),
+					box_color
+				});
+			}
+			console.log(levels)
+			return levels;
 		},
 		copyright() {
 			return (
@@ -1420,7 +1502,7 @@ export default {
 			this.fit();
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
@@ -1720,6 +1802,70 @@ export default {
 	height: 26mm;
 	margin: auto;
 }
+
+.levelup-oracle {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+
+	left: 0mm;
+	width: 54.6mm;
+}
+
+.oracle-levelup-inner {
+	position: relative;
+	min-height: 2em;
+	
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.8mm;
+
+	flex-basis: 33%;
+	flex-grow: 1;
+}
+
+.oracle-levelup-inner .level-box {
+	position: absolute;
+	left: -1.6mm;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	font-family: Beleren;
+
+	padding: 1mm;
+	padding-top: 1.2mm;
+	padding-left: 1.6mm;
+	gap: 0.2mm;
+}
+
+.oracle-levelup-inner .level-box div:nth-child(2) {
+	text-transform: uppercase;
+	font-size: 1.5mm;
+	height: 1.6mm;
+}
+
+.oracle-levelup-inner .oracle-text.has-level {
+	margin-left: 7mm;
+}
+.oracle-levelup-inner .oracle-text.has-pt {
+	margin-right: 9mm;
+}
+
+.oracle-levelup-inner .pt-box {
+	position: absolute;
+	right: -1.6mm;
+	top: 50%;
+	transform: translateY(calc(-50% + 0.2mm));
+}
+
+/* Ignore naturally overflowing elements when scaling text */
+.fitting .oracle-levelup-inner .level-box,
+.fitting .oracle-levelup-inner .pt-box { display:none; }
 
 /* Workaround the fact that adventure frames have a sligthly larger ratio */
 .adventure .inner-frame {
@@ -2167,15 +2313,16 @@ export default {
 .pt-box {
 	position: absolute;
 	right: 3mm;
-	bottom: 2.6mm;
+	bottom: 3.8mm;
 	width: 11.58mm;
-	height: 7.4mm;
+	height: 6.2mm;
 	background-image: v-bind(pt_box);
 	background-size: 100%;
 	background-repeat: no-repeat;
 
 	text-align: center;
 	line-height: 5.5mm;
+	font-family: Beleren;
 	font-size: 9.6pt;
 	color: v-bind(pt_box_color);
 
