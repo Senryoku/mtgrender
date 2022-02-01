@@ -961,7 +961,7 @@ export default defineComponent({
 				if (this.$refs.adventure_oracle_el)
 					this.fit_font_size(this.$refs.adventure_oracle_el);
 				if (this.$refs.saga_oracle_reminder_el)
-					this.fit_font_size(this.$refs.saga_oracle_reminder_el);
+					this.fit_font_size(this.$refs.saga_oracle_reminder_el, 7.3);
 			});
 		},
 		flip() {
@@ -2003,10 +2003,12 @@ export default defineComponent({
 }
 
 .saga-reminder {
-	height: 12mm;
+	height: 13.3mm;
 	font-size: 7.3pt;
 	line-height: 7.3pt;
-	padding: 2mm 0.7mm 2mm 0.7mm;
+	padding: 0.5mm 0.7mm 2.4mm 0.7mm;
+	display: flex;
+	align-items: center;
 }
 
 .saga-steps {
