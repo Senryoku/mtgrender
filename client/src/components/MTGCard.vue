@@ -486,6 +486,7 @@
 					class="saga-reminder"
 					v-if="saga_reminder"
 					v-html="saga_reminder"
+					ref="saga_oracle_reminder_el"
 				></div>
 				<div class="saga-frame"></div>
 				<div class="saga-steps" ref="oracle_el">
@@ -792,11 +793,13 @@ export default defineComponent({
 		const name_el = ref(null);
 		const oracle_el = ref(null);
 		const adventure_oracle_el = ref(null);
+		const saga_oracle_reminder_el = ref(null);
 		const type_line_el = ref(null);
 		return {
 			name_el,
 			oracle_el,
 			adventure_oracle_el,
+			saga_oracle_reminder_el,
 			type_line_el,
 			currentFace: 0,
 			dragging_illustration: null,
@@ -957,6 +960,8 @@ export default defineComponent({
 				this.fit_font_size(this.$refs.oracle_el);
 				if (this.$refs.adventure_oracle_el)
 					this.fit_font_size(this.$refs.adventure_oracle_el);
+				if (this.$refs.saga_oracle_reminder_el)
+					this.fit_font_size(this.$refs.saga_oracle_reminder_el);
 			});
 		},
 		flip() {
