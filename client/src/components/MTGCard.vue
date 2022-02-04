@@ -1200,7 +1200,7 @@ export default defineComponent({
 			return this.colors === "Vehicle"
 				? "Artifact"
 				: this.is_land // FIXME: Fixes colors for cards like 'Agadeem, the Undercrypt', but may cause problem elsewhere?
-				? "Land"
+				? (this.colors.length > 2 ? "Gold" : "Land")
 				: this.colors.length > 1 && this.colors.length < 5
 				? "Gold"
 				: this.colors;
