@@ -6,11 +6,18 @@ import logging
 import threading
 import os
 from PIL import Image
+import ssl
 
 SetsURL = "https://api.scryfall.com/sets"
 SetsFile = "./client/src/assets/data/sets.json"
 MTGSets = {}
 IconsFolder = "./client/src/assets/img/set_icons/"
+
+opener = urllib.request.build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
+urllib.request.install_opener(opener)
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 print("Downloading {}".format(SetsURL))
 urllib.request.urlretrieve(SetsURL, SetsFile)
@@ -43,7 +50,7 @@ def dl_set_icon(mtgset):
 
 threads = list()
 for mtgset in MTGSets:
-    #print("Downloading {} icons...".format(set["code"]))
+    #print(f"Downloading {mtgset['code']} icons...")
     x = threading.Thread(target=dl_set_icon, args=(mtgset,))
     threads.append(x)
     x.start()

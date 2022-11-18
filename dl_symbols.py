@@ -8,6 +8,10 @@ SymbolsFile = "./client/src/assets/data/symbology.json"
 SymbolsFolder = "./client/src/assets/img/symbols/"
 Symbols = None
 
+opener = urllib.request.build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
+urllib.request.install_opener(opener)
+    
 print("Downloading {}".format(SymbolsURL))
 urllib.request.urlretrieve(SymbolsURL, SymbolsFile)
 with open(SymbolsFile, 'r', encoding="utf8") as file:
