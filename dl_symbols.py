@@ -25,7 +25,7 @@ for symbol in Symbols:
     path = SymbolsFolder + filename
     if not os.path.exists(path):
         urllib.request.urlretrieve(symbol["svg_uri"], path)
-    symbol["svg_uri"] = filename
+    symbol["svg_uri"] = filename[1:filename.find('.')]
 
 
 with open(ProcessedSymbolsFile, 'w', encoding="utf8") as file:
