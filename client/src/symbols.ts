@@ -4,7 +4,7 @@ for (let symbol of mana_symbols_list) {
 	mana_symbols[symbol.symbol] = symbol;
 
 	mana_symbols[symbol.symbol].svg_uri = new URL(
-		"./assets/img/symbols/" + mana_symbols[symbol.symbol].svg_uri,
+		"/src/assets/img/symbols/" + mana_symbols[symbol.symbol].svg_uri,
 		import.meta.url
 	).href;
 }
