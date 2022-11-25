@@ -2005,8 +2005,6 @@
 
 	.type-line {
 		font-size: 8pt;
-		height: 5mm;
-		line-height: 5mm;
 		flex-grow: 1;
 		white-space: nowrap;
 		margin-top: -0.2mm;
