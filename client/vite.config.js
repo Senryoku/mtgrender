@@ -5,7 +5,7 @@ import compress from "vite-plugin-compress";
 
 export default defineConfig({
 	build: {
-		target: ["es2020"],
+		target: ["esnext"],
 	},
 	assetsInclude: ["**/*.png"],
 	plugins: [vue() /*, compress({ brotli: false })*/],
