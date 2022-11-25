@@ -22,9 +22,11 @@
 			'full-footer': ['full-footer', 'japanese-archive'].includes(
 				(is_adventure ? card : card_face).art_variant
 			),
-			archive: (is_adventure ? card : card_face).art_variant === 'archive',
+			archive:
+				(is_adventure ? card : card_face).art_variant === 'archive',
 			'japanese-archive':
-				(is_adventure ? card : card_face).art_variant === 'japanese-archive',
+				(is_adventure ? card : card_face).art_variant ===
+				'japanese-archive',
 			compasslanddfc: card.frame_effects?.includes('compasslanddfc'),
 		}"
 	>
@@ -51,7 +53,9 @@
 				width="100%"
 				height="100%"
 				preserveAspectRatio="none"
-				v-if="(is_adventure ? card : card_face).art_variant === 'archive'"
+				v-if="
+					(is_adventure ? card : card_face).art_variant === 'archive'
+				"
 			>
 				<filter
 					id="noise"
@@ -111,11 +115,17 @@
 						in2="SourceGraphic"
 						result="finalNoise"
 					/>
-					<feBlend in="SourceGraphic" in2="finalNoise" mode="multiply" />
+					<feBlend
+						in="SourceGraphic"
+						in2="finalNoise"
+						mode="multiply"
+					/>
 				</filter>
 				<defs>
 					<clipPath id="illustration-clip">
-						<path d="M 0.425 2.321 H 13.902 L 14.4 2.481 V 0 H 0 V 2.496 Z" />
+						<path
+							d="M 0.425 2.321 H 13.902 L 14.4 2.481 V 0 H 0 V 2.496 Z"
+						/>
 					</clipPath>
 					<clipPath id="top-clip">
 						<path
@@ -133,8 +143,18 @@
 							height="100%"
 							stroke-width="0"
 						/>
-						<circle class="background-feature" cx="8.5" cy="1.2" r="5" />
-						<circle class="background-feature" cx="8.5" cy="4" r="5" />
+						<circle
+							class="background-feature"
+							cx="8.5"
+							cy="1.2"
+							r="5"
+						/>
+						<circle
+							class="background-feature"
+							cx="8.5"
+							cy="4"
+							r="5"
+						/>
 						<circle
 							class="background-feature"
 							cx="10"
@@ -203,7 +223,13 @@
 							d="M 5.266 2.07 L 5.421 2.305 H 9.004 L 9.207 2.07 Z"
 						/>
 
-						<rect x="2.29" y="2.312" width="16" height="2" fill="black" />
+						<rect
+							x="2.29"
+							y="2.312"
+							width="16"
+							height="2"
+							fill="black"
+						/>
 					</g>
 
 					<path
@@ -357,7 +383,8 @@
 			</div>
 			<div
 				v-if="
-					card_face.printed_name && card_face.printed_name !== card_face.name
+					card_face.printed_name &&
+					card_face.printed_name !== card_face.name
 				"
 				class="original-name-container"
 			>
@@ -368,12 +395,17 @@
 					viewBox="0.28 0.93 8.43 1.5"
 					class="original-name-bg"
 					v-if="
-						card_face.printed_name && card_face.printed_name !== card_face.name
+						card_face.printed_name &&
+						card_face.printed_name !== card_face.name
 					"
 				>
 					<defs>
 						<linearGradient id="gradient">
-							<stop offset="42%" stop-color="#F60" class="original-name-left" />
+							<stop
+								offset="42%"
+								stop-color="#F60"
+								class="original-name-left"
+							/>
 							<stop
 								offset="58%"
 								stop-color="#FF6"
@@ -418,13 +450,17 @@
 				<div class="adventure-top-line">
 					<span
 						class="adventure-name"
-						@dblclick.prevent="edit_property(['card_faces', 1, 'name'])"
+						@dblclick.prevent="
+							edit_property(['card_faces', 1, 'name'])
+						"
 						@mousedown.prevent=""
 						>{{ card.card_faces[1].name }}</span
 					>
 					<div
 						class="adventure-mana-cost"
-						@dblclick.prevent="edit_property(['card_faces', 1, 'mana_cost'])"
+						@dblclick.prevent="
+							edit_property(['card_faces', 1, 'mana_cost'])
+						"
 						@mousedown.prevent=""
 					>
 						<img
@@ -435,20 +471,26 @@
 						/>
 					</div>
 				</div>
-				<div class="adventure-type">{{ card.card_faces[1].type_line }}</div>
+				<div class="adventure-type">
+					{{ card.card_faces[1].type_line }}
+				</div>
 				<div class="oracle adventure-oracle" ref="adventure_oracle_el">
 					<div
 						class="oracle-inner"
 						v-for="(line, idx) in adventure_oracle_lines"
 						:key="idx"
 						v-html="line"
-						@dblclick="edit_property(['card_faces', 1, 'oracle_text'])"
+						@dblclick="
+							edit_property(['card_faces', 1, 'oracle_text'])
+						"
 						@mousedown.prevent=""
 					></div>
 					<div
 						class="oracle-flavor"
 						v-if="card.card_faces[1].flavor_text"
-						@dblclick="edit_property(['card_faces', 1, 'flavor_text'])"
+						@dblclick="
+							edit_property(['card_faces', 1, 'flavor_text'])
+						"
 						@mousedown.prevent=""
 					>
 						<hr />
@@ -490,9 +532,17 @@
 				></div>
 				<div class="saga-frame"></div>
 				<div class="saga-steps" ref="oracle_el">
-					<div class="saga-step" v-for="(step, idx) in saga_steps" :key="idx">
+					<div
+						class="saga-step"
+						v-for="(step, idx) in saga_steps"
+						:key="idx"
+					>
 						<div class="saga-step-number">
-							<img v-for="step in step.steps" :key="step" :src="step" />
+							<img
+								v-for="step in step.steps"
+								:key="step"
+								:src="step"
+							/>
 						</div>
 						<div v-html="step.html"></div>
 					</div>
@@ -518,7 +568,8 @@
 						v-if="ability.cost !== null"
 						:class="{
 							'planeswalker-ability-cost-minus': ability.cost < 0,
-							'planeswalker-ability-cost-zero': ability.cost === 0,
+							'planeswalker-ability-cost-zero':
+								ability.cost === 0,
 							'planeswalker-ability-cost-plus': ability.cost > 0,
 						}"
 					>
@@ -534,43 +585,112 @@
 					class="oracle-levelup-inner"
 					v-for="(level, idx) in levels"
 					:key="idx"
-					:style="'background-color: ' + level.color +';'"
+					:style="'background-color: ' + level.color + ';'"
 					@dblclick="edit_property('oracle_text')"
 					@mousedown.prevent=""
 				>
 					<div class="level-box" v-if="level.level">
-						<svg style="position:absolute; top: 0.7mm; left:0; z-index: -1; width: 9mm; height: 6mm;" viewBox="-3 0 34 22" version="1.1" xmlns="http://www.w3.org/2000/svg" id="level-box-bg" preserveAspectRatio="none">
+						<svg
+							style="
+								position: absolute;
+								top: 0.7mm;
+								left: 0;
+								z-index: -1;
+								width: 9mm;
+								height: 6mm;
+							"
+							viewBox="-3 0 34 22"
+							version="1.1"
+							xmlns="http://www.w3.org/2000/svg"
+							id="level-box-bg"
+							preserveAspectRatio="none"
+						>
 							<defs>
 								<filter id="inset-shadow">
-									<feOffset dx="1" dy="-1"/>                                                         <!-- Shadow Offset -->
-									<feGaussianBlur stdDeviation="1"  result="offset-blur"/>                           <!-- Shadow Blur -->
-									<feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/> <!-- Invert the drop shadow to create an inner shadow -->
-									<feFlood flood-color="black" flood-opacity="1" result="color"/>                     <!-- Color & Opacity -->
-									<feComposite operator="in" in="color" in2="inverse" result="shadow"/>               <!-- Clip color inside shadow -->
-									<feComponentTransfer in="shadow" result="shadow">                                   <!-- Shadow Opacity -->
-										<feFuncA type="linear" slope="1"/>
+									<feOffset dx="1" dy="-1" />
+									<!-- Shadow Offset -->
+									<feGaussianBlur
+										stdDeviation="1"
+										result="offset-blur"
+									/>
+									<!-- Shadow Blur -->
+									<feComposite
+										operator="out"
+										in="SourceGraphic"
+										in2="offset-blur"
+										result="inverse"
+									/>
+									<!-- Invert the drop shadow to create an inner shadow -->
+									<feFlood
+										flood-color="black"
+										flood-opacity="1"
+										result="color"
+									/>
+									<!-- Color & Opacity -->
+									<feComposite
+										operator="in"
+										in="color"
+										in2="inverse"
+										result="shadow"
+									/>
+									<!-- Clip color inside shadow -->
+									<feComponentTransfer
+										in="shadow"
+										result="shadow"
+									>
+										<!-- Shadow Opacity -->
+										<feFuncA type="linear" slope="1" />
 									</feComponentTransfer>
-									<feComposite operator="over" in="shadow" in2="SourceGraphic"/>                       <!-- Put shadow over original object -->
+									<feComposite
+										operator="over"
+										in="shadow"
+										in2="SourceGraphic"
+									/>
+									<!-- Put shadow over original object -->
 								</filter>
 								<filter id="drop-shadow">
 									<feComponentTransfer>
-									<feFuncR type="linear" slope="1.2" />
-									<feFuncG type="linear" slope="1.2" />
-									<feFuncB type="linear" slope="1.2" />
+										<feFuncR type="linear" slope="1.2" />
+										<feFuncG type="linear" slope="1.2" />
+										<feFuncB type="linear" slope="1.2" />
 									</feComponentTransfer>
-									<feDropShadow dx="-1" dy="0.6" stdDeviation="1"/>
+									<feDropShadow
+										dx="-1"
+										dy="0.6"
+										stdDeviation="1"
+									/>
 								</filter>
 							</defs>
-							<path d="M 0 0 H 20 L 30 10 L 20 20 H 0 Z"  :fill="level.box_color" filter="url(#drop-shadow)" />
-							<path d="M 0 0 H 20 L 30 10 L 20 20 H 0 Z M 2 2 V 18 H 18.8 L 27.2 10.000 L 18.8 2 Z"  :fill="level.box_color" filter="url(#inset-shadow)" />
+							<path
+								d="M 0 0 H 20 L 30 10 L 20 20 H 0 Z"
+								:fill="level.box_color"
+								filter="url(#drop-shadow)"
+							/>
+							<path
+								d="M 0 0 H 20 L 30 10 L 20 20 H 0 Z M 2 2 V 18 H 18.8 L 27.2 10.000 L 18.8 2 Z"
+								:fill="level.box_color"
+								filter="url(#inset-shadow)"
+							/>
 						</svg>
-						<div>{{level.level_text}}</div>
-						<div>{{level.level}}</div>
+						<div>{{ level.level_text }}</div>
+						<div>{{ level.level }}</div>
 					</div>
-					<div class="oracle-text" :class="{'has-level': level.level, 'has-pt': level.power}">
-						<div class="oracle-inner" v-for="line in level.oracle_lines" v-html="line"></div>
+					<div
+						class="oracle-text"
+						:class="{
+							'has-level': level.level,
+							'has-pt': level.power,
+						}"
+					>
+						<div
+							class="oracle-inner"
+							v-for="line in level.oracle_lines"
+							v-html="line"
+						></div>
 					</div>
-					<div v-if="level.power" class="pt-box">{{level.power}}/{{level.toughness}}</div>
+					<div v-if="level.power" class="pt-box">
+						{{ level.power }}/{{ level.toughness }}
+					</div>
 				</div>
 				<div
 					class="oracle-flavor"
@@ -604,7 +724,10 @@
 				</div>
 			</div>
 		</template>
-		<div class="pt-box" v-show="(card_face.power || card_face.toughness) && !is_levelup">
+		<div
+			class="pt-box"
+			v-show="(card_face.power || card_face.toughness) && !is_levelup"
+		>
 			<span @dblclick="edit_property('power')" @mousedown.prevent="">{{
 				card_face.power
 			}}</span
@@ -627,13 +750,19 @@
 					@mousedown.prevent=""
 				>
 					{{
-						(is_adventure || !card_face?.collector_number ? card : card_face)
-							.collector_number
+						(is_adventure || !card_face?.collector_number
+							? card
+							: card_face
+						).collector_number
 					}}
 				</div>
 				<div>
-					<span v-if="card.set" class="set">{{ card.set.toUpperCase() }}</span>
-					<span v-if="card.set && card.lang" style="margin-right: 0.2mm"
+					<span v-if="card.set" class="set">{{
+						card.set.toUpperCase()
+					}}</span>
+					<span
+						v-if="card.set && card.lang"
+						style="margin-right: 0.2mm"
 						>&nbsp;•&nbsp;</span
 					>
 					<span v-if="card.lang" class="language"
@@ -695,7 +824,9 @@
 			@mouseleave="update_debug_overlay"
 		>
 			<div>
-				<img :src="card?.image_uris?.png || card_face?.image_uris?.png" />
+				<img
+					:src="card?.image_uris?.png || card_face?.image_uris?.png"
+				/>
 			</div>
 		</div>
 		<div class="debug-controls" v-if="debug">
@@ -721,2149 +852,2272 @@
 </template>
 
 <script lang="ts">
-import { ref, nextTick } from "vue";
-import { defineComponent } from "vue";
+	import { ref, nextTick } from "vue";
+	import { defineComponent } from "vue";
 
-// Disabled for now: This should be made optional, or even explicitly specified (like "{Flash}" instead of "Flash")
-const keywords = {
-	//Flash: "You may cast this spell any time you could cast an instant.",
-};
-const mana_regex = /{([^}]+)}/g;
+	// Disabled for now: This should be made optional, or even explicitly specified (like "{Flash}" instead of "Flash")
+	const keywords = {
+		//Flash: "You may cast this spell any time you could cast an instant.",
+	};
+	const mana_regex = /{([^}]+)}/g;
 
-const FrameColors = {
-	W: "#f9f4f0",
-	U: "#0070b3",
-	B: "#37302d",
-	R: "#f20106",
-	G: "#00713d",
-	Gold: "#f5d15e",
-	Colorless: "#e7e8ea",
-};
+	const FrameColors = {
+		W: "#f9f4f0",
+		U: "#0070b3",
+		B: "#37302d",
+		R: "#f20106",
+		G: "#00713d",
+		Gold: "#f5d15e",
+		Colorless: "#e7e8ea",
+	};
 
-const ArchiveColors = {
-	W: "#878167",
-	U: "#1c477b",
-	B: "#161417",
-	R: "#69201a",
-	G: "#2d4429",
-	Gold: "#927c43",
-};
+	const ArchiveColors = {
+		W: "#878167",
+		U: "#1c477b",
+		B: "#161417",
+		R: "#69201a",
+		G: "#2d4429",
+		Gold: "#927c43",
+	};
 
-const ArchiveFrameColors = {
-	W: { primary: "#9d8793", lighter: "#f0e8e5", darker: "#a89390" },
-	U: { primary: "#0e3d95", lighter: "#125faf", darker: "#13316d" },
-	B: { primary: "#7d7584", lighter: "#443a39", darker: "#47414b" },
-	R: { primary: "#821d23", lighter: "#cd4431", darker: "#462327" },
-	G: { primary: "#30513c", lighter: "#366a54", darker: "#1a3429" },
-	Gold: { primary: "#ceac4b", lighter: "#ceac4b", darker: "#86622e" },
-};
+	const ArchiveFrameColors = {
+		W: { primary: "#9d8793", lighter: "#f0e8e5", darker: "#a89390" },
+		U: { primary: "#0e3d95", lighter: "#125faf", darker: "#13316d" },
+		B: { primary: "#7d7584", lighter: "#443a39", darker: "#47414b" },
+		R: { primary: "#821d23", lighter: "#cd4431", darker: "#462327" },
+		G: { primary: "#30513c", lighter: "#366a54", darker: "#1a3429" },
+		Gold: { primary: "#ceac4b", lighter: "#ceac4b", darker: "#86622e" },
+	};
 
-const mana_symbols = {};
-import mana_symbols_list from "../assets/data/symbology.json";
-for (let symbol of mana_symbols_list.data) mana_symbols[symbol.symbol] = symbol;
-import sets_with_icons from "../assets/data/sets_with_icons.json";
+	import mana_symbols from "../symbols";
+	import sets_with_icons from "../assets/data/sets_with_icons.json";
 
-function check_overflow(el) {
-	const curOverflow = el.style.overflow;
+	function check_overflow(el) {
+		const curOverflow = el.style.overflow;
 
-	if (!curOverflow || curOverflow === "visible") el.style.overflow = "hidden";
+		if (!curOverflow || curOverflow === "visible")
+			el.style.overflow = "hidden";
 
-	const isOverflowing =
-		el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
-	el.style.overflow = curOverflow;
+		const isOverflowing =
+			el.clientWidth < el.scrollWidth ||
+			el.clientHeight < el.scrollHeight;
+		el.style.overflow = curOverflow;
 
-	return isOverflowing;
-}
+		return isOverflowing;
+	}
 
-function contains(str, search) {
-	if (!str || !search) return false;
-	if (Array.isArray(search))
-		return search.some((s) => str.toLowerCase().includes(s.toLowerCase()));
-	return str.toLowerCase().includes(search.toLowerCase());
-}
+	function contains(str, search) {
+		if (!str || !search) return false;
+		if (Array.isArray(search))
+			return search.some((s) =>
+				str.toLowerCase().includes(s.toLowerCase())
+			);
+		return str.toLowerCase().includes(search.toLowerCase());
+	}
 
-export default defineComponent({
-	name: "MTGCard",
-	props: {
-		card: Object,
-		scale: Number,
-		renderMargin: Number,
-	},
-	data() {
-		const name_el = ref(null);
-		const oracle_el = ref(null);
-		const adventure_oracle_el = ref(null);
-		const saga_oracle_reminder_el = ref(null);
-		const type_line_el = ref(null);
-		return {
-			name_el,
-			oracle_el,
-			adventure_oracle_el,
-			saga_oracle_reminder_el,
-			type_line_el,
-			currentFace: 0,
-			dragging_illustration: null,
-			debug: import.meta.env.MODE === "development",
-			display_debug: false,
-			debug_opacity: 0,
-		};
-	},
-	updated() {
-		this.fit();
-	},
-	methods: {
-		set_face(idx) {
-			this.currentFace = idx;
-		},
-		gen_mana_symbol(str, classes = []) {
-			if ("{" + str + "}" in mana_symbols) {
-				let el = new Image();
-				el.src = mana_symbols["{" + str + "}"].svg_uri;
-				el.className = "ms";
-				return el;
-			}
-			return null;
-		},
-		parse_oracle(str) {
-			if (str in keywords) {
-				return `${str} <span class="oracle-reminder">(${keywords[str]})</span>`;
-			}
-			str = str.replace(
-				mana_regex,
-				(match, group) => this.gen_mana_symbol(group)?.outerHTML ?? match // FIXME: This is horrible
-			);
-			// Included reminder text
-			str = str.replace(
-				/\([^)]+\)/g,
-				(match) => `<span class="oracle-reminder">${match}</span>`
-			);
-			return str;
-		},
-		edit_property(prop) {
-			// TODO
-			const r = prompt(`Edit Card property '${prop}'`, this.card_face[prop]);
-			if (r)
-				this.$emit(
-					"edit",
-					this.d ? ["card_faces", this.currentFace, prop] : prop,
-					r
-				);
-		},
-		scale_illustration(event) {
-			let s = 1;
-			const card = this.is_adventure ? this.card : this.card_face;
-			if (card.illustration_scale) s = card.illustration_scale;
-			s += event.deltaY > 0 ? -0.1 : 0.1;
-			s = Math.min(Math.max(1, s), 50);
-			this.$emit(
-				"edit",
-				this.card.card_faces && !this.is_adventure
-					? ["card_faces", this.currentFace, "illustration_scale"]
-					: "illustration_scale",
-				s
-			);
-		},
-		start_drag_illustration(event) {
-			const card = this.is_adventure ? this.card : this.card_face;
-			if (!card.illustration_position)
-				this.$emit(
-					"edit",
-					this.card.card_faces && !this.is_adventure
-						? ["card_faces", this.currentFace, "illustration_position"]
-						: "illustration_position",
-					{ x: 0, y: 0 }
-				);
-			this.dragging_illustration = {
-				x: card.illustration_position?.x ?? 0,
-				y: card.illustration_position?.y ?? 0,
-			};
-		},
-		cancel_drag_illustration(event) {
-			if (this.dragging_illustration) {
-				this.$emit(
-					"edit",
-					this.card.card_faces && !this.is_adventure
-						? ["card_faces", this.currentFace, "illustration_position"]
-						: "illustration_position",
-					this.dragging_illustration
-				);
-				this.end_drag_illustration();
-			}
-		},
-		end_drag_illustration(event) {
-			this.dragging_illustration = null;
-		},
-		drag_illustration(event) {
-			const card = this.is_adventure ? this.card : this.card_face;
-			if (this.dragging_illustration) {
-				this.$emit(
-					"edit",
-					this.card.card_faces && !this.is_adventure
-						? ["card_faces", this.currentFace, "illustration_position"]
-						: "illustration_position",
-					{
-						x:
-							card.illustration_position.x +
-							(this.mmperpixel * event.movementX) / this.scale,
-						y:
-							card.illustration_position.y +
-							(this.mmperpixel * event.movementY) / this.scale,
-					}
-				);
-			}
-		},
-		fit_font_size(el, initial_size = 8) {
-			el.classList.add("fitting");
-			let curr_font_size = initial_size;
-			el.style.fontSize = curr_font_size + "pt";
-			while (check_overflow(el) && curr_font_size > 3) {
-				curr_font_size *= 0.9;
-				el.style.fontSize = curr_font_size + "pt";
-			}
-			el.classList.remove("fitting");
-		},
-		fit() {
-			this.fit_name();
-			this.fit_type_line();
-			this.fit_oracle_text();
-		},
-		fit_name() {
-			if (!this.$refs.name_el) return;
-			// Make sure oracle text fits in its box
-			nextTick(() => {
-				const initial_font_size = 9.454;
-				let curr_letter_spacing = 0.034; //initial_spacing;
-				this.$refs.name_el.style.fontSize = initial_font_size + "pt";
-				this.$refs.name_el.style.letterSpacing = curr_letter_spacing + "mm";
-				while (
-					check_overflow(this.$refs.name_el) &&
-					curr_letter_spacing > -0.09
-				) {
-					curr_letter_spacing -= 0.001;
-					this.$refs.name_el.style.letterSpacing = curr_letter_spacing + "mm";
-				}
-				if (check_overflow(this.$refs.name_el))
-					this.fit_font_size(this.$refs.name_el, initial_font_size);
-			});
-		},
-		fit_type_line() {
-			if (!this.$refs.type_line_el) return;
-			// Make sure type fits in its box
-			nextTick(() => {
-				this.fit_font_size(this.$refs.type_line_el);
-			});
-		},
-		fit_oracle_text() {
-			if (!this.$refs.oracle_el) return;
-			// Make sure oracle text fits in its box
-			nextTick(() => {
-				this.fit_font_size(this.$refs.oracle_el);
-				if (this.$refs.adventure_oracle_el)
-					this.fit_font_size(this.$refs.adventure_oracle_el);
-				if (this.$refs.saga_oracle_reminder_el)
-					this.fit_font_size(this.$refs.saga_oracle_reminder_el, 7.3);
-			});
-		},
-		flip() {
-			this.currentFace = (this.currentFace + 1) % 2;
-			this.fit_name();
-			this.fit_oracle_text();
-			this.fit_type_line();
-		},
-		compute_colors(face) {
-			if (
-				face?.colors === undefined &&
-				face?.color_identity === undefined &&
-				face?.mana_cost === undefined
-			)
-				return "Colourless";
-			let colors =
-				face?.colors && face?.colors.length > 0
-					? face?.colors
-					: face?.color_identity
-					? face?.color_identity
-					: [...face.mana_cost].filter((c) => "WUBRG".includes(c));
-			if (colors.length === 0 && this.card.color_identity.length > 0)
-				colors = this.card.color_identity;
-			const sorted_colors = [...new Set(colors)]
-				.sort((l: string, r: string) => {
-					return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
-				})
-				.join("");
-			// TODO: Correctly handle dual mana cost (bi-colored border)
-			return contains(face.type_line, ["Artifact", "Artefact", "Artéfact"])
-				? "Artifact"
-				: sorted_colors.length === 0
-				? "Colourless"
-				: sorted_colors.length > 2
-				? "Gold"
-				: sorted_colors;
-		},
-		update_debug_overlay(event) {
-			if (event.type === "mousemove") {
-				event.target.firstElementChild.style.width =
-					(event.clientX - event.target.parentNode.getBoundingClientRect().x) /
-						this.scale +
-					"px";
-			} else {
-				event.target.firstElementChild.style.width = "";
-			}
-		},
-	},
-	computed: {
-		mmperpixel() {
-			return 63.5 / this.$el.clientWidth;
-		},
-		card_face() {
-			if (this.card.card_faces)
-				return this.card.card_faces[this.is_adventure ? 0 : this.currentFace];
-			return this.card;
-		},
-		back_face() {
-			if (this.card.card_faces)
-				return this.card.card_faces[(this.currentFace + 1) % 2];
-			return this.card;
-		},
-		is_land() {
-			return this.card_face?.type_line?.startsWith("Land") ||
-				this.card_face?.type_line?.startsWith("Terrain")
-				? true
-				: false;
-		},
-		is_legendary() {
-			return this.card.frame_effects?.includes("legendary") ||
-				this.card_face?.type_line?.startsWith("Legendary") ||
-				this.card_face?.type_line?.includes("légendaire")
-				? true
-				: false;
-		},
-		has_legendary_crown() {
-			return (
-				this.is_legendary &&
-				!this.is_planeswalker &&
-				!this.card.frame_effects?.includes("compasslanddfc")
-			);
-		},
-		is_adventure() {
-			return this.card.layout === "adventure";
-		},
-		is_planeswalker() {
-			return this.card_face?.type_line?.toLowerCase().includes("planeswalker");
-		},
-		is_large_planeswalker() {
-			return this.is_planeswalker && this.planeswalker_abilities.length > 3;
-		},
-		is_saga() {
-			return (
-				this.card_face?.layout === "saga" ||
-				contains(this.card_face?.type_line, "Saga")
-			);
-		},
-		is_vehicle() {
-			if (!this.card?.type_line) return false;
-			return contains(this.card_face.type_line, ["Vehicle", "Véhicule"]);
-		},
-		is_dualfaced() {
-			return this.card.card_faces && !this.is_adventure;
-		},
-		is_mdfc() {
-			return this.card.layout === "modal_dfc";
-		},
-		is_transform() {
-			return this.card.layout === "transform";
-		},
-		is_levelup() {
-			return this.card_face?.oracle_text?.includes("Level up") || this.card_face?.oracle_text?.includes("Montée de niveau");
-		},
-		mana_cost() {
-			if (!this.card_face?.mana_cost) return [];
-			return [...this.card_face.mana_cost.matchAll(mana_regex)].map((m) =>
-				["archive", "japanese-archive"].includes(this.card_face?.art_variant)
-					? new URL(
-							`../assets/img/archives_symbols/${m[1]}.svg`,
-							import.meta.url
-					  ).href
-					: mana_symbols[m[0]].svg_uri
-			);
-		},
-		adventure_mana_cost() {
-			if (!this.card?.card_faces?.[1]?.mana_cost) return [];
-			return [...this.card.card_faces[1].mana_cost.matchAll(mana_regex)].map(
-				(m) => mana_symbols[m[0]].svg_uri
-			);
-		},
-		mdfc_back_mana_cost() {
-			if (!this.card?.card_faces?.[(this.currentFace + 1) % 2]?.mana_cost)
-				return [];
-			return [
-				...this.card.card_faces[(this.currentFace + 1) % 2].mana_cost.matchAll(
-					mana_regex
-				),
-			].map((m) => mana_symbols[m[0]].svg_uri);
-		},
-		mdfc_hint_text() {
-			return (
-				this.card_face.mdfc_hint ??
-				this.back_face?.type_line
-					?.substr(this.back_face.type_line.indexOf("—") + 1)
-					.trim()
-			);
-		},
-		extended_art() {
-			return ["extended", "full", "full-footer"].includes(
-				(this.is_adventure ? this.card : this.card_face).art_variant
-			);
-		},
-		oracle_lines() {
-			if (!this.card_face?.oracle_text) return [];
-			return this.card_face.oracle_text.split("\n").map(this.parse_oracle);
-		},
-		adventure_oracle_lines() {
-			if (!this.card.card_faces?.[1]?.oracle_text) return [];
-			return this.card.card_faces[1].oracle_text
-				.split("\n")
-				.map(this.parse_oracle);
-		},
-		saga_reminder() {
-			if (!this.card_face?.oracle_text) return "";
-			return this.parse_oracle(this.card_face.oracle_text.split("\n")[0]);
-		},
-		saga_steps() {
-			return this.card_face.oracle_text
-				.split("\n")
-				.filter((s) => s.match(/^(.+) — /))
-				.map(this.parse_oracle)
-				.map((str) => {
-					const m = str.match(/(.+) — (.+)/);
-					return {
-						steps: m[1]
-							.split(",")
-							.map(
-								(s) =>
-									new URL(`../assets/img/saga/${s.trim()}.png`, import.meta.url)
-										.href
-							),
-						html: m[2],
-					};
-				});
-		},
-		planeswalker_abilities() {
-			if (!this.is_planeswalker) return null;
-			return this.card_face.oracle_text
-				.split("\n")
-				.map(this.parse_oracle)
-				.map((line) => {
-					const r = { html: line, cost: null };
-					const m = line.match(/^[+-−]?(\d+):/);
-					if (m) {
-						if (line[0] === "0") {
-							r.cost = 0;
-						} else if (line[0] === "+") {
-							r.cost = parseInt(m[1]);
-						} else r.cost = -parseInt(m[1]);
-						r.html = line.substr(m[0].length + 1);
-					}
-					return r;
-				});
-		},
-		levels() {
-			if(!this.is_levelup) return null;
-			const levelstext = this.card_face.oracle_text.split(/(LEVEL|NIVEAU) ([^\n]+)\n/);
-			const box_color = {"W": "#dcc8af", "U": "#b9c0da", "B": "#af9aa5", "R": "#d7a67c", "G": "#b2c0b0"}[this.colors?.[0] ?? "W"];
-			const levels = [{level_text: "", level : 0, power: this.card_face.power, toughness: this.card_face.toughness, oracle_lines : levelstext[0].split("\n").map(this.parse_oracle), color: "#00000000", box_color}];
-			for(let i = 1; i < levelstext.length; i += 3) {
-				const pt = this.card_face.power ? levelstext[i + 2].split("\n")[0].split("/") : null;
-				const oracle = pt ? levelstext[i + 2].substr(levelstext[i + 2].indexOf("\n") + 1) : levelstext[i + 2];
-				levels.push({
-					level_text: levelstext[i + 0],
-					level: levelstext[i + 1],
-					power: pt?.[0],
-					toughness: pt?.[1],
-					oracle_lines: oracle.split("\n").map(this.parse_oracle),
-					color: this.frame_colors.left + ((1+(i / 3)) * 25).toFixed(0).toString(16),
-					box_color
-				});
-			}
-			console.log(levels)
-			return levels;
-		},
-		copyright() {
-			return (
-				this.card?.copyright ??
-				`™ & © ${new Date().getFullYear()} Wizards of the Coast`
-			);
-		},
-		colors() {
-			return this.compute_colors(this.card_face);
-		},
-		boxes_colors() {
-			return this.colors === "Vehicle"
-				? "Artifact"
-				: this.is_land // FIXME: Fixes colors for cards like 'Agadeem, the Undercrypt', but may cause problem elsewhere?
-				? (this.colors.length > 2  && this.colors.length < 5 ? "Gold" : "Land")
-				: this.colors.length > 1 && this.colors.length < 5
-				? "Gold"
-				: this.colors;
-		},
-		background() {
-			const folder = this.is_planeswalker
-				? this.is_large_planeswalker
-					? "planeswalker_large_bg"
-					: "planeswalker_bg"
-				: this.is_saga
-				? "saga_bg"
-				: this.card.frame_effects?.includes("compasslanddfc") &&
-				  this.currentFace === 1
-				? "ixalan_bg"
-				: "bg";
-			return `url(${
-				new URL(
-					`../assets/img/${folder}/${
-						this.is_vehicle ? "Vehicle" : this.boxes_colors
-					}.png`,
-					import.meta.url
-				).href
-			})`;
-		},
-		frame() {
-			let folder = this.is_adventure
-				? "adventure_frames"
-				: this.is_saga
-				? "saga_frames"
-				: this.is_planeswalker
-				? this.is_large_planeswalker
-					? "planeswalker_large_frames"
-					: "planeswalker_frames"
-				: this.is_mdfc
-				? "mdfc_frames"
-				: this.is_transform
-				? this.currentFace === 0
-					? "transform_frames"
-					: "transform_back_frames"
-				: "frames";
-			if (this.extended_art && !this.is_saga) folder = "extended_" + folder;
-			const colors =
-				this.colors === "Artifact" && this.card_face?.colors?.length === 1
-					? this.card_face.colors[0]
-					: this.colors;
-			return `url(${
-				new URL(`../assets/img/${folder}/${colors}.png`, import.meta.url).href
-			})`;
-		},
-		boxes() {
-			const folder = this.is_planeswalker
-				? "planeswalker_boxes"
-				: this.is_mdfc || this.is_transform
-				? this.currentFace === 0
-					? "mdfc_boxes"
-					: "mdfc_back_boxes"
-				: this.extended_art
-				? "extended_boxes"
-				: "boxes";
-			return `url(${
-				new URL(
-					`../assets/img/${folder}/${this.boxes_colors}.png`,
-					import.meta.url
-				).href
-			})`;
-		},
-		mid_boxes() {
-			return this.extended_art && !this.is_planeswalker
-				? `url(${
-						new URL(
-							`../assets/img/extended_boxes/${this.boxes_colors}.png`,
-							import.meta.url
-						).href
-				  })`
-				: this.boxes;
-		},
-		legendary_crown() {
-			const colors =
-				this.colors === "Artifact" && this.card_face?.colors?.length === 1
-					? this.card_face.colors[0]
-					: this.colors;
-			const folder = this.extended_art
-				? "extended_legendary_crowns"
-				: "legendary_crowns";
-			return `url(${
-				new URL(`../assets/img/${folder}/${colors}.png`, import.meta.url).href
-			})`;
-		},
-		pt_box() {
-			return `url(${
-				new URL(
-					`../assets/img/${
-						(this.is_mdfc || this.is_transform) && this.currentFace === 1
-							? "transform_back_pt_boxes"
-							: "pt_boxes"
-					}/${this.is_vehicle ? "Vehicle" : this.boxes_colors}.png`,
-					import.meta.url
-				).href
-			})`;
-		},
-		saga_text_box() {
-			return `url(${
-				new URL(
-					`../assets/img/saga_textboxes/${this.boxes_colors}.png`,
-					import.meta.url
-				).href
-			})`;
-		},
-		mdfc_icon() {
-			return `url(${
-				new URL(
-					`../assets/img/mdfc${this.currentFace === 0 ? "" : "_back"}_icons/${
-						this.boxes_colors === "Land" ? this.colors : this.boxes_colors
-					}.png`,
-					import.meta.url
-				).href
-			})`;
-		},
-		mdfc_hint() {
-			let colors = this.compute_colors(this.back_face);
-			if (colors.length > 1 && colors.length < 5) colors = "Gold";
-			return `url(${
-				new URL(
-					`../assets/img/mdfc${
-						this.currentFace === 0 ? "" : "_back"
-					}_hints/${colors}.png`,
-					import.meta.url
-				).href
-			})`;
-		},
-		mdfc_hint_color() {
-			return this.currentFace === 0 ? "white" : "black";
-		},
-		transform_icon() {
-			return `url(${
-				new URL(
-					`../assets/img/transform${
-						this.currentFace === 0 ? "" : "_back"
-					}_icons/${
-						this.card.frame_effects?.[0] ?? "sunmoondfc"
-					}.png` /* FIXME: Pretty sure this will break at some point */,
-					import.meta.url
-				).href
-			})`;
-		},
-		pt_box_color() {
-			return this.is_vehicle || (this.is_transform && this.currentFace === 1)
-				? "white"
-				: "black";
-		},
-		top_line_color() {
-			return this.is_mdfc
-				? this.currentFace === 0
-					? "black"
-					: "white"
-				: this.is_transform && this.currentFace === 1 && !this.is_planeswalker
-				? "white"
-				: "black";
-		},
-		mid_line_color() {
-			return (this.extended_art &&
-				!this.is_planeswalker &&
-				(!this.is_transform || this.currentFace === 0)) ||
-				((this.is_transform || this.is_mdfc) &&
-					this.currentFace === 1 &&
-					!this.is_planeswalker)
-				? "white"
-				: "black";
-		},
-		color_indicator() {
-			return new URL(
-				`../assets/img/color_indicators/${[...this.card_face.color_indicator]
-					.sort((lhs, rhs) => "WUBRG".indexOf(lhs) - "WUBRG".indexOf(rhs))
-					.join("")}.png`,
-				import.meta.url
-			).href;
-		},
-		illustration() {
-			return `url(${
-				(this.is_adventure ? this.card : this.card_face)?.image_uris?.art_crop
-			})`;
-		},
-		illustration_scale() {
-			return (
-				(this.is_adventure ? this.card : this.card_face)?.illustration_scale ??
-				1
-			);
-		},
-		illustration_position() {
-			const card = this.is_adventure ? this.card : this.card_face;
-			return card?.illustration_position
-				? {
-						x: card?.illustration_position.x + "mm",
-						y: card?.illustration_position.y + "mm",
-				  }
-				: { x: "0mm", y: "0mm" };
-		},
-		set_icon_uri() {
-			if (this.card.set_icon) return this.card.set_icon;
-			if (sets_with_icons.includes(this.card?.set))
-				return new URL(
-					`../assets/img/set_icons/${this.card?.set}_${
-						this.card?.rarity ?? "common"
-					}.png`,
-					import.meta.url
-				).href;
-			return null;
-		},
-		archive_frame_colors() {
-			const colors = this.card_face?.color_identity ?? this.card_face?.colors;
-			if (!colors)
-				return Object.assign(
-					{
-						left: ArchiveFrameColors["Gold"],
-						right: ArchiveFrameColors["Gold"],
-					},
-					ArchiveFrameColors["Gold"]
-				);
-			return Object.assign(
-				{
-					left: ArchiveFrameColors[colors[0]] ?? ArchiveFrameColors["Gold"],
-					right:
-						ArchiveFrameColors[colors[colors.length === 1 ? 0 : 1]] ??
-						ArchiveFrameColors["Gold"],
-				},
-				colors.length > 1 || ArchiveFrameColors[colors[0]]
-					? ArchiveFrameColors["Gold"]
-					: ArchiveFrameColors[colors[0]]
-			);
-		},
-		japanese_color() {
-			return this.card_face?.colors?.length === 1
-				? ArchiveColors[this.card_face.colors[0]]
-				: "#927c43";
-		},
-		japanese_name_color() {
-			if (this.card_face?.colors?.length === 2)
-				return `linear-gradient(to right, ${
-					ArchiveColors[this.card_face.colors[0]]
-				}, ${ArchiveColors[this.card_face.colors[1]]})`;
-			return this.japanese_color;
-		},
-		/* These don't appear in the render, great \o/ */
-		japanese_type_line_border() {
-			const c0 =
-				this.card_face?.colors?.length === 2
-					? ArchiveColors[this.card_face.colors[0]]
-					: this.japanese_color;
-			const c1 =
-				this.card_face?.colors?.length === 2
-					? ArchiveColors[this.card_face.colors[1]]
-					: c0;
-			return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-0.05 -0.05 1.1 1.1'><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='0%25'><stop offset='0%25' stop-color='${c0}' /><stop offset='100%25' stop-color='${c1}' /></linearGradient></defs><path d='M 0.2 0 c -0.1 0.125 -0.2 0.25 -0.2 0.5 c 0 0.25 0.1 0.375 0.2 0.5 l 0.6 0 c 0.1 -0.125 0.2 -0.25 0.2 -0.5 c 0 -0.25 -0.1 -0.375 -0.2 -0.5 Z' stroke='url(%23gradient)' stroke-width='0.1' fill='none'/></svg>")`.replaceAll(
-				"#",
-				"%23"
-			);
-		},
-		japanese_oracle_border() {
-			const c0 =
-				this.card_face?.colors?.length === 2
-					? ArchiveColors[this.card_face.colors[0]]
-					: this.japanese_color;
-			const c1 =
-				this.card_face?.colors?.length === 2
-					? ArchiveColors[this.card_face.colors[1]]
-					: c0;
-			return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='0%25'><stop offset='0%25' stop-color='${c0}' /><stop offset='100%25' stop-color='${c1}' /></linearGradient></defs><rect x='0' y='0' width='100' height='100' fill='url(%23gradient)' /></svg>")`.replaceAll(
-				"#",
-				"%23"
-			);
-		},
-		frame_colors() {
-			if (this.colors.length === 0 || this.colors === "Artifact")
-				return {
-					left: FrameColors["Colorless"],
-					right: FrameColors["Colorless"],
-				};
-			if (this.colors.length == 1) {
-				return {
-					left: FrameColors[this.colors[0]],
-					right: FrameColors[this.colors[0]],
-				};
-			}
-			if (this.colors.length == 2) {
-				return {
-					left: FrameColors[this.colors[0]],
-					right: FrameColors[this.colors[1]],
-				};
-			}
+	export default defineComponent({
+		name: "MTGCard",
+		props: {
+			card: Object,
+			scale: Number,
+			renderMargin: Number,
+		},
+		data() {
+			const name_el = ref(null);
+			const oracle_el = ref(null);
+			const adventure_oracle_el = ref(null);
+			const saga_oracle_reminder_el = ref(null);
+			const type_line_el = ref(null);
 			return {
-				left: FrameColors["Gold"],
-				right: FrameColors["Gold"],
+				name_el,
+				oracle_el,
+				adventure_oracle_el,
+				saga_oracle_reminder_el,
+				type_line_el,
+				currentFace: 0,
+				dragging_illustration: null,
+				debug: import.meta.env.MODE === "development",
+				display_debug: false,
+				debug_opacity: 0,
 			};
 		},
-	},
-	watch: {
-		"card.oracle_text": function () {
-			this.fit_oracle_text();
-		},
-		"card.type_line": function () {
-			this.fit_type_line();
-		},
-		"card.card_faces": function () {
+		updated() {
 			this.fit();
 		},
-	},
-});
+		methods: {
+			set_face(idx) {
+				this.currentFace = idx;
+			},
+			gen_mana_symbol(str, classes = []) {
+				if ("{" + str + "}" in mana_symbols) {
+					let el = new Image();
+					el.src = mana_symbols["{" + str + "}"].svg_uri;
+					el.className = "ms";
+					return el;
+				}
+				return null;
+			},
+			parse_oracle(str) {
+				if (str in keywords) {
+					return `${str} <span class="oracle-reminder">(${keywords[str]})</span>`;
+				}
+				str = str.replace(
+					mana_regex,
+					(match, group) =>
+						this.gen_mana_symbol(group)?.outerHTML ?? match // FIXME: This is horrible
+				);
+				// Included reminder text
+				str = str.replace(
+					/\([^)]+\)/g,
+					(match) => `<span class="oracle-reminder">${match}</span>`
+				);
+				return str;
+			},
+			edit_property(prop) {
+				// TODO
+				const r = prompt(
+					`Edit Card property '${prop}'`,
+					this.card_face[prop]
+				);
+				if (r)
+					this.$emit(
+						"edit",
+						this.d ? ["card_faces", this.currentFace, prop] : prop,
+						r
+					);
+			},
+			scale_illustration(event) {
+				let s = 1;
+				const card = this.is_adventure ? this.card : this.card_face;
+				if (card.illustration_scale) s = card.illustration_scale;
+				s += event.deltaY > 0 ? -0.1 : 0.1;
+				s = Math.min(Math.max(1, s), 50);
+				this.$emit(
+					"edit",
+					this.card.card_faces && !this.is_adventure
+						? ["card_faces", this.currentFace, "illustration_scale"]
+						: "illustration_scale",
+					s
+				);
+			},
+			start_drag_illustration(event) {
+				const card = this.is_adventure ? this.card : this.card_face;
+				if (!card.illustration_position)
+					this.$emit(
+						"edit",
+						this.card.card_faces && !this.is_adventure
+							? [
+									"card_faces",
+									this.currentFace,
+									"illustration_position",
+							  ]
+							: "illustration_position",
+						{ x: 0, y: 0 }
+					);
+				this.dragging_illustration = {
+					x: card.illustration_position?.x ?? 0,
+					y: card.illustration_position?.y ?? 0,
+				};
+			},
+			cancel_drag_illustration(event) {
+				if (this.dragging_illustration) {
+					this.$emit(
+						"edit",
+						this.card.card_faces && !this.is_adventure
+							? [
+									"card_faces",
+									this.currentFace,
+									"illustration_position",
+							  ]
+							: "illustration_position",
+						this.dragging_illustration
+					);
+					this.end_drag_illustration();
+				}
+			},
+			end_drag_illustration(event) {
+				this.dragging_illustration = null;
+			},
+			drag_illustration(event) {
+				const card = this.is_adventure ? this.card : this.card_face;
+				if (this.dragging_illustration) {
+					this.$emit(
+						"edit",
+						this.card.card_faces && !this.is_adventure
+							? [
+									"card_faces",
+									this.currentFace,
+									"illustration_position",
+							  ]
+							: "illustration_position",
+						{
+							x:
+								card.illustration_position.x +
+								(this.mmperpixel * event.movementX) /
+									this.scale,
+							y:
+								card.illustration_position.y +
+								(this.mmperpixel * event.movementY) /
+									this.scale,
+						}
+					);
+				}
+			},
+			fit_font_size(el, initial_size = 8) {
+				el.classList.add("fitting");
+				let curr_font_size = initial_size;
+				el.style.fontSize = curr_font_size + "pt";
+				while (check_overflow(el) && curr_font_size > 3) {
+					curr_font_size *= 0.9;
+					el.style.fontSize = curr_font_size + "pt";
+				}
+				el.classList.remove("fitting");
+			},
+			fit() {
+				this.fit_name();
+				this.fit_type_line();
+				this.fit_oracle_text();
+			},
+			fit_name() {
+				if (!this.$refs.name_el) return;
+				// Make sure oracle text fits in its box
+				nextTick(() => {
+					const initial_font_size = 9.454;
+					let curr_letter_spacing = 0.034; //initial_spacing;
+					this.$refs.name_el.style.fontSize =
+						initial_font_size + "pt";
+					this.$refs.name_el.style.letterSpacing =
+						curr_letter_spacing + "mm";
+					while (
+						check_overflow(this.$refs.name_el) &&
+						curr_letter_spacing > -0.09
+					) {
+						curr_letter_spacing -= 0.001;
+						this.$refs.name_el.style.letterSpacing =
+							curr_letter_spacing + "mm";
+					}
+					if (check_overflow(this.$refs.name_el))
+						this.fit_font_size(
+							this.$refs.name_el,
+							initial_font_size
+						);
+				});
+			},
+			fit_type_line() {
+				if (!this.$refs.type_line_el) return;
+				// Make sure type fits in its box
+				nextTick(() => {
+					this.fit_font_size(this.$refs.type_line_el);
+				});
+			},
+			fit_oracle_text() {
+				if (!this.$refs.oracle_el) return;
+				// Make sure oracle text fits in its box
+				nextTick(() => {
+					this.fit_font_size(this.$refs.oracle_el);
+					if (this.$refs.adventure_oracle_el)
+						this.fit_font_size(this.$refs.adventure_oracle_el);
+					if (this.$refs.saga_oracle_reminder_el)
+						this.fit_font_size(
+							this.$refs.saga_oracle_reminder_el,
+							7.3
+						);
+				});
+			},
+			flip() {
+				this.currentFace = (this.currentFace + 1) % 2;
+				this.fit_name();
+				this.fit_oracle_text();
+				this.fit_type_line();
+			},
+			compute_colors(face) {
+				if (
+					face?.colors === undefined &&
+					face?.color_identity === undefined &&
+					face?.mana_cost === undefined
+				)
+					return "Colourless";
+				let colors =
+					face?.colors && face?.colors.length > 0
+						? face?.colors
+						: face?.color_identity
+						? face?.color_identity
+						: [...face.mana_cost].filter((c) =>
+								"WUBRG".includes(c)
+						  );
+				if (colors.length === 0 && this.card.color_identity.length > 0)
+					colors = this.card.color_identity;
+				const sorted_colors = [...new Set(colors)]
+					.sort((l: string, r: string) => {
+						return "WUBRG".indexOf(l) - "WUBRG".indexOf(r);
+					})
+					.join("");
+				// TODO: Correctly handle dual mana cost (bi-colored border)
+				return contains(face.type_line, [
+					"Artifact",
+					"Artefact",
+					"Artéfact",
+				])
+					? "Artifact"
+					: sorted_colors.length === 0
+					? "Colourless"
+					: sorted_colors.length > 2
+					? "Gold"
+					: sorted_colors;
+			},
+			update_debug_overlay(event) {
+				if (event.type === "mousemove") {
+					event.target.firstElementChild.style.width =
+						(event.clientX -
+							event.target.parentNode.getBoundingClientRect().x) /
+							this.scale +
+						"px";
+				} else {
+					event.target.firstElementChild.style.width = "";
+				}
+			},
+		},
+		computed: {
+			mmperpixel() {
+				return 63.5 / this.$el.clientWidth;
+			},
+			card_face() {
+				if (this.card.card_faces)
+					return this.card.card_faces[
+						this.is_adventure ? 0 : this.currentFace
+					];
+				return this.card;
+			},
+			back_face() {
+				if (this.card.card_faces)
+					return this.card.card_faces[(this.currentFace + 1) % 2];
+				return this.card;
+			},
+			is_land() {
+				return this.card_face?.type_line?.startsWith("Land") ||
+					this.card_face?.type_line?.startsWith("Terrain")
+					? true
+					: false;
+			},
+			is_legendary() {
+				return this.card.frame_effects?.includes("legendary") ||
+					this.card_face?.type_line?.startsWith("Legendary") ||
+					this.card_face?.type_line?.includes("légendaire")
+					? true
+					: false;
+			},
+			has_legendary_crown() {
+				return (
+					this.is_legendary &&
+					!this.is_planeswalker &&
+					!this.card.frame_effects?.includes("compasslanddfc")
+				);
+			},
+			is_adventure() {
+				return this.card.layout === "adventure";
+			},
+			is_planeswalker() {
+				return this.card_face?.type_line
+					?.toLowerCase()
+					.includes("planeswalker");
+			},
+			is_large_planeswalker() {
+				return (
+					this.is_planeswalker &&
+					this.planeswalker_abilities.length > 3
+				);
+			},
+			is_saga() {
+				return (
+					this.card_face?.layout === "saga" ||
+					contains(this.card_face?.type_line, "Saga")
+				);
+			},
+			is_vehicle() {
+				if (!this.card?.type_line) return false;
+				return contains(this.card_face.type_line, [
+					"Vehicle",
+					"Véhicule",
+				]);
+			},
+			is_dualfaced() {
+				return this.card.card_faces && !this.is_adventure;
+			},
+			is_mdfc() {
+				return this.card.layout === "modal_dfc";
+			},
+			is_transform() {
+				return this.card.layout === "transform";
+			},
+			is_levelup() {
+				return (
+					this.card_face?.oracle_text?.includes("Level up") ||
+					this.card_face?.oracle_text?.includes("Montée de niveau")
+				);
+			},
+			mana_cost() {
+				if (!this.card_face?.mana_cost) return [];
+				return [...this.card_face.mana_cost.matchAll(mana_regex)].map(
+					(m) =>
+						["archive", "japanese-archive"].includes(
+							this.card_face?.art_variant
+						)
+							? new URL(
+									`../assets/img/archives_symbols/${m[1]}.svg`,
+									import.meta.url
+							  ).href
+							: mana_symbols[m[0]].svg_uri
+				);
+			},
+			adventure_mana_cost() {
+				if (!this.card?.card_faces?.[1]?.mana_cost) return [];
+				return [
+					...this.card.card_faces[1].mana_cost.matchAll(mana_regex),
+				].map((m) => mana_symbols[m[0]].svg_uri);
+			},
+			mdfc_back_mana_cost() {
+				if (
+					!this.card?.card_faces?.[(this.currentFace + 1) % 2]
+						?.mana_cost
+				)
+					return [];
+				return [
+					...this.card.card_faces[
+						(this.currentFace + 1) % 2
+					].mana_cost.matchAll(mana_regex),
+				].map((m) => mana_symbols[m[0]].svg_uri);
+			},
+			mdfc_hint_text() {
+				return (
+					this.card_face.mdfc_hint ??
+					this.back_face?.type_line
+						?.substr(this.back_face.type_line.indexOf("—") + 1)
+						.trim()
+				);
+			},
+			extended_art() {
+				return ["extended", "full", "full-footer"].includes(
+					(this.is_adventure ? this.card : this.card_face).art_variant
+				);
+			},
+			oracle_lines() {
+				if (!this.card_face?.oracle_text) return [];
+				return this.card_face.oracle_text
+					.split("\n")
+					.map(this.parse_oracle);
+			},
+			adventure_oracle_lines() {
+				if (!this.card.card_faces?.[1]?.oracle_text) return [];
+				return this.card.card_faces[1].oracle_text
+					.split("\n")
+					.map(this.parse_oracle);
+			},
+			saga_reminder() {
+				if (!this.card_face?.oracle_text) return "";
+				return this.parse_oracle(
+					this.card_face.oracle_text.split("\n")[0]
+				);
+			},
+			saga_steps() {
+				return this.card_face.oracle_text
+					.split("\n")
+					.filter((s) => s.match(/^(.+) — /))
+					.map(this.parse_oracle)
+					.map((str) => {
+						const m = str.match(/(.+) — (.+)/);
+						return {
+							steps: m[1]
+								.split(",")
+								.map(
+									(s) =>
+										new URL(
+											`../assets/img/saga/${s.trim()}.png`,
+											import.meta.url
+										).href
+								),
+							html: m[2],
+						};
+					});
+			},
+			planeswalker_abilities() {
+				if (!this.is_planeswalker) return null;
+				return this.card_face.oracle_text
+					.split("\n")
+					.map(this.parse_oracle)
+					.map((line) => {
+						const r = { html: line, cost: null };
+						const m = line.match(/^[+-−]?(\d+):/);
+						if (m) {
+							if (line[0] === "0") {
+								r.cost = 0;
+							} else if (line[0] === "+") {
+								r.cost = parseInt(m[1]);
+							} else r.cost = -parseInt(m[1]);
+							r.html = line.substr(m[0].length + 1);
+						}
+						return r;
+					});
+			},
+			levels() {
+				if (!this.is_levelup) return null;
+				const levelstext = this.card_face.oracle_text.split(
+					/(LEVEL|NIVEAU) ([^\n]+)\n/
+				);
+				const box_color = {
+					W: "#dcc8af",
+					U: "#b9c0da",
+					B: "#af9aa5",
+					R: "#d7a67c",
+					G: "#b2c0b0",
+				}[this.colors?.[0] ?? "W"];
+				const levels = [
+					{
+						level_text: "",
+						level: 0,
+						power: this.card_face.power,
+						toughness: this.card_face.toughness,
+						oracle_lines: levelstext[0]
+							.split("\n")
+							.map(this.parse_oracle),
+						color: "#00000000",
+						box_color,
+					},
+				];
+				for (let i = 1; i < levelstext.length; i += 3) {
+					const pt = this.card_face.power
+						? levelstext[i + 2].split("\n")[0].split("/")
+						: null;
+					const oracle = pt
+						? levelstext[i + 2].substr(
+								levelstext[i + 2].indexOf("\n") + 1
+						  )
+						: levelstext[i + 2];
+					levels.push({
+						level_text: levelstext[i + 0],
+						level: levelstext[i + 1],
+						power: pt?.[0],
+						toughness: pt?.[1],
+						oracle_lines: oracle.split("\n").map(this.parse_oracle),
+						color:
+							this.frame_colors.left +
+							((1 + i / 3) * 25).toFixed(0).toString(16),
+						box_color,
+					});
+				}
+				console.log(levels);
+				return levels;
+			},
+			copyright() {
+				return (
+					this.card?.copyright ??
+					`™ & © ${new Date().getFullYear()} Wizards of the Coast`
+				);
+			},
+			colors() {
+				return this.compute_colors(this.card_face);
+			},
+			boxes_colors() {
+				return this.colors === "Vehicle"
+					? "Artifact"
+					: this.is_land // FIXME: Fixes colors for cards like 'Agadeem, the Undercrypt', but may cause problem elsewhere?
+					? this.colors.length > 2 && this.colors.length < 5
+						? "Gold"
+						: "Land"
+					: this.colors.length > 1 && this.colors.length < 5
+					? "Gold"
+					: this.colors;
+			},
+			background() {
+				const folder = this.is_planeswalker
+					? this.is_large_planeswalker
+						? "planeswalker_large_bg"
+						: "planeswalker_bg"
+					: this.is_saga
+					? "saga_bg"
+					: this.card.frame_effects?.includes("compasslanddfc") &&
+					  this.currentFace === 1
+					? "ixalan_bg"
+					: "bg";
+				return `url(${
+					new URL(
+						`../assets/img/${folder}/${
+							this.is_vehicle ? "Vehicle" : this.boxes_colors
+						}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			frame() {
+				let folder = this.is_adventure
+					? "adventure_frames"
+					: this.is_saga
+					? "saga_frames"
+					: this.is_planeswalker
+					? this.is_large_planeswalker
+						? "planeswalker_large_frames"
+						: "planeswalker_frames"
+					: this.is_mdfc
+					? "mdfc_frames"
+					: this.is_transform
+					? this.currentFace === 0
+						? "transform_frames"
+						: "transform_back_frames"
+					: "frames";
+				if (this.extended_art && !this.is_saga)
+					folder = "extended_" + folder;
+				const colors =
+					this.colors === "Artifact" &&
+					this.card_face?.colors?.length === 1
+						? this.card_face.colors[0]
+						: this.colors;
+				return `url(${
+					new URL(
+						`../assets/img/${folder}/${colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			boxes() {
+				const folder = this.is_planeswalker
+					? "planeswalker_boxes"
+					: this.is_mdfc || this.is_transform
+					? this.currentFace === 0
+						? "mdfc_boxes"
+						: "mdfc_back_boxes"
+					: this.extended_art
+					? "extended_boxes"
+					: "boxes";
+				return `url(${
+					new URL(
+						`../assets/img/${folder}/${this.boxes_colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			mid_boxes() {
+				return this.extended_art && !this.is_planeswalker
+					? `url(${
+							new URL(
+								`../assets/img/extended_boxes/${this.boxes_colors}.png`,
+								import.meta.url
+							).href
+					  })`
+					: this.boxes;
+			},
+			legendary_crown() {
+				const colors =
+					this.colors === "Artifact" &&
+					this.card_face?.colors?.length === 1
+						? this.card_face.colors[0]
+						: this.colors;
+				const folder = this.extended_art
+					? "extended_legendary_crowns"
+					: "legendary_crowns";
+				return `url(${
+					new URL(
+						`../assets/img/${folder}/${colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			pt_box() {
+				return `url(${
+					new URL(
+						`../assets/img/${
+							(this.is_mdfc || this.is_transform) &&
+							this.currentFace === 1
+								? "transform_back_pt_boxes"
+								: "pt_boxes"
+						}/${
+							this.is_vehicle ? "Vehicle" : this.boxes_colors
+						}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			saga_text_box() {
+				return `url(${
+					new URL(
+						`../assets/img/saga_textboxes/${this.boxes_colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			mdfc_icon() {
+				return `url(${
+					new URL(
+						`../assets/img/mdfc${
+							this.currentFace === 0 ? "" : "_back"
+						}_icons/${
+							this.boxes_colors === "Land"
+								? this.colors
+								: this.boxes_colors
+						}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			mdfc_hint() {
+				let colors = this.compute_colors(this.back_face);
+				if (colors.length > 1 && colors.length < 5) colors = "Gold";
+				return `url(${
+					new URL(
+						`../assets/img/mdfc${
+							this.currentFace === 0 ? "" : "_back"
+						}_hints/${colors}.png`,
+						import.meta.url
+					).href
+				})`;
+			},
+			mdfc_hint_color() {
+				return this.currentFace === 0 ? "white" : "black";
+			},
+			transform_icon() {
+				return `url(${
+					new URL(
+						`../assets/img/transform${
+							this.currentFace === 0 ? "" : "_back"
+						}_icons/${
+							this.card.frame_effects?.[0] ?? "sunmoondfc"
+						}.png` /* FIXME: Pretty sure this will break at some point */,
+						import.meta.url
+					).href
+				})`;
+			},
+			pt_box_color() {
+				return this.is_vehicle ||
+					(this.is_transform && this.currentFace === 1)
+					? "white"
+					: "black";
+			},
+			top_line_color() {
+				return this.is_mdfc
+					? this.currentFace === 0
+						? "black"
+						: "white"
+					: this.is_transform &&
+					  this.currentFace === 1 &&
+					  !this.is_planeswalker
+					? "white"
+					: "black";
+			},
+			mid_line_color() {
+				return (this.extended_art &&
+					!this.is_planeswalker &&
+					(!this.is_transform || this.currentFace === 0)) ||
+					((this.is_transform || this.is_mdfc) &&
+						this.currentFace === 1 &&
+						!this.is_planeswalker)
+					? "white"
+					: "black";
+			},
+			color_indicator() {
+				return new URL(
+					`../assets/img/color_indicators/${[
+						...this.card_face.color_indicator,
+					]
+						.sort(
+							(lhs, rhs) =>
+								"WUBRG".indexOf(lhs) - "WUBRG".indexOf(rhs)
+						)
+						.join("")}.png`,
+					import.meta.url
+				).href;
+			},
+			illustration() {
+				return `url(${
+					(this.is_adventure ? this.card : this.card_face)?.image_uris
+						?.art_crop
+				})`;
+			},
+			illustration_scale() {
+				return (
+					(this.is_adventure ? this.card : this.card_face)
+						?.illustration_scale ?? 1
+				);
+			},
+			illustration_position() {
+				const card = this.is_adventure ? this.card : this.card_face;
+				return card?.illustration_position
+					? {
+							x: card?.illustration_position.x + "mm",
+							y: card?.illustration_position.y + "mm",
+					  }
+					: { x: "0mm", y: "0mm" };
+			},
+			set_icon_uri() {
+				if (this.card.set_icon) return this.card.set_icon;
+				if (sets_with_icons.includes(this.card?.set))
+					return new URL(
+						`../assets/img/set_icons/${this.card?.set}_${
+							this.card?.rarity ?? "common"
+						}.png`,
+						import.meta.url
+					).href;
+				return null;
+			},
+			archive_frame_colors() {
+				const colors =
+					this.card_face?.color_identity ?? this.card_face?.colors;
+				if (!colors)
+					return Object.assign(
+						{
+							left: ArchiveFrameColors["Gold"],
+							right: ArchiveFrameColors["Gold"],
+						},
+						ArchiveFrameColors["Gold"]
+					);
+				return Object.assign(
+					{
+						left:
+							ArchiveFrameColors[colors[0]] ??
+							ArchiveFrameColors["Gold"],
+						right:
+							ArchiveFrameColors[
+								colors[colors.length === 1 ? 0 : 1]
+							] ?? ArchiveFrameColors["Gold"],
+					},
+					colors.length > 1 || ArchiveFrameColors[colors[0]]
+						? ArchiveFrameColors["Gold"]
+						: ArchiveFrameColors[colors[0]]
+				);
+			},
+			japanese_color() {
+				return this.card_face?.colors?.length === 1
+					? ArchiveColors[this.card_face.colors[0]]
+					: "#927c43";
+			},
+			japanese_name_color() {
+				if (this.card_face?.colors?.length === 2)
+					return `linear-gradient(to right, ${
+						ArchiveColors[this.card_face.colors[0]]
+					}, ${ArchiveColors[this.card_face.colors[1]]})`;
+				return this.japanese_color;
+			},
+			/* These don't appear in the render, great \o/ */
+			japanese_type_line_border() {
+				const c0 =
+					this.card_face?.colors?.length === 2
+						? ArchiveColors[this.card_face.colors[0]]
+						: this.japanese_color;
+				const c1 =
+					this.card_face?.colors?.length === 2
+						? ArchiveColors[this.card_face.colors[1]]
+						: c0;
+				return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-0.05 -0.05 1.1 1.1'><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='0%25'><stop offset='0%25' stop-color='${c0}' /><stop offset='100%25' stop-color='${c1}' /></linearGradient></defs><path d='M 0.2 0 c -0.1 0.125 -0.2 0.25 -0.2 0.5 c 0 0.25 0.1 0.375 0.2 0.5 l 0.6 0 c 0.1 -0.125 0.2 -0.25 0.2 -0.5 c 0 -0.25 -0.1 -0.375 -0.2 -0.5 Z' stroke='url(%23gradient)' stroke-width='0.1' fill='none'/></svg>")`.replaceAll(
+					"#",
+					"%23"
+				);
+			},
+			japanese_oracle_border() {
+				const c0 =
+					this.card_face?.colors?.length === 2
+						? ArchiveColors[this.card_face.colors[0]]
+						: this.japanese_color;
+				const c1 =
+					this.card_face?.colors?.length === 2
+						? ArchiveColors[this.card_face.colors[1]]
+						: c0;
+				return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='0%25'><stop offset='0%25' stop-color='${c0}' /><stop offset='100%25' stop-color='${c1}' /></linearGradient></defs><rect x='0' y='0' width='100' height='100' fill='url(%23gradient)' /></svg>")`.replaceAll(
+					"#",
+					"%23"
+				);
+			},
+			frame_colors() {
+				if (this.colors.length === 0 || this.colors === "Artifact")
+					return {
+						left: FrameColors["Colorless"],
+						right: FrameColors["Colorless"],
+					};
+				if (this.colors.length == 1) {
+					return {
+						left: FrameColors[this.colors[0]],
+						right: FrameColors[this.colors[0]],
+					};
+				}
+				if (this.colors.length == 2) {
+					return {
+						left: FrameColors[this.colors[0]],
+						right: FrameColors[this.colors[1]],
+					};
+				}
+				return {
+					left: FrameColors["Gold"],
+					right: FrameColors["Gold"],
+				};
+			},
+		},
+		watch: {
+			"card.oracle_text": function () {
+				this.fit_oracle_text();
+			},
+			"card.type_line": function () {
+				this.fit_type_line();
+			},
+			"card.card_faces": function () {
+				this.fit();
+			},
+		},
+	});
 </script>
 
 <style scoped>
-@font-face {
-	font-family: "Beleren";
-	src: url("../assets/fonts/beleren-bold_P1.01.ttf") format("truetype");
-}
+	@font-face {
+		font-family: "Beleren";
+		src: url("../assets/fonts/beleren-bold_P1.01.ttf") format("truetype");
+	}
 
-@font-face {
-	font-family: "Beleren Small Caps";
-	src: url("../assets/fonts/belerensmallcaps-bold.ttf") format("truetype");
-}
+	@font-face {
+		font-family: "Beleren Small Caps";
+		src: url("../assets/fonts/belerensmallcaps-bold.ttf") format("truetype");
+	}
 
-@font-face {
-	font-family: "MPlantin";
-	src: url("../assets/fonts/mplantin.eot") format("eot"),
-		url("../assets/fonts/mplantin.woff") format("woff"),
-		url("../assets/fonts/mplantin.ttf") format("truetype");
-}
+	@font-face {
+		font-family: "MPlantin";
+		src: url("../assets/fonts/mplantin.eot") format("eot"),
+			url("../assets/fonts/mplantin.woff") format("woff"),
+			url("../assets/fonts/mplantin.ttf") format("truetype");
+	}
 
-@font-face {
-	font-family: "MPlantin-Italic";
-	src: url("../assets/fonts/MPlantin-Italic.ttf") format("truetype");
-	font-style: italic;
-}
+	@font-face {
+		font-family: "MPlantin-Italic";
+		src: url("../assets/fonts/MPlantin-Italic.ttf") format("truetype");
+		font-style: italic;
+	}
 
-@font-face {
-	font-family: "Relay Medium";
-	src: url("../assets/fonts/relay-medium.ttf") format("truetype");
-}
+	@font-face {
+		font-family: "Relay Medium";
+		src: url("../assets/fonts/relay-medium.ttf") format("truetype");
+	}
 
-@font-face {
-	font-family: "Relay Wide Medium";
-	src: url("../assets/fonts/relaywide-medium.ttf") format("truetype");
-}
+	@font-face {
+		font-family: "Relay Wide Medium";
+		src: url("../assets/fonts/relaywide-medium.ttf") format("truetype");
+	}
 
-.mtg-card {
-	position: relative;
-	width: 63.5mm;
-	height: 88.9mm;
-	border-radius: 3mm;
-	padding: 2.25mm;
-	background-color: black;
+	.mtg-card {
+		position: relative;
+		width: 63.5mm;
+		height: 88.9mm;
+		border-radius: 3mm;
+		padding: 2.25mm;
+		background-color: black;
 
-	font-family: Beleren;
-	font-size: 3mm;
-	text-rendering: geometricPrecision;
+		font-family: Beleren;
+		font-size: 3mm;
+		text-rendering: geometricPrecision;
 
-	box-sizing: border-box;
-}
+		box-sizing: border-box;
+	}
 
-.inner-background {
-	position: absolute;
-	left: calc((63.5mm - 58.5mm) / 2);
-	width: 58.5mm;
-	height: 78mm;
-	margin: auto;
-	border-radius: 0.75mm 0.75mm 4mm 4mm;
-	overflow-y: visible;
-	background-image: v-bind(background);
-	background-size: 100%;
-	padding-top: 1.1mm;
-	background-repeat: no-repeat;
+	.inner-background {
+		position: absolute;
+		left: calc((63.5mm - 58.5mm) / 2);
+		width: 58.5mm;
+		height: 78mm;
+		margin: auto;
+		border-radius: 0.75mm 0.75mm 4mm 4mm;
+		overflow-y: visible;
+		background-image: v-bind(background);
+		background-size: 100%;
+		padding-top: 1.1mm;
+		background-repeat: no-repeat;
 
-	pointer-events: none;
-	user-select: none;
-}
+		pointer-events: none;
+		user-select: none;
+	}
 
-.inner-frame {
-	position: absolute;
-	margin: auto;
-	width: calc(58.5mm * 0.98);
-	top: 3.5mm;
-	left: calc((63.5mm - 58.5mm * 0.98) / 2);
-	height: 79mm;
-	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black)
-		drop-shadow(0.1mm -0.2mm 0.1mm #ffffffa0);
-	background-image: v-bind(frame);
-	background-size: 100%;
-	background-repeat: no-repeat;
+	.inner-frame {
+		position: absolute;
+		margin: auto;
+		width: calc(58.5mm * 0.98);
+		top: 3.5mm;
+		left: calc((63.5mm - 58.5mm * 0.98) / 2);
+		height: 79mm;
+		filter: drop-shadow(-0.25mm 0.25mm 0.15mm black)
+			drop-shadow(0.1mm -0.2mm 0.1mm #ffffffa0);
+		background-image: v-bind(frame);
+		background-size: 100%;
+		background-repeat: no-repeat;
 
-	pointer-events: none;
-	user-select: none;
-}
+		pointer-events: none;
+		user-select: none;
+	}
 
-.has-legendary-crown .inner-background {
-	background-position: 0 -1.3mm;
-	margin-top: 1.3mm;
-}
+	.has-legendary-crown .inner-background {
+		background-position: 0 -1.3mm;
+		margin-top: 1.3mm;
+	}
 
-.has-legendary-crown .inner-frame {
-	filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
-}
+	.has-legendary-crown .inner-frame {
+		filter: drop-shadow(-0.25mm 0.25mm 0.15mm black);
+	}
 
-.legendary-crown {
-	position: absolute;
-	left: 1mm;
-	top: 1.5mm;
-	width: 61.1mm;
-	height: 14mm;
-	background-image: v-bind(legendary_crown);
-	background-size: 100%;
-	background-repeat: no-repeat;
-}
+	.legendary-crown {
+		position: absolute;
+		left: 1mm;
+		top: 1.5mm;
+		width: 61.1mm;
+		height: 14mm;
+		background-image: v-bind(legendary_crown);
+		background-size: 100%;
+		background-repeat: no-repeat;
+	}
 
-.extended-art .legendary-crown,
-.full-art .legendary-crown {
-	top: 1.2mm;
-}
+	.extended-art .legendary-crown,
+	.full-art .legendary-crown {
+		top: 1.2mm;
+	}
 
-.top-line,
-.mid-line {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: 5.1mm;
-	width: 53.8mm;
-	margin: auto;
-	padding: 0 1mm 0 1.5mm;
-	background-image: v-bind(boxes);
-	background-size: 100%;
+	.top-line,
+	.mid-line {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 5.1mm;
+		width: 53.8mm;
+		margin: auto;
+		padding: 0 1mm 0 1.5mm;
+		background-image: v-bind(boxes);
+		background-size: 100%;
 
-	pointer-events: initial;
-	user-select: initial;
-}
+		pointer-events: initial;
+		user-select: initial;
+	}
 
-.top-line {
-	position: absolute;
-	top: 4mm;
-	left: 0;
-	right: 0;
-	color: v-bind(top_line_color);
-	gap: 1.5mm;
-}
+	.top-line {
+		position: absolute;
+		top: 4mm;
+		left: 0;
+		right: 0;
+		color: v-bind(top_line_color);
+		gap: 1.5mm;
+	}
 
-.name {
-	font-size: 9.454pt;
-	white-space: nowrap;
-	letter-spacing: 0.034mm;
-}
+	.name {
+		font-size: 9.454pt;
+		white-space: nowrap;
+		letter-spacing: 0.034mm;
+	}
 
-.original-name-container {
-	position: absolute;
-	bottom: -0.05mm;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 54mm;
-}
+	.original-name-container {
+		position: absolute;
+		bottom: -0.05mm;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 54mm;
+	}
 
-.original-name-bg {
-	position: absolute;
-}
+	.original-name-bg {
+		position: absolute;
+	}
 
-.original-name-bg-path {
-	stroke: #000000;
-	stroke-width: 0.01;
-	fill: url(#gradient);
-}
+	.original-name-bg-path {
+		stroke: #000000;
+		stroke-width: 0.01;
+		fill: url(#gradient);
+	}
 
-.original-name-left {
-	stop-color: v-bind(frame_colors.left);
-}
+	.original-name-left {
+		stop-color: v-bind(frame_colors.left);
+	}
 
-.original-name-right {
-	stop-color: v-bind(frame_colors.right);
-}
+	.original-name-right {
+		stop-color: v-bind(frame_colors.right);
+	}
 
-.original-name {
-	position: absolute;
-	width: 100%;
-	color: #fff;
-	font-size: 2.1mm;
-	letter-spacing: 0.1mm;
-	font-family: MPlatin-Italtic;
-	font-style: italic;
-	line-height: 3.1mm;
-	text-align: center;
-}
+	.original-name {
+		position: absolute;
+		width: 100%;
+		color: #fff;
+		font-size: 2.1mm;
+		letter-spacing: 0.1mm;
+		font-family: MPlatin-Italtic;
+		font-style: italic;
+		line-height: 3.1mm;
+		text-align: center;
+	}
 
-.mana-cost {
-	font-size: 6.4pt;
-	display: flex;
-	gap: 0.24mm;
-	margin-top: -0.4mm;
-}
+	.mana-cost {
+		font-size: 6.4pt;
+		display: flex;
+		gap: 0.24mm;
+		margin-top: -0.4mm;
+	}
 
-.mana-cost .ms,
-.adventure-mana-cost .ms {
-	width: 1.35em;
-	border-radius: 50%;
-	box-shadow: -0.2mm 0.2mm 0 rgba(0, 0, 0, 0.85);
-}
+	.mana-cost .ms,
+	.adventure-mana-cost .ms {
+		width: 1.35em;
+		border-radius: 50%;
+		box-shadow: -0.2mm 0.2mm 0 rgba(0, 0, 0, 0.85);
+	}
 
-.illustration {
-	position: absolute;
-	top: 9.55mm;
-	left: 4.4mm;
-	width: 54.7mm;
-	height: 39.9mm;
-	margin: auto;
-	background-image: v-bind(illustration);
-	background-color: yellow;
-	background-size: calc(v-bind(illustration_scale) * 100%);
-	background-position: v-bind(illustration_position.x)
-		v-bind(illustration_position.y);
-	background-repeat: no-repeat;
-	cursor: grab;
-}
-
-.mtg-card:not(.full-art):not(.extended-art):not(.compasslanddfc.back)
 	.illustration {
-	box-shadow: inset 0.2mm -0.2mm 0.2mm black;
-}
-
-.extended-art .illustration {
-	left: 0;
-	top: 7mm;
-	width: 100%;
-	height: 48mm;
-	background-color: black;
-	mask-image: linear-gradient(
-		rgba(0, 0, 0, 0) 0,
-		rgba(0, 0, 0, 1) 6%,
-		rgba(0, 0, 0, 1) 94%,
-		rgba(0, 0, 0, 0) 100%
-	);
-}
-
-.mid-line {
-	position: absolute;
-	top: 49.9mm;
-	left: 0;
-	right: 0;
-	background-position: 0 bottom;
-	gap: 0.6mm;
-	color: v-bind(mid_line_color);
-	background-image: v-bind(mid_boxes);
-}
-
-.color-indicator {
-	width: 2.8mm;
-	margin-left: -0.5mm;
-}
-
-.type-line {
-	font-size: 8pt;
-	height: 5mm;
-	line-height: 5mm;
-	flex-grow: 1;
-	white-space: nowrap;
-	margin-top: -0.2mm;
-}
-
-.set-icon-container {
-	height: 3.9mm;
-	width: 7mm;
-	margin-right: 0.3mm;
-	display: flex;
-	justify-content: right;
-	align-items: center;
-	margin-top: -0.2mm;
-}
-
-.set-icon {
-	max-height: 100%;
-	max-width: 100%;
-}
-
-.oracle {
-	font-family: MPlantin;
-	font-size: 8pt;
-	line-height: 1em;
-
-	pointer-events: initial;
-	user-select: initial;
-}
-
-.oracle:deep(.ms) {
-	width: 0.8em;
-	margin: 0 0.07em;
-	vertical-align: baseline;
-}
-
-.normal-oracle {
-	position: absolute;
-	top: 55.6mm;
-	left: 0;
-	right: 0;
-
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.8mm;
-
-	width: 53.8mm;
-	height: 26mm;
-	margin: auto;
-}
-
-.levelup-oracle {
-	display: flex;
-	flex-direction: column;
-	gap: 0;
-
-	left: 0mm;
-	width: 54.6mm;
-}
-
-.oracle-levelup-inner {
-	position: relative;
-	min-height: 2em;
-	
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.8mm;
-
-	flex-basis: 33%;
-	flex-grow: 1;
-}
-
-.oracle-levelup-inner .level-box {
-	position: absolute;
-	left: -1.6mm;
-	top: 50%;
-	transform: translateY(-50%);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	font-family: Beleren;
-
-	padding: 1mm;
-	padding-top: 1.2mm;
-	padding-left: 1.6mm;
-	gap: 0.2mm;
-}
-
-.oracle-levelup-inner .level-box div:nth-child(2) {
-	text-transform: uppercase;
-	font-size: 1.5mm;
-	height: 1.6mm;
-}
-
-.oracle-levelup-inner .oracle-text.has-level {
-	margin-left: 7mm;
-}
-.oracle-levelup-inner .oracle-text.has-pt {
-	margin-right: 9mm;
-}
-
-.oracle-levelup-inner .pt-box {
-	position: absolute;
-	right: -1.6mm;
-	top: 50%;
-	transform: translateY(calc(-50% + 0.2mm));
-}
-
-/* Ignore naturally overflowing elements when scaling text */
-.fitting .oracle-levelup-inner .level-box,
-.fitting .oracle-levelup-inner .pt-box { display:none; }
-
-/* Workaround the fact that adventure frames have a sligthly larger ratio */
-.adventure .inner-frame {
-	width: 57.4mm;
-	left: 2.9mm;
-}
-
-.adventure .mid-line {
-	top: 49.7mm;
-}
-
-.adventure-main-oracle {
-	position: absolute;
-	top: 54.9mm;
-	left: 33mm;
-	width: 25.5mm;
-	height: 25mm;
-
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.8mm;
-}
-
-.adventure-part {
-	position: absolute;
-	top: 55.3mm;
-	left: 5mm;
-	width: 26mm;
-	height: 25.2mm;
-
-	display: flex;
-	align-items: stretch;
-	flex-direction: column;
-}
-
-.adventure-top-line,
-.adventure-type {
-	color: white;
-	height: 4.2mm;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: 7pt;
-	line-height: 7pt;
-	flex-shrink: 0;
-	margin-left: 0.6mm;
-}
-
-.adventure-mana-cost {
-	display: flex;
-	font-size: 5pt;
-	gap: 0.3mm;
-	margin-top: -0.4mm;
-	margin-right: 0.5mm;
-}
-
-.adventure-oracle {
-	flex-grow: 1;
-	margin: 0.8mm 0 0.2mm 0;
-
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.8mm;
-
-	font-family: MPlantin;
-	font-size: 8pt;
-	line-height: 1em;
-
-	pointer-events: initial;
-	user-select: initial;
-}
-
-/************** Saga *************/
-
-.saga .inner-background {
-	top: 2.5mm;
-}
-
-.saga .inner-frame {
-	top: 3.66mm;
-	margin: 0;
-	width: 58.5mm;
-	margin-left: -1mm;
-}
-
-.saga .saga-frame {
-	position: absolute;
-	top: 0;
-	left: -2.8mm;
-	width: 10mm;
-	height: 100%;
-	background-image: v-bind(frame);
-	background-size: 58.5mm;
-	background-position: 0 -6.3mm;
-	background-repeat: no-repeat;
-	pointer-events: none;
-}
-
-.saga .mid-line,
-.saga .top-line {
-	top: 4.2mm;
-	left: 0.1mm;
-}
-
-.saga .mid-line {
-	top: 75.2mm;
-}
-
-.saga .illustration {
-	width: 27.3mm;
-	height: 64.3mm;
-	top: 10mm;
-	left: 31.8mm;
-	outline-offset: 0;
-}
-
-.saga-oracle {
-	position: absolute;
-	left: 4.9mm;
-	top: 9.95mm;
-	width: 26.6mm;
-	height: 64.3mm;
-	background-size: cover;
-	background-image: v-bind(saga_text_box);
-	background-repeat: no-repeat;
-}
-
-.saga-reminder {
-	height: 13.3mm;
-	font-size: 7.3pt;
-	line-height: 7.3pt;
-	padding: 0.5mm 0.7mm 2.4mm 0.7mm;
-	display: flex;
-	align-items: center;
-}
-
-.saga-steps {
-	display: flex;
-	align-items: stretch;
-	justify-content: stretch;
-	flex-direction: column;
-	gap: 0.8mm;
-	padding-left: 2.15mm;
-	height: 47.5mm;
-}
-
-.saga-step {
-	position: relative;
-	display: flex;
-	justify-content: center;
-	flex-direction: column;
-	box-shadow: 0 -0.35mm 0.5mm #00000020;
-	padding: 1.35mm;
-	flex-grow: 1;
-	line-height: 1em;
-}
-
-.saga-step-number {
-	position: absolute;
-	width: 5mm;
-	top: 50%;
-	transform: translateY(-50%);
-	left: -4.65mm;
-	z-index: 4;
-}
-
-.saga-step-number img {
-	width: 5mm;
-}
-
-/* Planeswalkers */
-
-.planeswalker .inner-frame {
-	top: 2.36mm;
-	left: 3mm;
-	width: calc(58mm - 2px);
-	height: 80mm;
-}
-
-.planeswalker .top-line,
-.planeswalker .mid-line {
-	width: 53.75mm;
-}
-
-.planeswalker .top-line {
-	top: 3mm;
-}
-
-.planeswalker .mid-line {
-	top: 49.6mm;
-}
-
-.planeswalker-large .mid-line {
-	top: 43.6mm;
-}
-
-.planeswalker .illustration {
-	position: absolute;
-	left: 4mm;
-	top: 8.2mm;
-	width: 55mm;
-	height: 39mm;
-	/*border-radius: 2mm/50%;*/
-}
-
-.planeswalker .illustration.behind-textbox {
-	background-color: white;
-	height: 73mm;
-	z-index: -1;
-}
-
-.planeswalker.extended-art .illustration.behind-textbox {
-	top: 6mm;
-	height: 75mm;
-	mask-image: linear-gradient(
-		rgba(0, 0, 0, 0) 0,
-		rgba(0, 0, 0, 1) 3%,
-		rgba(0, 0, 0, 1) 97%,
-		rgba(0, 0, 0, 0) 100%
-	);
-	left: 0;
-	right: 0;
-	width: 100%;
-}
-
-.planeswalker:not(.full-art):not(.extended-art) .illustration.behind-textbox {
-	border-radius: 2mm / calc(39mm / 2);
-	border-bottom-left-radius: 4mm 3mm;
-	border-bottom-right-radius: 2mm;
-}
-
-.planeswalker.extended-art .illustration,
-.planeswalker.full-art .illustration {
-	z-index: auto;
-}
-
-.planeswalker.full-art .illustration,
-.full-art .illustration {
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	background-color: initial;
-}
-
-.planeswalker-oracle-bg {
-	position: absolute;
-	left: 7.4mm;
-	top: 55.6mm;
-	width: 51.2mm;
-	height: 25.35mm;
-	background-color: #ffffff90;
-	border-radius: 0.9mm;
-	border-bottom-left-radius: 8mm 2.1mm;
-	border-bottom-right-radius: 8mm 2.1mm;
-	box-shadow: inset -0.2mm -0.2mm 0.2mm #00000080,
-		inset 0.2mm 0.2mm 0.2mm #00000080;
-}
-
-.planeswalker-large .planeswalker-oracle-bg {
-	top: 49.5mm;
-	height: 31.45mm;
-}
-
-.planeswalker-oracle {
-	position: absolute;
-	left: 2.8mm;
-	top: 55.7mm;
-
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.4mm;
-
-	width: 49.5mm;
-	height: 24mm;
-
-	padding: 0.5mm;
-	padding-left: 5.5mm;
-	padding-bottom: 1mm;
-}
-
-.planeswalker-large .planeswalker-oracle {
-	top: 49mm;
-	height: 31.04mm;
-}
-
-.planeswalker-ability {
-	position: relative;
-	flex-shrink: 0;
-	padding: 0.4mm 0.4em;
-	z-index: 0;
-}
-
-.planeswalker-ability:nth-child(2n + 1):before {
-	content: "";
-	position: absolute;
-	left: -0.6mm;
-	right: -0.6mm;
-	top: -1.2mm;
-	bottom: -1.2mm;
-	background-color: #fff6;
-	mask-image: linear-gradient(
-			transparent,
-			transparent 1.2mm,
-			black 1.2mm,
-			black calc(100% - 1.2mm),
-			transparent calc(100% - 1.2mm),
-			transparent
-		),
-		url("../assets/img/planeswalker_ability_top.png"),
-		url("../assets/img/planeswalker_ability_bottom.png");
-	mask-size: 100%, 100%, 100%;
-	mask-position: 0 0, 0 0, 0 100%;
-	mask-repeat: repeat-x;
-	mask-composite: add;
-	z-index: -1;
-}
-
-.planeswalker-ability-with-cost:nth-child(2n + 1):before {
-	left: -3.1mm;
-	right: -0.6mm;
-}
-
-.planeswalker-ability:nth-child(1):before {
-	border-top-left-radius: 1mm;
-	border-top-right-radius: 1mm;
-	mask-image: linear-gradient(
-			black calc(100% - 1.2mm),
-			transparent calc(100% - 1.2mm),
-			transparent
-		),
-		url("../assets/img/planeswalker_ability_bottom.png");
-	mask-size: 100%, 100%;
-	mask-position: 0 0, 0 100%;
-	mask-composite: add;
-	top: -0.1mm;
-}
-
-.planeswalker:not(.planeswalker-large)
-	.planeswalker-ability:nth-child(3):before {
-	mask-image: linear-gradient(transparent, transparent 1.2mm, black 1.2mm),
-		url("../assets/img/planeswalker_ability_top.png");
-	mask-size: 100%, 100%;
-	mask-position: 0 0, 0 0;
-	bottom: -1mm;
-	border-bottom-left-radius: 10mm 2mm;
-}
-
-.planeswalker-ability-with-cost {
-	margin-left: 2.5mm;
-	min-height: 4.8mm;
-	flex-grow: 1;
-	display: flex;
-	align-items: center;
-	padding: 0.4mm 0;
-}
-
-.planeswalker-ability-cost {
-	position: absolute;
-	left: -8.5mm;
-	top: 50%;
-	transform: translateY(-50%);
-	background-size: 100%;
-	background-repeat: no-repeat;
-	width: 7mm;
-	color: white;
-	font-size: 7pt;
-	text-align: center;
-	font-family: Beleren;
-}
-
-.planeswalker-ability-cost-plus {
-	background-image: url("../assets/img/planeswalker/LoyaltyPlus.png");
-	height: 4.7mm;
-	line-height: 5mm;
-}
-
-.planeswalker-ability-cost-zero {
-	background-image: url("../assets/img/planeswalker/LoyaltyZero.png");
-	height: 4.2mm;
-	line-height: 3.8mm;
-}
-
-.planeswalker-ability-cost-minus {
-	background-image: url("../assets/img/planeswalker/LoyaltyMinus.png");
-	height: 4.7mm;
-	line-height: 3.8mm;
-}
-
-.planeswalker-ability-cost::after {
-	content: ":";
-	position: absolute;
-	right: -0.7mm;
-	top: 50%;
-	transform: translateY(-50%);
-	color: black;
-	font-family: MPlantin;
-	font-size: 8pt;
-}
-
-.planeswalker-ability-cost-minus::after {
-	top: 1.7mm;
-}
-
-.planeswalker-ability-cost-zero::after {
-	top: 1.7mm;
-}
-
-.planeswalker .footer {
-	top: 83mm;
-}
-
-.oracle-inner,
-.oracle-flavor,
-.oracle-reminder {
-	margin: 0 0.44mm;
-}
-
-.oracle-flavor hr {
-	border: 0;
-	height: 0.25mm;
-	background-image: linear-gradient(
-		to right,
-		rgba(0, 0, 0, 0),
-		rgba(0, 0, 0, 0.2) 20%,
-		rgba(0, 0, 0, 0.2) 80%,
-		rgba(0, 0, 0, 0)
-	);
-	margin-top: 0.2mm;
-	margin-bottom: 0.8mm;
-}
-
-.oracle-flavor,
-:deep(.oracle-reminder) {
-	font-family: MPlantin-Italic;
-	font-style: italic;
-}
-
-.pt-box {
-	position: absolute;
-	right: 3mm;
-	bottom: 3.8mm;
-	width: 11.58mm;
-	height: 6.2mm;
-	background-image: v-bind(pt_box);
-	background-size: 100%;
-	background-repeat: no-repeat;
-
-	text-align: center;
-	line-height: 5.5mm;
-	font-family: Beleren;
-	font-size: 9.6pt;
-	color: v-bind(pt_box_color);
-
-	pointer-events: initial;
-	user-select: initial;
-
-	z-index: 3;
-}
-
-.loyalty {
-	position: absolute;
-	right: 3mm;
-	bottom: 5mm;
-	width: 9.8mm;
-	height: 5.8mm;
-	background-image: url("../assets/img/planeswalker/Loyalty.png");
-	background-size: 100% 100%;
-	background-repeat: no-repeat;
-
-	text-align: center;
-	line-height: 6.4mm;
-	font-size: 9.5pt;
-	color: white;
-
-	pointer-events: initial;
-	user-select: initial;
-	z-index: 3;
-}
-
-.footer {
-	position: absolute;
-	top: 82.91mm;
-	left: 50%;
-	transform: translateX(-50%);
-
-	width: 55mm;
-	margin: auto;
-
-	display: flex;
-	justify-content: space-between;
-	color: white;
-	font-family: Relay Wide Medium;
-	font-size: 3.9pt;
-
-	z-index: 3;
-}
-
-.footer-left > div,
-.footer-right > div {
-	height: 1.35mm;
-}
-
-.collector-number {
-	letter-spacing: 0.2mm;
-}
-
-.copyright {
-	font-family: MPlantin;
-	margin-top: 0.2mm; /* FIXME: Workaround a weird upshift using this font */
-	font-size: 4pt;
-}
-
-.copyright div {
-	min-height: 2mm;
-}
-
-.set {
-	letter-spacing: 0.23mm;
-}
-
-.language {
-	letter-spacing: 0.15mm;
-}
-
-.artist-icon {
-	font-family: NDPMTG;
-}
-
-.artist-name {
-	font-family: Beleren Small Caps;
-	font-size: 4.5pt;
-}
-
-.flip-icon {
-	position: absolute;
-	bottom: -12mm;
-	left: 50%;
-	font-size: 10mm;
-	user-select: none;
-	cursor: pointer;
-	transform: translateX(-50%) rotateX(60deg);
-}
-
-.mdfc:not(.planeswalker) .inner-frame {
-	width: 58.8mm;
-	left: 1.6mm;
-}
-
-.mdfc .top-line .name {
-	padding-left: 5mm;
-}
-
-.mdfc.legendary:not(.planeswalker) .inner-frame {
-	/* Workdaround to hide frame behind the legendary crown */
-	border-top-left-radius: 10mm;
-}
-
-.mdfc .normal-oracle {
-	height: 22.6mm;
-	left: 0;
-}
-
-.mdfc .planeswalker-oracle {
-	height: 22mm;
-}
-
-.mdfc.planeswalker-large .planeswalker-oracle {
-	height: 29mm;
-}
-
-.mdfc-icon {
-	position: absolute;
-	top: 4.1mm;
-	left: 2.5mm;
-	width: 5.8mm;
-	aspect-ratio: calc(294 / 238);
-	background-image: v-bind(mdfc_icon);
-	background-size: 100%;
-	z-index: 3;
-}
-
-.planeswalker .mdfc-icon {
-	top: 3mm;
-}
-
-.mdfc-hint {
-	position: absolute;
-	bottom: 6.2mm;
-	left: 1.6mm;
-	width: 28mm;
-	height: 3.9mm;
-
-	display: flex;
-	justify-content: space-between;
-	align-content: stretch;
-	align-items: center;
-
-	font-size: 5pt;
-	color: v-bind(mdfc_hint_color);
-	background-image: v-bind(mdfc_hint);
-	background-size: 100%;
-
-	padding: 0 2.6mm;
-	padding-top: 0.1mm; /* FIXME: Shouldn't be needed? */
-
-	box-sizing: border-box;
-	z-index: 3;
-}
-
-.planeswalker .mdfc-hint {
-	bottom: 6mm;
-}
-
-.mdfc-hint span {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	flex-shrink: 1;
-	max-width: 20mm;
-}
-
-.mdfc-hint .mana-cost {
-	font-size: 4pt;
-}
-
-/* Transform */
-
-.transform:not(.back):not(.planeswalker) .inner-frame {
-	left: 2.9mm;
-	width: 58.5mm;
-}
-
-.transform:not(.planeswalker) .inner-frame {
-	top: 3.7mm;
-	left: 2.9mm;
-	width: 57.4mm;
-	height: 78.1mm;
-	background-size: 100% 100%;
-}
-
-.transform:not(.planeswalker) .top-line {
-	top: 4.2mm;
-}
-
-.transform .top-line .name {
-	padding-left: 5.2mm;
-}
-
-.transform-icon {
-	position: absolute;
-	top: 4mm;
-	left: 3.5mm;
-	width: 5.4mm;
-	aspect-ratio: 1;
-	border-radius: 50%;
-	border: 0.02mm black solid; /* Fixme: Border is too thick on renders */
-	box-sizing: border-box;
-	background-color: white;
-	background-image: v-bind(transform_icon);
-	background-size: 4.7mm;
-	background-position: center center;
-	background-repeat: no-repeat;
-	z-index: 3;
-}
-
-.planeswalker .transform-icon {
-	top: 3mm;
-}
-
-.transform-hint {
-	position: absolute;
-	bottom: 11.2mm;
-	right: 5.2mm;
-	z-index: 3;
-	font-family: Beleren;
-	font-size: 6.8pt;
-	color: #666;
-}
-
-/* Ixalan maps */
-
-.compasslanddfc.back .inner-frame {
-	background-image: none;
-	filter: none;
-}
-
-.compasslanddfc.back .name {
-	font-family: Beleren Small Caps;
-	padding: 0;
-	margin: 0;
-}
-
-.compasslanddfc.back .illustration {
-	top: 9.2mm;
-	left: 3mm;
-	right: 3mm;
-	width: auto;
-	height: 40mm;
-	z-index: -1;
-}
-
-.compasslanddfc.back .top-line,
-.compasslanddfc.back .mid-line {
-	background-image: none;
-	justify-content: center;
-	margin: 0;
-	padding: 0;
-	color: black;
-	left: 0;
-	right: 0;
-	width: 100%;
-}
-
-.compasslanddfc.back .type-line {
-	text-align: center;
-}
-
-.compasslanddfc.back .oracle {
-	top: 55.9mm;
-	left: 7mm;
-	right: 7.6mm;
-	bottom: 10mm;
-	width: auto;
-	height: auto;
-}
-
-.compasslanddfc.back .set-icon-container {
-	position: absolute;
-	top: -40.8mm;
-	left: 50%;
-	transform: translate(-50%);
-	justify-content: center;
-}
-
-.compasslanddfc.back .transform-icon {
-	display: none; /* Embeded in the background */
-}
-
-.archive .inner-frame {
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	filter: none;
-	background: none;
-
-	--primary: v-bind(archive_frame_colors.primary);
-	--lighter: v-bind(archive_frame_colors.lighter);
-	--darker: v-bind(archive_frame_colors.darker);
-	--left-primary: v-bind(archive_frame_colors.left.primary);
-	--left-lighter: v-bind(archive_frame_colors.left.lighter);
-	--left-darker: v-bind(archive_frame_colors.left.darker);
-	--right-primary: v-bind(archive_frame_colors.right.primary);
-	--right-lighter: v-bind(archive_frame_colors.right.lighter);
-	--right-darker: v-bind(archive_frame_colors.right.darker);
-}
-
-.archive .inner-frame svg {
-	width: 100%;
-}
-
-.archive .top-line,
-.archive .mid-line,
-.archive .oracle {
-	background-image: none;
-	color: #222;
-}
-
-.archive .top-line .mana-cost .ms {
-	width: 3.6mm;
-	opacity: 0.8;
-}
-
-.archive .top-line .mana-cost .ms-shadow,
-.japanese-archive .top-line .mana-cost .ms-shadow {
-	box-shadow: initial;
-}
-
-/* Japanse Mystical Archive */
-
-.japanese-archive .inner-frame,
-.japanese-archive .top-line,
-.japanese-archive .mid-line {
-	background-image: none;
-}
-
-.japanese-archive .legendary-crown {
-	display: none;
-}
-
-.japanese-archive .name {
-	background-color: v-bind(japanese_color);
-	background-image: v-bind(japanese_name_color);
-	color: #fff;
-	padding: 1mm 2mm;
-	border-radius: 1.5mm;
-	outline-style: solid;
-	outline-color: v-bind(japanese_color);
-	outline-width: 0.6mm;
-	outline-offset: 0.4mm;
-}
-
-.japanese-archive .top-line .mana-cost .ms {
-	width: 4.2mm;
-}
-
-.japanese-archive .type-line,
-.japanese-archive .oracle {
-	background-color: #ffffffa0;
-	border: 0.22mm solid v-bind(japanese_color); /* FIXME: Should be a gradient when multicolored */
-}
-
-.japanese-archive .oracle {
-	outline: #0005;
-	outline-width: 0.1mm;
-	outline-offset: -0.6mm;
-	outline-style: solid;
-	padding: 0.4mm 0.8mm;
-	box-sizing: border-box;
-
-	border-image-source: v-bind(japanese_oracle_border);
-	border-image-slice: 10%;
-	border-image-width: 0.22mm;
-	border-image-repeat: round;
-}
-
-.japanese-archive .type-line {
-	border-radius: 1mm/50%;
-	position: absolute;
-	left: 0.4mm;
-	padding: 0 3mm;
-	height: 4mm;
-	line-height: 4mm;
-	max-width: 40mm;
-
-	border-image-source: v-bind(japanese_type_line_border);
-	border-image-slice: 50% 50%;
-	border-image-width: 50% 1.5mm;
-}
-
-.japanese-archive .set-icon-container {
-	position: absolute;
-	right: 0;
-}
-
-.full-footer .illustration,
-.japanese-archive .illustration {
-	background-color: #ffffff;
-	clip-path: url(#full-art-clip-path);
-}
-
-.full-footer.planeswalker .illustration {
-	clip-path: url(#full-art-planeswalker-clip-path);
-}
-
-/* Extend art as much as possible when adding a bordering while rendering */
-
-.rendering.extended-art .illustration {
-	width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
-	background-size: calc(
-		v-bind(illustration_scale) *
-			(100% - 2mm * v-bind(renderMargin) * v-bind(scale))
-	);
-	background-position: calc(
-			v-bind(illustration_position.x) + 1mm * v-bind(renderMargin) *
-				v-bind(scale)
-		)
-		calc(v-bind(illustration_position.y));
-	left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
-	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
-}
-
-.rendering.full-art:not(.full-footer):not(.japanese-archive) .illustration {
-	width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
-	height: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
-	background-size: calc(
-		v-bind(illustration_scale) *
-			(100% - 2mm * v-bind(renderMargin) * v-bind(scale))
-	);
-	background-position: calc(
-			v-bind(illustration_position.x) + 1mm * v-bind(renderMargin) *
-				v-bind(scale)
-		)
-		calc(
-			v-bind(illustration_position.y) + 1mm * v-bind(renderMargin) *
-				v-bind(scale)
+		position: absolute;
+		top: 9.55mm;
+		left: 4.4mm;
+		width: 54.7mm;
+		height: 39.9mm;
+		margin: auto;
+		background-image: v-bind(illustration);
+		background-color: yellow;
+		background-size: calc(v-bind(illustration_scale) * 100%);
+		background-position: v-bind(illustration_position.x)
+			v-bind(illustration_position.y);
+		background-repeat: no-repeat;
+		cursor: grab;
+	}
+
+	.mtg-card:not(.full-art):not(.extended-art):not(.compasslanddfc.back)
+		.illustration {
+		box-shadow: inset 0.2mm -0.2mm 0.2mm black;
+	}
+
+	.extended-art .illustration {
+		left: 0;
+		top: 7mm;
+		width: 100%;
+		height: 48mm;
+		background-color: black;
+		mask-image: linear-gradient(
+			rgba(0, 0, 0, 0) 0,
+			rgba(0, 0, 0, 1) 6%,
+			rgba(0, 0, 0, 1) 94%,
+			rgba(0, 0, 0, 0) 100%
 		);
-	top: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
-	bottom: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
-	left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
-	right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
-}
+	}
 
-/* Debug */
+	.mid-line {
+		position: absolute;
+		top: 49.9mm;
+		left: 0;
+		right: 0;
+		background-position: 0 bottom;
+		gap: 0.6mm;
+		color: v-bind(mid_line_color);
+		background-image: v-bind(mid_boxes);
+	}
 
-.debug-overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 4;
-	width: 63.5mm;
-	height: 100%;
-	opacity: v-bind(debug_opacity);
-}
+	.color-indicator {
+		width: 2.8mm;
+		margin-left: -0.5mm;
+	}
 
-.debug-overlay:hover {
-	opacity: 1;
-}
+	.type-line {
+		font-size: 8pt;
+		height: 5mm;
+		line-height: 5mm;
+		flex-grow: 1;
+		white-space: nowrap;
+		margin-top: -0.2mm;
+	}
 
-.debug-overlay > div {
-	overflow: hidden;
-	position: relative;
-	pointer-events: none;
-}
+	.set-icon-container {
+		height: 3.9mm;
+		width: 7mm;
+		margin-right: 0.3mm;
+		display: flex;
+		justify-content: right;
+		align-items: center;
+		margin-top: -0.2mm;
+	}
 
-.debug-overlay > div:after {
-	content: "";
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 0.5px;
-	height: 100%;
-	background-color: #0008;
-}
+	.set-icon {
+		max-height: 100%;
+		max-width: 100%;
+	}
 
-.debug-overlay > div > img {
-	width: 63.5mm;
-}
+	.oracle {
+		font-family: MPlantin;
+		font-size: 8pt;
+		line-height: 1em;
 
-.debug-controls {
-	position: absolute;
-	bottom: -4em;
-}
+		pointer-events: initial;
+		user-select: initial;
+	}
+
+	.oracle:deep(.ms) {
+		width: 0.8em;
+		margin: 0 0.07em;
+		vertical-align: baseline;
+	}
+
+	.normal-oracle {
+		position: absolute;
+		top: 55.6mm;
+		left: 0;
+		right: 0;
+
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+		flex-direction: column;
+		gap: 0.8mm;
+
+		width: 53.8mm;
+		height: 26mm;
+		margin: auto;
+	}
+
+	.levelup-oracle {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+
+		left: 0mm;
+		width: 54.6mm;
+	}
+
+	.oracle-levelup-inner {
+		position: relative;
+		min-height: 2em;
+
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+		flex-direction: column;
+		gap: 0.8mm;
+
+		flex-basis: 33%;
+		flex-grow: 1;
+	}
+
+	.oracle-levelup-inner .level-box {
+		position: absolute;
+		left: -1.6mm;
+		top: 50%;
+		transform: translateY(-50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		font-family: Beleren;
+
+		padding: 1mm;
+		padding-top: 1.2mm;
+		padding-left: 1.6mm;
+		gap: 0.2mm;
+	}
+
+	.oracle-levelup-inner .level-box div:nth-child(2) {
+		text-transform: uppercase;
+		font-size: 1.5mm;
+		height: 1.6mm;
+	}
+
+	.oracle-levelup-inner .oracle-text.has-level {
+		margin-left: 7mm;
+	}
+	.oracle-levelup-inner .oracle-text.has-pt {
+		margin-right: 9mm;
+	}
+
+	.oracle-levelup-inner .pt-box {
+		position: absolute;
+		right: -1.6mm;
+		top: 50%;
+		transform: translateY(calc(-50% + 0.2mm));
+	}
+
+	/* Ignore naturally overflowing elements when scaling text */
+	.fitting .oracle-levelup-inner .level-box,
+	.fitting .oracle-levelup-inner .pt-box {
+		display: none;
+	}
+
+	/* Workaround the fact that adventure frames have a sligthly larger ratio */
+	.adventure .inner-frame {
+		width: 57.4mm;
+		left: 2.9mm;
+	}
+
+	.adventure .mid-line {
+		top: 49.7mm;
+	}
+
+	.adventure-main-oracle {
+		position: absolute;
+		top: 54.9mm;
+		left: 33mm;
+		width: 25.5mm;
+		height: 25mm;
+
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+		flex-direction: column;
+		gap: 0.8mm;
+	}
+
+	.adventure-part {
+		position: absolute;
+		top: 55.3mm;
+		left: 5mm;
+		width: 26mm;
+		height: 25.2mm;
+
+		display: flex;
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.adventure-top-line,
+	.adventure-type {
+		color: white;
+		height: 4.2mm;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 7pt;
+		line-height: 7pt;
+		flex-shrink: 0;
+		margin-left: 0.6mm;
+	}
+
+	.adventure-mana-cost {
+		display: flex;
+		font-size: 5pt;
+		gap: 0.3mm;
+		margin-top: -0.4mm;
+		margin-right: 0.5mm;
+	}
+
+	.adventure-oracle {
+		flex-grow: 1;
+		margin: 0.8mm 0 0.2mm 0;
+
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+		flex-direction: column;
+		gap: 0.8mm;
+
+		font-family: MPlantin;
+		font-size: 8pt;
+		line-height: 1em;
+
+		pointer-events: initial;
+		user-select: initial;
+	}
+
+	/************** Saga *************/
+
+	.saga .inner-background {
+		top: 2.5mm;
+	}
+
+	.saga .inner-frame {
+		top: 3.66mm;
+		margin: 0;
+		width: 58.5mm;
+		margin-left: -1mm;
+	}
+
+	.saga .saga-frame {
+		position: absolute;
+		top: 0;
+		left: -2.8mm;
+		width: 10mm;
+		height: 100%;
+		background-image: v-bind(frame);
+		background-size: 58.5mm;
+		background-position: 0 -6.3mm;
+		background-repeat: no-repeat;
+		pointer-events: none;
+	}
+
+	.saga .mid-line,
+	.saga .top-line {
+		top: 4.2mm;
+		left: 0.1mm;
+	}
+
+	.saga .mid-line {
+		top: 75.2mm;
+	}
+
+	.saga .illustration {
+		width: 27.3mm;
+		height: 64.3mm;
+		top: 10mm;
+		left: 31.8mm;
+		outline-offset: 0;
+	}
+
+	.saga-oracle {
+		position: absolute;
+		left: 4.9mm;
+		top: 9.95mm;
+		width: 26.6mm;
+		height: 64.3mm;
+		background-size: cover;
+		background-image: v-bind(saga_text_box);
+		background-repeat: no-repeat;
+	}
+
+	.saga-reminder {
+		height: 13.3mm;
+		font-size: 7.3pt;
+		line-height: 7.3pt;
+		padding: 0.5mm 0.7mm 2.4mm 0.7mm;
+		display: flex;
+		align-items: center;
+	}
+
+	.saga-steps {
+		display: flex;
+		align-items: stretch;
+		justify-content: stretch;
+		flex-direction: column;
+		gap: 0.8mm;
+		padding-left: 2.15mm;
+		height: 47.5mm;
+	}
+
+	.saga-step {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		box-shadow: 0 -0.35mm 0.5mm #00000020;
+		padding: 1.35mm;
+		flex-grow: 1;
+		line-height: 1em;
+	}
+
+	.saga-step-number {
+		position: absolute;
+		width: 5mm;
+		top: 50%;
+		transform: translateY(-50%);
+		left: -4.65mm;
+		z-index: 4;
+	}
+
+	.saga-step-number img {
+		width: 5mm;
+	}
+
+	/* Planeswalkers */
+
+	.planeswalker .inner-frame {
+		top: 2.36mm;
+		left: 3mm;
+		width: calc(58mm - 2px);
+		height: 80mm;
+	}
+
+	.planeswalker .top-line,
+	.planeswalker .mid-line {
+		width: 53.75mm;
+	}
+
+	.planeswalker .top-line {
+		top: 3mm;
+	}
+
+	.planeswalker .mid-line {
+		top: 49.6mm;
+	}
+
+	.planeswalker-large .mid-line {
+		top: 43.6mm;
+	}
+
+	.planeswalker .illustration {
+		position: absolute;
+		left: 4mm;
+		top: 8.2mm;
+		width: 55mm;
+		height: 39mm;
+		/*border-radius: 2mm/50%;*/
+	}
+
+	.planeswalker .illustration.behind-textbox {
+		background-color: white;
+		height: 73mm;
+		z-index: -1;
+	}
+
+	.planeswalker.extended-art .illustration.behind-textbox {
+		top: 6mm;
+		height: 75mm;
+		mask-image: linear-gradient(
+			rgba(0, 0, 0, 0) 0,
+			rgba(0, 0, 0, 1) 3%,
+			rgba(0, 0, 0, 1) 97%,
+			rgba(0, 0, 0, 0) 100%
+		);
+		left: 0;
+		right: 0;
+		width: 100%;
+	}
+
+	.planeswalker:not(.full-art):not(.extended-art)
+		.illustration.behind-textbox {
+		border-radius: 2mm / calc(39mm / 2);
+		border-bottom-left-radius: 4mm 3mm;
+		border-bottom-right-radius: 2mm;
+	}
+
+	.planeswalker.extended-art .illustration,
+	.planeswalker.full-art .illustration {
+		z-index: auto;
+	}
+
+	.planeswalker.full-art .illustration,
+	.full-art .illustration {
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+		background-color: initial;
+	}
+
+	.planeswalker-oracle-bg {
+		position: absolute;
+		left: 7.4mm;
+		top: 55.6mm;
+		width: 51.2mm;
+		height: 25.35mm;
+		background-color: #ffffff90;
+		border-radius: 0.9mm;
+		border-bottom-left-radius: 8mm 2.1mm;
+		border-bottom-right-radius: 8mm 2.1mm;
+		box-shadow: inset -0.2mm -0.2mm 0.2mm #00000080,
+			inset 0.2mm 0.2mm 0.2mm #00000080;
+	}
+
+	.planeswalker-large .planeswalker-oracle-bg {
+		top: 49.5mm;
+		height: 31.45mm;
+	}
+
+	.planeswalker-oracle {
+		position: absolute;
+		left: 2.8mm;
+		top: 55.7mm;
+
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+		flex-direction: column;
+		gap: 0.4mm;
+
+		width: 49.5mm;
+		height: 24mm;
+
+		padding: 0.5mm;
+		padding-left: 5.5mm;
+		padding-bottom: 1mm;
+	}
+
+	.planeswalker-large .planeswalker-oracle {
+		top: 49mm;
+		height: 31.04mm;
+	}
+
+	.planeswalker-ability {
+		position: relative;
+		flex-shrink: 0;
+		padding: 0.4mm 0.4em;
+		z-index: 0;
+	}
+
+	.planeswalker-ability:nth-child(2n + 1):before {
+		content: "";
+		position: absolute;
+		left: -0.6mm;
+		right: -0.6mm;
+		top: -1.2mm;
+		bottom: -1.2mm;
+		background-color: #fff6;
+		mask-image: linear-gradient(
+				transparent,
+				transparent 1.2mm,
+				black 1.2mm,
+				black calc(100% - 1.2mm),
+				transparent calc(100% - 1.2mm),
+				transparent
+			),
+			url("../assets/img/planeswalker_ability_top.png"),
+			url("../assets/img/planeswalker_ability_bottom.png");
+		mask-size: 100%, 100%, 100%;
+		mask-position: 0 0, 0 0, 0 100%;
+		mask-repeat: repeat-x;
+		mask-composite: add;
+		z-index: -1;
+	}
+
+	.planeswalker-ability-with-cost:nth-child(2n + 1):before {
+		left: -3.1mm;
+		right: -0.6mm;
+	}
+
+	.planeswalker-ability:nth-child(1):before {
+		border-top-left-radius: 1mm;
+		border-top-right-radius: 1mm;
+		mask-image: linear-gradient(
+				black calc(100% - 1.2mm),
+				transparent calc(100% - 1.2mm),
+				transparent
+			),
+			url("../assets/img/planeswalker_ability_bottom.png");
+		mask-size: 100%, 100%;
+		mask-position: 0 0, 0 100%;
+		mask-composite: add;
+		top: -0.1mm;
+	}
+
+	.planeswalker:not(.planeswalker-large)
+		.planeswalker-ability:nth-child(3):before {
+		mask-image: linear-gradient(transparent, transparent 1.2mm, black 1.2mm),
+			url("../assets/img/planeswalker_ability_top.png");
+		mask-size: 100%, 100%;
+		mask-position: 0 0, 0 0;
+		bottom: -1mm;
+		border-bottom-left-radius: 10mm 2mm;
+	}
+
+	.planeswalker-ability-with-cost {
+		margin-left: 2.5mm;
+		min-height: 4.8mm;
+		flex-grow: 1;
+		display: flex;
+		align-items: center;
+		padding: 0.4mm 0;
+	}
+
+	.planeswalker-ability-cost {
+		position: absolute;
+		left: -8.5mm;
+		top: 50%;
+		transform: translateY(-50%);
+		background-size: 100%;
+		background-repeat: no-repeat;
+		width: 7mm;
+		color: white;
+		font-size: 7pt;
+		text-align: center;
+		font-family: Beleren;
+	}
+
+	.planeswalker-ability-cost-plus {
+		background-image: url("../assets/img/planeswalker/LoyaltyPlus.png");
+		height: 4.7mm;
+		line-height: 5mm;
+	}
+
+	.planeswalker-ability-cost-zero {
+		background-image: url("../assets/img/planeswalker/LoyaltyZero.png");
+		height: 4.2mm;
+		line-height: 3.8mm;
+	}
+
+	.planeswalker-ability-cost-minus {
+		background-image: url("../assets/img/planeswalker/LoyaltyMinus.png");
+		height: 4.7mm;
+		line-height: 3.8mm;
+	}
+
+	.planeswalker-ability-cost::after {
+		content: ":";
+		position: absolute;
+		right: -0.7mm;
+		top: 50%;
+		transform: translateY(-50%);
+		color: black;
+		font-family: MPlantin;
+		font-size: 8pt;
+	}
+
+	.planeswalker-ability-cost-minus::after {
+		top: 1.7mm;
+	}
+
+	.planeswalker-ability-cost-zero::after {
+		top: 1.7mm;
+	}
+
+	.planeswalker .footer {
+		top: 83mm;
+	}
+
+	.oracle-inner,
+	.oracle-flavor,
+	.oracle-reminder {
+		margin: 0 0.44mm;
+	}
+
+	.oracle-flavor hr {
+		border: 0;
+		height: 0.25mm;
+		background-image: linear-gradient(
+			to right,
+			rgba(0, 0, 0, 0),
+			rgba(0, 0, 0, 0.2) 20%,
+			rgba(0, 0, 0, 0.2) 80%,
+			rgba(0, 0, 0, 0)
+		);
+		margin-top: 0.2mm;
+		margin-bottom: 0.8mm;
+	}
+
+	.oracle-flavor,
+	:deep(.oracle-reminder) {
+		font-family: MPlantin-Italic;
+		font-style: italic;
+	}
+
+	.pt-box {
+		position: absolute;
+		right: 3mm;
+		bottom: 3.8mm;
+		width: 11.58mm;
+		height: 6.2mm;
+		background-image: v-bind(pt_box);
+		background-size: 100%;
+		background-repeat: no-repeat;
+
+		text-align: center;
+		line-height: 5.5mm;
+		font-family: Beleren;
+		font-size: 9.6pt;
+		color: v-bind(pt_box_color);
+
+		pointer-events: initial;
+		user-select: initial;
+
+		z-index: 3;
+	}
+
+	.loyalty {
+		position: absolute;
+		right: 3mm;
+		bottom: 5mm;
+		width: 9.8mm;
+		height: 5.8mm;
+		background-image: url("../assets/img/planeswalker/Loyalty.png");
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+
+		text-align: center;
+		line-height: 6.4mm;
+		font-size: 9.5pt;
+		color: white;
+
+		pointer-events: initial;
+		user-select: initial;
+		z-index: 3;
+	}
+
+	.footer {
+		position: absolute;
+		top: 82.91mm;
+		left: 50%;
+		transform: translateX(-50%);
+
+		width: 55mm;
+		margin: auto;
+
+		display: flex;
+		justify-content: space-between;
+		color: white;
+		font-family: Relay Wide Medium;
+		font-size: 3.9pt;
+
+		z-index: 3;
+	}
+
+	.footer-left > div,
+	.footer-right > div {
+		height: 1.35mm;
+	}
+
+	.collector-number {
+		letter-spacing: 0.2mm;
+	}
+
+	.copyright {
+		font-family: MPlantin;
+		margin-top: 0.2mm; /* FIXME: Workaround a weird upshift using this font */
+		font-size: 4pt;
+	}
+
+	.copyright div {
+		min-height: 2mm;
+	}
+
+	.set {
+		letter-spacing: 0.23mm;
+	}
+
+	.language {
+		letter-spacing: 0.15mm;
+	}
+
+	.artist-icon {
+		font-family: NDPMTG;
+	}
+
+	.artist-name {
+		font-family: Beleren Small Caps;
+		font-size: 4.5pt;
+	}
+
+	.flip-icon {
+		position: absolute;
+		bottom: -12mm;
+		left: 50%;
+		font-size: 10mm;
+		user-select: none;
+		cursor: pointer;
+		transform: translateX(-50%) rotateX(60deg);
+	}
+
+	.mdfc:not(.planeswalker) .inner-frame {
+		width: 58.8mm;
+		left: 1.6mm;
+	}
+
+	.mdfc .top-line .name {
+		padding-left: 5mm;
+	}
+
+	.mdfc.legendary:not(.planeswalker) .inner-frame {
+		/* Workdaround to hide frame behind the legendary crown */
+		border-top-left-radius: 10mm;
+	}
+
+	.mdfc .normal-oracle {
+		height: 22.6mm;
+		left: 0;
+	}
+
+	.mdfc .planeswalker-oracle {
+		height: 22mm;
+	}
+
+	.mdfc.planeswalker-large .planeswalker-oracle {
+		height: 29mm;
+	}
+
+	.mdfc-icon {
+		position: absolute;
+		top: 4.1mm;
+		left: 2.5mm;
+		width: 5.8mm;
+		aspect-ratio: calc(294 / 238);
+		background-image: v-bind(mdfc_icon);
+		background-size: 100%;
+		z-index: 3;
+	}
+
+	.planeswalker .mdfc-icon {
+		top: 3mm;
+	}
+
+	.mdfc-hint {
+		position: absolute;
+		bottom: 6.2mm;
+		left: 1.6mm;
+		width: 28mm;
+		height: 3.9mm;
+
+		display: flex;
+		justify-content: space-between;
+		align-content: stretch;
+		align-items: center;
+
+		font-size: 5pt;
+		color: v-bind(mdfc_hint_color);
+		background-image: v-bind(mdfc_hint);
+		background-size: 100%;
+
+		padding: 0 2.6mm;
+		padding-top: 0.1mm; /* FIXME: Shouldn't be needed? */
+
+		box-sizing: border-box;
+		z-index: 3;
+	}
+
+	.planeswalker .mdfc-hint {
+		bottom: 6mm;
+	}
+
+	.mdfc-hint span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		flex-shrink: 1;
+		max-width: 20mm;
+	}
+
+	.mdfc-hint .mana-cost {
+		font-size: 4pt;
+	}
+
+	/* Transform */
+
+	.transform:not(.back):not(.planeswalker) .inner-frame {
+		left: 2.9mm;
+		width: 58.5mm;
+	}
+
+	.transform:not(.planeswalker) .inner-frame {
+		top: 3.7mm;
+		left: 2.9mm;
+		width: 57.4mm;
+		height: 78.1mm;
+		background-size: 100% 100%;
+	}
+
+	.transform:not(.planeswalker) .top-line {
+		top: 4.2mm;
+	}
+
+	.transform .top-line .name {
+		padding-left: 5.2mm;
+	}
+
+	.transform-icon {
+		position: absolute;
+		top: 4mm;
+		left: 3.5mm;
+		width: 5.4mm;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		border: 0.02mm black solid; /* Fixme: Border is too thick on renders */
+		box-sizing: border-box;
+		background-color: white;
+		background-image: v-bind(transform_icon);
+		background-size: 4.7mm;
+		background-position: center center;
+		background-repeat: no-repeat;
+		z-index: 3;
+	}
+
+	.planeswalker .transform-icon {
+		top: 3mm;
+	}
+
+	.transform-hint {
+		position: absolute;
+		bottom: 11.2mm;
+		right: 5.2mm;
+		z-index: 3;
+		font-family: Beleren;
+		font-size: 6.8pt;
+		color: #666;
+	}
+
+	/* Ixalan maps */
+
+	.compasslanddfc.back .inner-frame {
+		background-image: none;
+		filter: none;
+	}
+
+	.compasslanddfc.back .name {
+		font-family: Beleren Small Caps;
+		padding: 0;
+		margin: 0;
+	}
+
+	.compasslanddfc.back .illustration {
+		top: 9.2mm;
+		left: 3mm;
+		right: 3mm;
+		width: auto;
+		height: 40mm;
+		z-index: -1;
+	}
+
+	.compasslanddfc.back .top-line,
+	.compasslanddfc.back .mid-line {
+		background-image: none;
+		justify-content: center;
+		margin: 0;
+		padding: 0;
+		color: black;
+		left: 0;
+		right: 0;
+		width: 100%;
+	}
+
+	.compasslanddfc.back .type-line {
+		text-align: center;
+	}
+
+	.compasslanddfc.back .oracle {
+		top: 55.9mm;
+		left: 7mm;
+		right: 7.6mm;
+		bottom: 10mm;
+		width: auto;
+		height: auto;
+	}
+
+	.compasslanddfc.back .set-icon-container {
+		position: absolute;
+		top: -40.8mm;
+		left: 50%;
+		transform: translate(-50%);
+		justify-content: center;
+	}
+
+	.compasslanddfc.back .transform-icon {
+		display: none; /* Embeded in the background */
+	}
+
+	.archive .inner-frame {
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		filter: none;
+		background: none;
+
+		--primary: v-bind(archive_frame_colors.primary);
+		--lighter: v-bind(archive_frame_colors.lighter);
+		--darker: v-bind(archive_frame_colors.darker);
+		--left-primary: v-bind(archive_frame_colors.left.primary);
+		--left-lighter: v-bind(archive_frame_colors.left.lighter);
+		--left-darker: v-bind(archive_frame_colors.left.darker);
+		--right-primary: v-bind(archive_frame_colors.right.primary);
+		--right-lighter: v-bind(archive_frame_colors.right.lighter);
+		--right-darker: v-bind(archive_frame_colors.right.darker);
+	}
+
+	.archive .inner-frame svg {
+		width: 100%;
+	}
+
+	.archive .top-line,
+	.archive .mid-line,
+	.archive .oracle {
+		background-image: none;
+		color: #222;
+	}
+
+	.archive .top-line .mana-cost .ms {
+		width: 3.6mm;
+		opacity: 0.8;
+	}
+
+	.archive .top-line .mana-cost .ms-shadow,
+	.japanese-archive .top-line .mana-cost .ms-shadow {
+		box-shadow: initial;
+	}
+
+	/* Japanse Mystical Archive */
+
+	.japanese-archive .inner-frame,
+	.japanese-archive .top-line,
+	.japanese-archive .mid-line {
+		background-image: none;
+	}
+
+	.japanese-archive .legendary-crown {
+		display: none;
+	}
+
+	.japanese-archive .name {
+		background-color: v-bind(japanese_color);
+		background-image: v-bind(japanese_name_color);
+		color: #fff;
+		padding: 1mm 2mm;
+		border-radius: 1.5mm;
+		outline-style: solid;
+		outline-color: v-bind(japanese_color);
+		outline-width: 0.6mm;
+		outline-offset: 0.4mm;
+	}
+
+	.japanese-archive .top-line .mana-cost .ms {
+		width: 4.2mm;
+	}
+
+	.japanese-archive .type-line,
+	.japanese-archive .oracle {
+		background-color: #ffffffa0;
+		border: 0.22mm solid v-bind(japanese_color); /* FIXME: Should be a gradient when multicolored */
+	}
+
+	.japanese-archive .oracle {
+		outline: #0005;
+		outline-width: 0.1mm;
+		outline-offset: -0.6mm;
+		outline-style: solid;
+		padding: 0.4mm 0.8mm;
+		box-sizing: border-box;
+
+		border-image-source: v-bind(japanese_oracle_border);
+		border-image-slice: 10%;
+		border-image-width: 0.22mm;
+		border-image-repeat: round;
+	}
+
+	.japanese-archive .type-line {
+		border-radius: 1mm/50%;
+		position: absolute;
+		left: 0.4mm;
+		padding: 0 3mm;
+		height: 4mm;
+		line-height: 4mm;
+		max-width: 40mm;
+
+		border-image-source: v-bind(japanese_type_line_border);
+		border-image-slice: 50% 50%;
+		border-image-width: 50% 1.5mm;
+	}
+
+	.japanese-archive .set-icon-container {
+		position: absolute;
+		right: 0;
+	}
+
+	.full-footer .illustration,
+	.japanese-archive .illustration {
+		background-color: #ffffff;
+		clip-path: url(#full-art-clip-path);
+	}
+
+	.full-footer.planeswalker .illustration {
+		clip-path: url(#full-art-planeswalker-clip-path);
+	}
+
+	/* Extend art as much as possible when adding a bordering while rendering */
+
+	.rendering.extended-art .illustration {
+		width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
+		background-size: calc(
+			v-bind(illustration_scale) *
+				(100% - 2mm * v-bind(renderMargin) * v-bind(scale))
+		);
+		background-position: calc(
+				v-bind(illustration_position.x) + 1mm * v-bind(renderMargin) *
+					v-bind(scale)
+			)
+			calc(v-bind(illustration_position.y));
+		left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+		right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+	}
+
+	.rendering.full-art:not(.full-footer):not(.japanese-archive) .illustration {
+		width: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
+		height: calc(100% + 2mm * v-bind(renderMargin) * v-bind(scale));
+		background-size: calc(
+			v-bind(illustration_scale) *
+				(100% - 2mm * v-bind(renderMargin) * v-bind(scale))
+		);
+		background-position: calc(
+				v-bind(illustration_position.x) + 1mm * v-bind(renderMargin) *
+					v-bind(scale)
+			)
+			calc(
+				v-bind(illustration_position.y) + 1mm * v-bind(renderMargin) *
+					v-bind(scale)
+			);
+		top: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+		bottom: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+		left: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+		right: calc(-1mm * v-bind(renderMargin) * v-bind(scale));
+	}
+
+	/* Debug */
+
+	.debug-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 4;
+		width: 63.5mm;
+		height: 100%;
+		opacity: v-bind(debug_opacity);
+	}
+
+	.debug-overlay:hover {
+		opacity: 1;
+	}
+
+	.debug-overlay > div {
+		overflow: hidden;
+		position: relative;
+		pointer-events: none;
+	}
+
+	.debug-overlay > div:after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 0.5px;
+		height: 100%;
+		background-color: #0008;
+	}
+
+	.debug-overlay > div > img {
+		width: 63.5mm;
+	}
+
+	.debug-controls {
+		position: absolute;
+		bottom: -4em;
+	}
 </style>
 
 <style type="text/css">
-.gold {
-	fill: #f5d54e;
-}
-.background-color {
-	fill: #ecdfbf;
-	filter: url(#noise);
-}
-.background-feature {
-	fill: transparent;
-	stroke: #cfac58;
-	stroke-width: 0.07;
-	opacity: 0.6;
-}
-.top-feature {
-	fill: transparent;
-	stroke: #000000;
-	stroke-width: 0.03;
-	opacity: 0.1;
-}
-.primary-color {
-	fill: var(--primary, #0e3d95);
-}
-.lighter-color {
-	fill: var(--lighter, #125faf);
-}
-.darker-color {
-	fill: var(--darker, #13316d);
-}
-.primary-left-color {
-	fill: var(--left-primary, #0e3d95);
-}
-.lighter-left-color {
-	fill: var(--left-lighter, #125faf);
-}
-.darker-left-color {
-	fill: var(--left-darker, #13316d);
-}
-.primary-right-color {
-	fill: var(--right-primary, #0e3d95);
-}
-.lighter-right-color {
-	fill: var(--right-lighter, #125faf);
-}
-.darker-right-color {
-	fill: var(--right-darker, #13316d);
-}
+	.gold {
+		fill: #f5d54e;
+	}
+	.background-color {
+		fill: #ecdfbf;
+		filter: url(#noise);
+	}
+	.background-feature {
+		fill: transparent;
+		stroke: #cfac58;
+		stroke-width: 0.07;
+		opacity: 0.6;
+	}
+	.top-feature {
+		fill: transparent;
+		stroke: #000000;
+		stroke-width: 0.03;
+		opacity: 0.1;
+	}
+	.primary-color {
+		fill: var(--primary, #0e3d95);
+	}
+	.lighter-color {
+		fill: var(--lighter, #125faf);
+	}
+	.darker-color {
+		fill: var(--darker, #13316d);
+	}
+	.primary-left-color {
+		fill: var(--left-primary, #0e3d95);
+	}
+	.lighter-left-color {
+		fill: var(--left-lighter, #125faf);
+	}
+	.darker-left-color {
+		fill: var(--left-darker, #13316d);
+	}
+	.primary-right-color {
+		fill: var(--right-primary, #0e3d95);
+	}
+	.lighter-right-color {
+		fill: var(--right-lighter, #125faf);
+	}
+	.darker-right-color {
+		fill: var(--right-darker, #13316d);
+	}
 </style>
