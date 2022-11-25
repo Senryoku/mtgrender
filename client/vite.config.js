@@ -7,6 +7,6 @@ export default defineConfig({
 	build: {
 		target: ["esnext"],
 	},
-	assetsInclude: ["**/*.png"],
+	assetsInclude: ["**/*.png", "**/*.webp"],
 	plugins: [vue() /*, compress({ brotli: false })*/],
 });

@@ -1331,7 +1331,7 @@
 								.map(
 									(s) =>
 										new URL(
-											`../assets/img/saga/${s.trim()}.png`,
+											`../assets/img/saga/${s.trim()}.webp`,
 											import.meta.url
 										).href
 								),
@@ -1442,7 +1442,7 @@
 					new URL(
 						`../assets/img/${folder}/${
 							this.is_vehicle ? "Vehicle" : this.boxes_colors
-						}.png`,
+						}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1472,7 +1472,7 @@
 						: this.colors;
 				return `url(${
 					new URL(
-						`../assets/img/${folder}/${colors}.png`,
+						`../assets/img/${folder}/${colors}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1489,7 +1489,7 @@
 					: "boxes";
 				return `url(${
 					new URL(
-						`../assets/img/${folder}/${this.boxes_colors}.png`,
+						`../assets/img/${folder}/${this.boxes_colors}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1498,7 +1498,7 @@
 				return this.extended_art && !this.is_planeswalker
 					? `url(${
 							new URL(
-								`../assets/img/extended_boxes/${this.boxes_colors}.png`,
+								`../assets/img/extended_boxes/${this.boxes_colors}.webp`,
 								import.meta.url
 							).href
 					  })`
@@ -1515,7 +1515,7 @@
 					: "legendary_crowns";
 				return `url(${
 					new URL(
-						`../assets/img/${folder}/${colors}.png`,
+						`../assets/img/${folder}/${colors}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1530,7 +1530,7 @@
 								: "pt_boxes"
 						}/${
 							this.is_vehicle ? "Vehicle" : this.boxes_colors
-						}.png`,
+						}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1538,7 +1538,7 @@
 			saga_text_box() {
 				return `url(${
 					new URL(
-						`../assets/img/saga_textboxes/${this.boxes_colors}.png`,
+						`../assets/img/saga_textboxes/${this.boxes_colors}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1552,7 +1552,7 @@
 							this.boxes_colors === "Land"
 								? this.colors
 								: this.boxes_colors
-						}.png`,
+						}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1564,7 +1564,7 @@
 					new URL(
 						`../assets/img/mdfc${
 							this.currentFace === 0 ? "" : "_back"
-						}_hints/${colors}.png`,
+						}_hints/${colors}.webp`,
 						import.meta.url
 					).href
 				})`;
@@ -1579,7 +1579,7 @@
 							this.currentFace === 0 ? "" : "_back"
 						}_icons/${
 							this.card.frame_effects?.[0] ?? "sunmoondfc"
-						}.png` /* FIXME: Pretty sure this will break at some point */,
+						}.webp` /* FIXME: Pretty sure this will break at some point */,
 						import.meta.url
 					).href
 				})`;
@@ -1620,7 +1620,7 @@
 							(lhs, rhs) =>
 								"WUBRG".indexOf(lhs) - "WUBRG".indexOf(rhs)
 						)
-						.join("")}.png`,
+						.join("")}.webp`,
 					import.meta.url
 				).href;
 			},
@@ -1651,7 +1651,7 @@
 					return new URL(
 						`../assets/img/set_icons/${this.card?.set}_${
 							this.card?.rarity ?? "common"
-						}.png`,
+						}.webp`,
 						import.meta.url
 					).href;
 				return null;
@@ -2442,8 +2442,8 @@
 				transparent calc(100% - 1.2mm),
 				transparent
 			),
-			url("../assets/img/planeswalker_ability_top.png"),
-			url("../assets/img/planeswalker_ability_bottom.png");
+			url("../assets/img/planeswalker_ability_top.webp"),
+			url("../assets/img/planeswalker_ability_bottom.webp");
 		mask-size: 100%, 100%, 100%;
 		mask-position: 0 0, 0 0, 0 100%;
 		mask-repeat: repeat-x;
@@ -2464,7 +2464,7 @@
 				transparent calc(100% - 1.2mm),
 				transparent
 			),
-			url("../assets/img/planeswalker_ability_bottom.png");
+			url("../assets/img/planeswalker_ability_bottom.webp");
 		mask-size: 100%, 100%;
 		mask-position: 0 0, 0 100%;
 		mask-composite: add;
@@ -2474,7 +2474,7 @@
 	.planeswalker:not(.planeswalker-large)
 		.planeswalker-ability:nth-child(3):before {
 		mask-image: linear-gradient(transparent, transparent 1.2mm, black 1.2mm),
-			url("../assets/img/planeswalker_ability_top.png");
+			url("../assets/img/planeswalker_ability_top.webp");
 		mask-size: 100%, 100%;
 		mask-position: 0 0, 0 0;
 		bottom: -1mm;
@@ -2505,19 +2505,19 @@
 	}
 
 	.planeswalker-ability-cost-plus {
-		background-image: url("../assets/img/planeswalker/LoyaltyPlus.png");
+		background-image: url("../assets/img/planeswalker/LoyaltyPlus.webp");
 		height: 4.7mm;
 		line-height: 5mm;
 	}
 
 	.planeswalker-ability-cost-zero {
-		background-image: url("../assets/img/planeswalker/LoyaltyZero.png");
+		background-image: url("../assets/img/planeswalker/LoyaltyZero.webp");
 		height: 4.2mm;
 		line-height: 3.8mm;
 	}
 
 	.planeswalker-ability-cost-minus {
-		background-image: url("../assets/img/planeswalker/LoyaltyMinus.png");
+		background-image: url("../assets/img/planeswalker/LoyaltyMinus.webp");
 		height: 4.7mm;
 		line-height: 3.8mm;
 	}
@@ -2599,7 +2599,7 @@
 		bottom: 5mm;
 		width: 9.8mm;
 		height: 5.8mm;
-		background-image: url("../assets/img/planeswalker/Loyalty.png");
+		background-image: url("../assets/img/planeswalker/Loyalty.webp");
 		background-size: 100% 100%;
 		background-repeat: no-repeat;
 
