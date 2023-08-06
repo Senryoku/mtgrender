@@ -10,6 +10,7 @@
 			planeswalker: is_planeswalker,
 			'planeswalker-large': is_large_planeswalker,
 			saga: is_saga,
+			class: is_class,
 			adventure: is_adventure,
 			'extended-art':
 				(is_adventure ? card : card_face).art_variant === 'extended',
@@ -538,14 +539,34 @@
 						:key="idx"
 					>
 						<div class="saga-step-number">
-							<img
-								v-for="step in step.steps"
-								:key="step"
-								:src="step"
-							/>
+							<img v-for="s in step.steps" :key="s" :src="s" />
 						</div>
 						<div v-html="step.html"></div>
 					</div>
+				</div>
+			</div>
+		</template>
+		<template v-else-if="is_class">
+			<div
+				class="oracle class-oracle"
+				@dblclick="edit_property('oracle_text')"
+				@mousedown.prevent=""
+			>
+				<div
+					class="class-reminder"
+					v-if="class_reminder"
+					v-html="class_reminder"
+					ref="saga_oracle_reminder_el"
+				></div>
+				<hr />
+				<div class="class-steps" ref="oracle_el">
+					<div
+						class="class-step"
+						v-for="(step, idx) in class_steps"
+						:key="idx"
+						:class="step.class"
+						v-html="step.html"
+					></div>
 				</div>
 			</div>
 		</template>
@@ -1233,6 +1254,12 @@
 					contains(this.card_face?.type_line, "Saga")
 				);
 			},
+			is_class() {
+				return (
+					this.card_face?.layout === "class" ||
+					contains(this.card_face?.type_line, "Class")
+				);
+			},
 			is_vehicle() {
 				if (!this.card?.type_line) return false;
 				return contains(this.card_face.type_line, [
@@ -1318,6 +1345,12 @@
 					this.card_face.oracle_text.split("\n")[0]
 				);
 			},
+			class_reminder() {
+				if (!this.card_face?.oracle_text) return "";
+				return this.parse_oracle(
+					this.card_face.oracle_text.split("\n")[0]
+				);
+			},
 			saga_steps() {
 				return this.card_face.oracle_text
 					.split("\n")
@@ -1338,6 +1371,26 @@
 							html: m[2],
 						};
 					});
+			},
+			class_steps() {
+				const lines = this.card_face.oracle_text.split("\n");
+				const r = [];
+				for (let i = 1; i < lines.length; ++i) {
+					let m = lines[i].match(/({[^:]+}): Level (\d)/);
+					if (m) {
+						r.push({
+							class: "level-header",
+							html: this.parse_oracle(
+								`<div>${m[1]}:</div><div>Level ${m[2]}</div>`
+							),
+						});
+					} else
+						r.push({
+							class: "normal",
+							html: this.parse_oracle(lines[i]),
+						});
+				}
+				return r;
 			},
 			planeswalker_abilities() {
 				if (!this.is_planeswalker) return null;
@@ -1434,6 +1487,8 @@
 						: "planeswalker_bg"
 					: this.is_saga
 					? "saga_bg"
+					: this.is_class
+					? "saga_bg"
 					: this.card.frame_effects?.includes("compasslanddfc") &&
 					  this.currentFace === 1
 					? "ixalan_bg"
@@ -1452,6 +1507,8 @@
 					? "adventure_frames"
 					: this.is_saga
 					? "saga_frames"
+					: this.is_class
+					? "class_frames"
 					: this.is_planeswalker
 					? this.is_large_planeswalker
 						? "planeswalker_large_frames"
@@ -1463,7 +1520,7 @@
 						? "transform_frames"
 						: "transform_back_frames"
 					: "frames";
-				if (this.extended_art && !this.is_saga)
+				if (this.extended_art && !this.is_saga && !this.is_class)
 					folder = "extended_" + folder;
 				const colors =
 					this.colors === "Artifact" &&
@@ -1484,7 +1541,7 @@
 					? this.currentFace === 0
 						? "mdfc_boxes"
 						: "mdfc_back_boxes"
-					: this.extended_art
+					: this.extended_art && !this.is_class
 					? "extended_boxes"
 					: "boxes";
 				return `url(${
@@ -1495,7 +1552,9 @@
 				})`;
 			},
 			mid_boxes() {
-				return this.extended_art && !this.is_planeswalker
+				return this.extended_art &&
+					!this.is_planeswalker &&
+					!this.is_class
 					? `url(${
 							new URL(
 								`../assets/img/extended_boxes/${this.boxes_colors}.webp`,
@@ -1603,6 +1662,7 @@
 			},
 			mid_line_color() {
 				return (this.extended_art &&
+					!this.is_class &&
 					!this.is_planeswalker &&
 					(!this.is_transform || this.currentFace === 0)) ||
 					((this.is_transform || this.is_mdfc) &&
@@ -2296,6 +2356,66 @@
 		width: 5mm;
 	}
 
+	.class-reminder {
+		height: 7mm;
+		font-size: 6.3pt;
+		line-height: 6.3pt;
+		padding: 0.5mm 0.7mm 0.5mm 0.7mm;
+		display: flex;
+		align-items: center;
+	}
+
+	.class .top-line {
+		top: 4.2mm;
+	}
+	.class .mid-line {
+		top: 74.4mm;
+	}
+
+	.class .illustration {
+		width: 27.3mm;
+		height: 64.3mm;
+		top: 10mm;
+		left: 4.3mm;
+		outline-offset: 0;
+	}
+
+	.class-oracle {
+		position: absolute;
+		left: 31.8mm;
+		top: 10.1mm;
+		width: 26.4mm;
+		height: 63.65mm;
+		background-size: cover;
+		background-image: v-bind(saga_text_box);
+		background-repeat: no-repeat;
+	}
+
+	.class-steps {
+		display: flex;
+		align-items: stretch;
+		justify-content: stretch;
+		flex-direction: column;
+		gap: 0.8mm;
+		height: 54.3mm;
+	}
+
+	.class-step {
+		padding: 0.2mm;
+	}
+
+	.level-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		align-content: center;
+		height: 3mm;
+		padding-left: 1mm;
+		padding-right: 1mm;
+		background-image: url("../assets/img/class_level_bg.png");
+		background-size: cover;
+	}
+
 	/* Planeswalkers */
 
 	.planeswalker .inner-frame {
@@ -2549,6 +2669,7 @@
 		margin: 0 0.44mm;
 	}
 
+	.class-oracle hr,
 	.oracle-flavor hr {
 		border: 0;
 		height: 0.25mm;
@@ -3117,5 +3238,9 @@
 	}
 	.darker-right-color {
 		fill: var(--right-darker, #13316d);
+	}
+
+	.oracle .level-header .ms {
+		vertical-align: middle;
 	}
 </style>
