@@ -1376,12 +1376,12 @@
 				const lines = this.card_face.oracle_text.split("\n");
 				const r = [];
 				for (let i = 1; i < lines.length; ++i) {
-					let m = lines[i].match(/({[^:]+}): Level (\d)/);
+					let m = lines[i].match(/({[^:]+}): (Level|Niveau) (\d)/);
 					if (m) {
 						r.push({
 							class: "level-header",
 							html: this.parse_oracle(
-								`<div>${m[1]}:</div><div>Level ${m[2]}</div>`
+								`<div>${m[1]}:</div><div>${m[2]} ${m[3]}</div>`
 							),
 						});
 					} else
