@@ -2965,6 +2965,9 @@
 		right: 0;
 		width: 100%;
 	}
+	.compasslanddfc.back .top-line {
+		top: 3.5mm;
+	}
 
 	.compasslanddfc.back .type-line {
 		text-align: center;
