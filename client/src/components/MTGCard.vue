@@ -596,7 +596,10 @@
 					>
 						{{ ability.cost > 0 ? "+" : "" }}{{ ability.cost }}
 					</div>
-					<div v-html="ability.html"></div>
+					<div
+						class="planeswalker-ability-text"
+						v-html="ability.html"
+					></div>
 				</div>
 			</div>
 		</template>
@@ -919,9 +922,13 @@
 		if (!curOverflow || curOverflow === "visible")
 			el.style.overflow = "hidden";
 
+		// FIXME: The + 1 is there for some weird rounding error (I guess, I don't actually know)
+		//        Without it, planeswalker oracle text is always overflowing by a single pixel horizontally,
+		//        shrinking the text to oblivion.
 		const isOverflowing =
-			el.clientWidth < el.scrollWidth ||
-			el.clientHeight < el.scrollHeight;
+			el.clientWidth + 1 < el.scrollWidth ||
+			el.clientHeight + 1 < el.scrollHeight;
+
 		el.style.overflow = curOverflow;
 
 		return isOverflowing;
