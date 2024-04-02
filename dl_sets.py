@@ -7,6 +7,7 @@ import threading
 import os
 from PIL import Image
 import ssl
+import socket
 
 SetsURL = "https://api.scryfall.com/sets"
 SetsFile = "./client/src/assets/data/sets.json"
@@ -35,16 +36,20 @@ def dl_set_icon(mtgset):
 
         if not os.path.exists(icon_path):
             # print("\t{}".format(icon_url))
-            urllib.request.urlretrieve(icon_url, icon_path)
-            if os.path.getsize(icon_path) == 0:
-                os.remove(icon_path)
-            else:
-                try:
-                    #print("\tTriming {}".format(mtgset["code"] + "_" + rarity))
-                    im = Image.open(icon_path)
-                    # im.crop(im.getbbox()).save(icon_path)
-                except:
-                    print("Error trimming {}".format(icon_path))
+            socket.setdefaulttimeout(5)
+            try:
+                urllib.request.urlretrieve(icon_url, icon_path)
+                if os.path.getsize(icon_path) == 0:
+                    os.remove(icon_path)
+                else:
+                    try:
+                        #print("\tTriming {}".format(mtgset["code"] + "_" + rarity))
+                        im = Image.open(icon_path)
+                        # im.crop(im.getbbox()).save(icon_path)
+                    except:
+                        print("Error trimming {}".format(icon_path))
+            except:
+                print("Error downloading {}".format(icon_url))
     logging.info("Thread %s: finishing", mtgset["code"])
 
 
