@@ -1862,6 +1862,11 @@
 		src: url("../assets/fonts/relaywide-medium.ttf") format("truetype");
 	}
 
+	@font-face {
+		font-family: "NDPMTG";
+		src: url("../assets/fonts/NDPMTG.ttf") format("truetype");
+	}
+
 	.mtg-card {
 		position: relative;
 		width: 63.5mm;
