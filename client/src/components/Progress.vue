@@ -8,7 +8,7 @@
 				'task-success': task.status === 'success',
 				'task-fail': task.status === 'fail',
 			}"
-			@click="collapse(idx)"
+			@click=""
 		>
 			<div class="task-name">
 				<span v-if="task.status === 'success'" class="success">✓ </span>
@@ -43,13 +43,12 @@
 </template>
 
 <script lang="ts">
-import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
 import Spinner from "./Spinner.vue";
 
 export default {
 	props: { defaulttasks: Array },
-	components: { CollapseTransition, Spinner },
+	components: {  Spinner },
 	data(inst) {
 		return {
 			tasks: inst.$props.defaulttasks ?? [],

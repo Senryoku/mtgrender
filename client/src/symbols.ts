@@ -2,7 +2,7 @@ export const mana_symbols = {};
 import mana_symbols_list from "./assets/data/symbology.json";
 
 function getImage(uri: string) {
-	return new URL(`./assets/img/symbols/${uri}.svg`, import.meta.url).href;
+	return `/assets/img/symbols/${uri}.svg`;
 }
 
 for (let symbol of mana_symbols_list) {

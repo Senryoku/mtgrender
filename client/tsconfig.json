@@ -1,16 +1,11 @@
 {
-	"compilerOptions": {
-	  "target": "es2020",
-	  "lib": [
-		"dom","es2020", "esnext"
-	  ],
-	  "module": "es2020",
-	  "moduleResolution": "node",
-	  "importHelpers": true,
-	  "isolatedModules": true,
-	  "noEmit": true,
-	  "resolveJsonModule": true,
-	  "allowSyntheticDefaultImports":true
-	}
-  }
-  
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}

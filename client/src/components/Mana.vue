@@ -24,10 +24,7 @@
 				if (!this.cost) return [];
 				return [...this.cost.matchAll(mana_regex)].map((m) =>
 					this.archive
-						? new URL(
-								`../assets/img/archives_symbols/${m[1]}.svg`,
-								import.meta.url
-						  ).href
+						? `/assets/img/archives_symbols/${m[1]}.svg`
 						: mana_symbols[m[0]].svg_uri
 				);
 			},
